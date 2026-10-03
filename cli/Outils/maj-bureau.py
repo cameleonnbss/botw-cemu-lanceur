@@ -39,6 +39,10 @@ LIVRABLES = ["botw.py", "botw.bat", "README.md", "README.fr.md"]
 DOSSIERS = ["botw", "locales", "tests", "Outils"]
 EXCLUS = ("__pycache__", "*.pyc", ".pytest_cache", "_*.py", "*.bak")
 
+# Dossiers qu'on ne veut ni copier, ni laisser trainer cote bureau. Ils
+# reapparaisent des qu'on lance pytest depuis la copie livree.
+CACHES = ("__pycache__", ".pytest_cache")
+
 # Fichiers que Windows execute : ASCII, sans BOM, fins de ligne CRLF.
 WINDOWS = (".bat", ".cmd", ".ps1")
 
@@ -52,6 +56,11 @@ def md5(path):
 
 
 def exclus(nom):
+    # Les fichiers en __ sont la structure du paquet (__init__.py,
+    # __main__.py), pas des brouillons. "_*.py" les attrapait, et la copie
+    # livree se retrouvait sans eux.
+    if nom.startswith("__") and nom.endswith(".py"):
+        return False
     return any(fnmatch.fnmatch(nom, motif) for motif in EXCLUS)
 
 
@@ -65,7 +74,8 @@ def a_livrer(src, dst):
         if not os.path.isdir(base):
             continue
         for rep, sous, fichiers in os.walk(base):
-            sous[:] = [s for s in sous if not exclus(s)]
+            sous[:] = [s for s in sous
+                       if s not in CACHES and not exclus(s)]
             rel = os.path.relpath(rep, src)
             for f in fichiers:
                 if exclus(f):
@@ -76,10 +86,20 @@ def a_livrer(src, dst):
 
 
 def nettoyer_les_obsoletes(dst, src):
-    """Supprime sur le bureau ce qui n'existe plus cote source."""
+    """Supprime sur le bureau ce qui n'existe plus cote source.
+
+    Les caches (__pycache__, .pytest_cache) sont supprimes entiers. Les
+    ignorer au parcours ne suffirait pas : on ne les visiterait pas, donc on
+    ne verrait pas leurs fichiers, donc ils resteraient sur le bureau.
+    """
     orphelins = []
+    caches = []
     for rep, sous, fichiers in os.walk(dst):
-        sous[:] = [s for s in sous if s != "__pycache__"]
+        for s in list(sous):
+            if s in CACHES:
+                caches.append(os.path.join(rep, s))
+                sous.remove(s)
+    for rep, sous, fichiers in os.walk(dst):
         for f in fichiers:
             if exclus(f):
                 continue
@@ -89,6 +109,8 @@ def nettoyer_les_obsoletes(dst, src):
                 orphelins.append(cible)
     for o in orphelins:
         os.remove(o)
+    for c in caches:
+        shutil.rmtree(c, ignore_errors=True)
     # Les dossiers devenus vides, du plus profond au plus haut.
     for rep, _s, _f in sorted(os.walk(dst), key=lambda x: -len(x[0])):
         if rep == dst:
@@ -98,7 +120,7 @@ def nettoyer_les_obsoletes(dst, src):
                 os.rmdir(rep)
         except OSError:
             pass
-    return orphelins
+    return orphelins, caches
 
 
 def verifier_windows(path):
@@ -151,7 +173,8 @@ def main(argv):
             return 1
         copies += 1
 
-    orphelins = nettoyer_les_obsoletes(DEST, SOURCE) if not verifier_seulement else []
+    orphelins, caches = (nettoyer_les_obsoletes(DEST, SOURCE)
+                         if not verifier_seulement else ([], []))
 
     # --- controle final ----------------------------------------------------
     divergences = [os.path.relpath(d, DEST) for s, d in paires
@@ -173,6 +196,20 @@ def main(argv):
         print("obsoletes supprimes : %d" % len(orphelins))
         for o in orphelins:
             print("  - %s" % os.path.relpath(o, DEST))
+        print("caches supprimes : %d" % len(caches))
+        for c in caches:
+            print("  - %s" % os.path.relpath(c, DEST))
+    # Auto-controle : la copie livree doit contenir les fichiers qui font
+    # exister le paquet. Leur absence ne se voyait pas.
+    attendus = ["botw/__init__.py", "botw/__main__.py"]
+    manquants = [a for a in attendus
+                 if not os.path.isfile(os.path.join(DEST, *a.split("/")))]
+    if manquants:
+        print("\nPROBLEMES : fichiers du paquet absents de la copie :")
+        for a in manquants:
+            print("  ! %s" % a)
+        return 1
+
     print("divergences MD5 : %d" % len(divergences))
     for d in divergences:
         print("  ! %s" % d)
