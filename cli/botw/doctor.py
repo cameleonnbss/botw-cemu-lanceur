@@ -149,6 +149,19 @@ def run(cfg=None):
     rep.add(gb >= 2, _("doctor.disk.ok", n="%.1f" % gb, d=drive),
             _("doctor.disk.low", n="%.1f" % gb, d=drive))
 
+    # --- 8. ce qui bloque le chargement -------------------------------------
+    # La section la plus importante du bilan : c'est elle qui dit si le jeu va
+    # demarrer. Voir botw/fix.py pour la cause exacte.
+    i18n.section(_("doctor.section.load"))
+    from . import fix
+    for gravite, texte in fix.rapport(cfg):
+        if gravite >= 2:
+            rep.add(False, texte)
+        elif gravite == 0:
+            i18n.ok(texte)
+        else:
+            i18n.warn(texte)
+
     rep.verdict()
     return rep
 

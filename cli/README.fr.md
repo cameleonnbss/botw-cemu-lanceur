@@ -9,6 +9,11 @@ bilan de santé qui dit ce qui ne va pas au lieu de vous laisser deviner.
 
 ```bat
 botw                 :: ouvre le menu
+botw check           :: le jeu va-t-il demarrer ? ne change rien
+botw fix             :: repare le chargement infini
+botw build           :: construit un profil en repondant a des questions
+botw art             :: la Triforce et Linkle, en texte
+botw graphics         :: resolution + correction des couleurs
 botw doctor          :: bilan de santé complet
 botw deploy sur      :: passe le jeu sur le profil « sans échec »
 botw catalog         :: les combinaisons de mods prouvées
@@ -280,6 +285,11 @@ sauvegarde qui ne correspond pas au profil**. Voir §7.
 |---|---|
 | `botw` | ouvre le menu |
 | `botw doctor` | bilan de santé complet |
+| `botw check` | ce qui peut bloquer le chargement, sans rien changer |
+| `botw fix [-y] [--keep-cosmetics] [--no-cheats] [--no-deploy]` | repare le chargement infini |
+| `botw build [--name <n>] [--yes] [--no-deploy]` | construit un profil en repondant a dix questions |
+| `botw art` | la Triforce et Linkle, en texte |
+| `botw graphics [--mods] [--off]` | resolution et correction des couleurs |
 | `botw deploy <profil> [--activate]` | fusionne et déploie |
 | `botw profile list\|show\|use\|create\|delete\|verify` | profils |
 | `botw mods list\|search\|download\|install\|uninstall` | mods |
@@ -308,3 +318,94 @@ sauvegarde qui ne correspond pas au profil**. Voir §7.
 ## Licence
 
 MIT. Cet outil ne contient aucun élément du jeu.
+
+---
+
+## Le chargement infini
+
+Le jeu reste sur son ecran de chargement et n'arrive jamais a la suite. Aucun
+crash, aucune erreur, aucune ligne de log. C'est le probleme le plus signale,
+et il vient rarement du profil de mods que tu viens de deployer.
+
+**Ce sont les packs graphiques.** Cemu en garde la liste dans
+`%APPDATA%\Cemu\settings.xml`. Deux familles cassent un jeu modde :
+
+| Pack | Pourquoi il bloque |
+|---|---|
+| `ExtendedMemory` | repointe +2 Go de memoire et exige le *jeu* recompile. Son propre `rules.txt` le dit, et dit que le code ne doit pas vivre dans un mod. |
+| `HD_Map_and_Icons` | remplace des fichiers du jeu, ce que les `rules.txt` d'UKMM interdisent avec un autre chargeur de mods. |
+
+Les packs cosmetiques (`DrawDistance`, `FPS++`, `DivineLaserBeam`,
+`Enhancements`, `Graphics`) ne sont pas dangereux, mais ils se disputent les
+memes fichiers que les mods : ils sont donc desactives par defaut. Les
+triches sont conservees : elles ne touchent pas au code du jeu.
+
+```bat
+botw check          :: dit ce qui bloque, ne change rien. Code 0 = tout va bien.
+botw fix            :: retire les packs bloquants, redeploie, garde la sauvegarde
+botw fix --minimal  :: idem, et desactive aussi les triches
+```
+
+Le lanceur fait la meme chose avec les touches **i** (diagnostic) et **j**
+(reparation).
+
+`botw check` regarde aussi deux choses invisibles depuis le jeu :
+
+* **la sauvegarde**. Un fichier de sauvegarde ne s'ouvre qu'avec les mods qui
+  l'ont cree : la cle est derivee du jeu de mods. `botw` note chaque
+  deploiement, donc il peut te dire que la partie vient de `sur` alors que
+  `boost` est actif. La charger bloque, en silence.
+* **le deploiement**. Si le profil actif n'est pas entierement fusionne et
+  deploye, Cemu demarre avec un melange de fichiers.
+
+Le code de sortie vaut 0 si rien ne peut bloquer, 1 sinon : tu peux le mettre
+dans un script.
+
+### Si le jeu refuse toujours de demarrer
+
+```bat
+botw newgame        :: met l'emplacement de cote, le garde, part d'une neuve
+```
+
+C'est la reponse quand une sauvegarde refuse de se charger. L'ancienne est
+*deplacee*, jamais supprimee ; `botw newgame revert` la remet en place.
+
+
+---
+
+## Graphismes et correction des couleurs
+
+`botw fix` desactive les packs graphiques en meme temps que ceux qui bloquent
+le chargement : un jeu bloque vaut moins qu'une image terne. Mais il ne
+restait aucun moyen de les remettre. Le correctif etait irreversible.
+
+```bat
+botw graphics           :: resolution, anticrenelage, correction des couleurs
+botw graphics --mods    :: aussi les packs tiers (DrawDistance, FPS++...)
+botw graphics --off     :: retour a l'image d'origine
+```
+
+Ce que ca reactive :
+
+| Pack | Ce que ca change |
+|---|---|
+| `Graphics` | resolution, anticrenelage, resolution des ombres |
+| `Enhancements` | **correction des couleurs** (prereglages *Clarity*), reflets, filtrage anisotrope |
+| `Workarounds/*` | les correctifs de compatibilite de Cemu : crash AMD/NVIDIA, cloudes, herbe, saccades CPU |
+
+`Enhancements` porte deja `$preset:int = 10` dans sa section `[Default]`, soit
+le prereglage *Clarity* de Serfrost - celui que Cemu recommande. La correction
+des couleurs est donc appliquee sans qu'on devine le format XML des
+prereglages. Tu veux un autre prereglage ? Choisis-le dans la fenetre des
+packs graphiques de Cemu.
+
+Deux garanties, couvertes par les tests :
+
+* les packs qui causent le chargement infini (`ExtendedMemory`,
+  `HD_Map_and_Icons`) sont **retires dans la meme operation**. Reactiver
+  l'image ne peut jamais remettre le jeu dans l'etat qui le faisait boucler ;
+* le pack UKMM reste en premier dans la liste : c'est lui qui porte tes mods,
+  et l'ordre n'est pas neutre.
+
+Les packs tiers restent coupes par defaut : `DrawDistance`, `FPS++` et
+`DivineLaserBeam` changent l'image bien plus que les packs officiels.

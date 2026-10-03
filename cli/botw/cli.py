@@ -297,6 +297,136 @@ def cmd_coop(args, cfg):
     return 1
 
 
+def cmd_graphics(args, cfg):
+    """Les packs graphiques de Cemu : resolution et correction des couleurs.
+
+    C'est la commande inverse de ce que fait `botw fix` sur ces packs. Elle
+    ne peut pas remettre les packs qui bloquent le chargement : ils sont
+    retires dans la meme operation.
+    """
+    from . import cemu
+    i18n.title(_("graphics.title"))
+
+    packs = cemu.disponibles()
+    if not packs:
+        i18n.ko(_("graphics.none"))
+        return 4
+    for _relatif, nom, cle in packs:
+        i18n.info("%-13s %s" % (nom, _(cle) if cle else ""))
+
+    if args.off:
+        ordre = [c for c in cemu.active_packs()
+                 if nom_packs(c) not in [n for _r, n, _c in packs]]
+        ok, msg = cemu.ecrire_packs(ordre, cfg)
+        (i18n.ok if ok else i18n.ko)(msg)
+        return 0 if ok else 1
+
+    ok, msg, ajoutes = cemu.activer_graphismes(cosmetiques=args.mods, cfg=cfg)
+    if not ok:
+        i18n.ko(msg)
+        return 1
+    if ajoutes:
+        i18n.ok(_("graphics.added", n=len(ajoutes),
+                  list=", ".join(ajoutes)))
+    else:
+        i18n.ok(_("graphics.already"))
+    # On relit : ce que Cemu vera au prochain demarrage, pas ce qu'on croit
+    # avoir ecrit.
+    dangereux, _opt, _autres = cemu.classer()
+    if dangereux:
+        for _chemin, nom in dangereux:
+            i18n.ko(_("cemu.blocker", n=nom, why=cemu.raison(_chemin)))
+        return 1
+    i18n.ok(_("graphics.done"))
+    return 0
+
+
+def nom_packs(chemin):
+    """Raccourci : le nom lisible d'un chemin de pack."""
+    from . import cemu
+    return cemu.nom_lisible(chemin)
+
+
+def cmd_fix(args, cfg):
+    """Le correctif du chargement infini."""
+    from . import cemu, fix
+    if args.action in ("check", None) and args.action != "run":
+        return cmd_check(args, cfg)
+    i18n.title(_("fix.title"))
+    avant = fix.rapport(cfg)
+    for g, t in avant:
+        (i18n.ko if g >= 2 else i18n.warn if g == 1 else i18n.ok)(t)
+    if args.action == "check":
+        return 0 if not fix.bloque() else 1
+    i18n.info(_("fix.ask_mode"))
+    mode = "safe"
+    if args.keep_cosmetics:
+        mode = "keep"
+    elif args.minimal:
+        mode = "minimal"
+    i18n.info(_("cemu.mode", m=_("cemu.mode." + ("keep" if mode == "keep"
+                                                 else "nocheat" if mode == "minimal"
+                                                 else "safe"))))
+    code = fix.corriger(cfg, keep_options=(mode == "keep"),
+                        keep_cheats=(mode != "minimal"), deploy_apres=not args.no_deploy)
+    if code == 0:
+        i18n.ok(_("fix.done"))
+    reste = fix.rapport(cfg)
+    return 0 if not fix.bloque() else code or 1
+
+
+def cmd_check(args, cfg):
+    """Dis-dit : qu'est-ce qui peut empecher le jeu de charger ?"""
+    from . import fix
+    i18n.title(_("fix.title"))
+    lignes = fix.rapport(cfg)
+    for g, t in lignes:
+        (i18n.ko if g >= 2 else i18n.warn if g == 1 else i18n.ok)(t)
+    n = len([g for g, _ in lignes if g >= 2])
+    if n:
+        i18n.ko(_("fix.verdict.ko", n=n))
+        return 1
+    i18n.ok(_("fix.verdict.ok"))
+    return 0
+
+
+def cmd_build(args, cfg):
+    """Le constructeur de profil."""
+    from . import builder, config as cfgmod
+    i18n.title(_("builder.title"))
+    i18n.info(_("builder.intro"))
+    choix, posees = builder.poser_questions()
+    if not posees and not args.yes:
+        # Personne n'a repondu : stdin est ferme. Les valeurs par defaut
+        # construiraient alors un profil, le deployeraient, et surtout
+        # basculeraient le profil actif - ce qui rendrait illisible la
+        # sauvegarde du joueur, qui n'a pas ete faite avec ces mods. C'est le
+        # pire resultat possible, et il est invisible : rien n'echoue.
+        # On ne fait donc rien tant que --yes n'a pas ete demande.
+        i18n.ko(_("builder.no_terminal"))
+        i18n.info(_("builder.no_terminal.how"))
+        return 1
+    liste = builder.assembling(choix)
+    if not liste:
+        i18n.ko(_("builder.empty"))
+        return 1
+    nom = args.name or builder.noms(choix)
+    if posees:
+        nom = i18n.ask(_("builder.name"), nom) or nom
+        if not args.yes and not i18n.confirm(_("builder.use", p=nom), True):
+            return 0
+    # construire() renvoie (nom, code) : sans decomposer le tuple, `code == 0`
+    # n'est jamais vrai, le profil n'est donc jamais active et la commande
+    # renvoie un tuple a sys.exit() - qui le refuse.
+    nom_final, code = builder.construire(nom, choix, cfg,
+                                         deploy_apres=not args.no_deploy)
+    if code == 0:
+        cfg["game_profile"] = nom_final or nom
+        cfgmod.save(cfg)
+        i18n.ok(_("deploy.activate", p=nom_final or nom))
+    return code
+
+
 def cmd_newgame(args, cfg):
     from . import newgame
     return 0 if newgame.execute(args.rest) else 1
@@ -340,11 +470,20 @@ def cmd_config(args, cfg):
 
 
 def cmd_readme(args, cfg):
-    from . import readme
+    from . import art, readme
     lang = args.lang_code or i18n.lang()
     if args.open:
         return 0 if readme.open_in_viewer(lang) else 1
+    art.linkle("cyan")
+    print("")
     return 0 if readme.show(lang) else 1
+
+
+def cmd_art(args, cfg):
+    """Les deux dessins, pour le plaisir."""
+    from . import art
+    art.banniere()
+    return 0
 
 
 def cmd_ui(args, cfg):
@@ -433,6 +572,31 @@ def build_parser():
     ng = s.add_parser("newgame", help=_("cli.help.newgame"))
     ng.add_argument("rest", nargs="*", default=None)
 
+    bd = s.add_parser("build", help=_("cli.help.build"))
+    bd.add_argument("name", nargs="?", default=None)
+    bd.add_argument("-y", "--yes", action="store_true")
+    bd.add_argument("--no-deploy", action="store_true")
+
+    ck = s.add_parser("check", help=_("cli.help.check"),
+                      description=_("cli.help.checklong"))
+    ck.set_defaults(_handler=cmd_check)
+
+    gr = s.add_parser("graphics", help=_("cli.help.graphics"),
+                      description=_("cli.help.graphicslong"))
+    gr.add_argument("--mods", action="store_true",
+                    help=_("cli.help.graphicsmods"))
+    gr.add_argument("--off", action="store_true",
+                    help=_("cli.help.graphicsoff"))
+
+    fx = s.add_parser("fix", help=_("cli.help.fix"))
+    fx.add_argument("action", nargs="?", default="run",
+                    choices=["check", "run"])
+    fx.add_argument("-y", "--yes", action="store_true")
+    fx.add_argument("--keep-cosmetics", action="store_true",
+                    help=_("cli.help.cosmetics"))
+    fx.add_argument("--minimal", action="store_true")
+    fx.add_argument("--no-deploy", action="store_true")
+
     cf = s.add_parser("config", help=_("cli.help.config"))
     cf.add_argument("action", nargs="?", default=None,
                     choices=["set", "reset"])
@@ -444,6 +608,7 @@ def build_parser():
     rd.add_argument("-o", "--open", action="store_true")
 
     s.add_parser("ui", help=_("cli.help.ui"))
+    s.add_parser("art", help=_("cli.help.art"))
 
     mx = s.add_parser("matrix", help=_("cli.help.matrix"))
     mx.add_argument("suite", nargs="*", default=None)
@@ -461,9 +626,14 @@ HANDLERS = {
     "catalog": cmd_catalog,
     "coop": cmd_coop,
     "newgame": cmd_newgame,
+    "fix": cmd_fix,
+    "graphics": cmd_graphics,
+    "check": cmd_check,
+    "build": cmd_build,
     "config": cmd_config,
     "readme": cmd_readme,
     "ui": cmd_ui,
+    "art": cmd_art,
     "matrix": cmd_matrix,
 }
 
@@ -490,7 +660,7 @@ def main(argv=None):
     if not args.command:
         from . import ui
         return ui.run(cfg)
-    handler = HANDLERS.get(args.command)
+    handler = getattr(args, "_handler", None) or HANDLERS.get(args.command)
     if handler is None:
         i18n.ko(_("err.unknown_command", c=args.command))
         return 2

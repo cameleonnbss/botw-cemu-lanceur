@@ -4,16 +4,20 @@ Tout ce que la CLI sait faire est ici, avec un bouton. Le menu separe
 volontairement l'ecran principal (on y revient souvent) des sous-ecrans :
 
     jeu      choisir un profil, le deployer, lancer Cemu
+    check    ce qui bloque le chargement
+    fix      corriger le chargement infini
+    build    construire un profil en repondant a des questions
     mods     liste, installation, telechargement
     profils  creation depuis le catalogue, verification
     tools    UKMM, BCML, Cemu
     coop     deux joueurs
 
-Deux boutons sont en haut et non dans la liste numerotee, parce que ce sont
-les deux demandes les plus frequentes et qu'elles ne doivent pas demander
-trois commandes :
+Quatre boutons sont hors de la liste numerotee, parce que ce sont les demandes
+les plus frequentes et qu'elles ne doivent pas demander trois commandes :
 
     [N] nouvelle partie    le jeu est bloque sur l'ecran de chargement ?
+    [C] le jeu demarre ?   repond en trois lignes
+    [F] fixer le chargement le correctif en une commande
     [R] readme en francais  la doc, tout de suite
 """
 import os
@@ -38,13 +42,20 @@ def _status_line(cfg):
 
 
 def launch(profile, cfg):
-    """Deploie puis lance Cemu. Retourne le code de sortie."""
-    from . import deploy
+    """Deploie puis lance Cemu. Retourne le code de sortie.
+
+    Avant de lancer, on verifie qu'aucun pack graphique ne peut bloquer le
+    chargement. Un joueur qui voit un chargement infini en pense a son
+    profil ; or la cause est presque toujours un pack, pas le profil.
+    """
+    from . import deploy, fix
     try:
-        deploy.deploy(profile, cfg)
+        deploy.deploy(profile, cfg, quiet=True)
     except deploy.GuardError as e:
         i18n.ko(str(e))
         return e.code
+    if not fix.avant_de_lancer(cfg):
+        return 1
     cemu = config.cemu_exe(cfg)
     if not cemu:
         i18n.ko(_("doctor.tools.cemu", p=_("tool.cemu.missing")))
@@ -221,9 +232,11 @@ def sub_tools(cfg):
 # --- ecran principal ---------------------------------------------------------
 
 def main_screen(cfg):
-    from . import newgame, readme
+    from . import art, newgame, readme
     i18n.info(_status_line(cfg))
     options = [("play", _("ui.play")),
+               ("check", _("ui.check")),
+               ("build", _("ui.build")),
                ("mods", _("ui.mods")),
                ("profiles", _("ui.profiles")),
                ("coop", _("ui.coop")),
@@ -233,8 +246,13 @@ def main_screen(cfg):
                ("lang", _("ui.lang"))]
     for i, (key, _l) in enumerate(options, 1):
         print("  " + i18n.paint("  %d) " % i, "bold+cyan") + _l)
-    print("  " + i18n.paint("  N) ", "bold+green") + _("ui.newgame"))
-    print("  " + i18n.paint("  F) ", "bold+green") + _("ui.readme_fr"))
+    print("")
+    for touche, libelle in (("C", _("ui.check.short")),
+                            ("F", _("ui.fix.short")),
+                            ("G", _("ui.graphics.short")),
+                            ("N", _("ui.newgame")),
+                            ("D", _("ui.readme_fr"))):
+        print("  " + i18n.paint("  %s) " % touche, "bold+green") + libelle)
     print("  " + i18n.paint("  Q) ", "bold+dim") + _("ui.quit"))
     while True:
         raw = i18n.ask(_("ui.welcome"), "1")
@@ -245,8 +263,14 @@ def main_screen(cfg):
             return None
         if low == "n":
             return "newgame"
-        if low in ("f", "r"):
-            return "readme_fr" if low == "f" else "readme"
+        if low == "d":
+            return "readme_fr"
+        if low == "c":
+            return "check"
+        if low == "f":
+            return "fix"
+        if low == "g":
+            return "graphics"
         if raw.isdigit() and 1 <= int(raw) <= len(options):
             return options[int(raw) - 1][0]
         i18n.warn(_("ui.bad_choice", v=raw))
@@ -273,6 +297,19 @@ def run(cfg):
             return 0
         if quoi == "play":
             sub_play(cfg)
+        elif quoi == "check":
+            from . import cli
+            cli.cmd_check(_Fake(), cfg)
+        elif quoi == "fix":
+            from . import cli
+            cli.cmd_fix(_Fake(action="run", keep_cosmetics=False, minimal=False,
+                              no_deploy=False, yes=False), cfg)
+        elif quoi == "graphics":
+            from . import cli
+            cli.cmd_graphics(_Fake(mods=False, off=False), cfg)
+        elif quoi == "build":
+            from . import cli
+            cli.cmd_build(_Fake(name=None, yes=False, no_deploy=False), cfg)
         elif quoi == "mods":
             sub_mods(cfg)
         elif quoi == "profiles":

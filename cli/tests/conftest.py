@@ -36,6 +36,13 @@ def fausse_machine(tmp_path, monkeypatch):
     monkeypatch.setenv("USERPROFILE", str(profil))
     monkeypatch.setenv("SystemDrive", "C:")
     monkeypatch.delenv("BOTW_HOME", raising=False)
+    # Les repertoires sont repointes sur une fausse machine, mais la liste des
+    # processus, elle, est toujours celle de la vraie. Un Cemu lance pour de
+    # vrai fait alors echouer des tests qui n'ont rien a voir : le deploiement
+    # refuse (« Cemu est ouvert »), le mode coop refuse d'ecrire...
+    # On neutralise donc la detection pour tout le monde ; les tests qui
+    # exercent cette detection la reintroduisent explicitement.
+    monkeypatch.setattr("botw.deploy.processes_named", lambda n: [])
     i18n.set_lang("en")
     yield {
         "appdata": appdata,

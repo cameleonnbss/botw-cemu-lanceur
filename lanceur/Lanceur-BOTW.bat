@@ -6,9 +6,9 @@ rem  "choice" (natif Windows) renvoie un CODE DE SORTIE numerique : pas de
 rem  comparaison de chaine fragile. Pas de "chcp 65001" ici : changer de page
 rem  de code vide le tampon d'entree de la console. Fichier en ASCII pur.
 rem
-rem  Ordre du menu : "choice /c 123456789abcdefgh0" renvoie la POSITION
+rem  Ordre du menu : "choice /c 123456789abcdefghij0" renvoie la POSITION
 rem  de la touche. 1->1 ... 9->9, a->10, b->11, c->12, d->13, e->14,
-rem  f->15, g->16, h->17, 0->18.
+rem  f->15, g->16, h->17, i->18, j->19, 0->20.
 rem  On teste donc de la fin vers le debut : chaque "if errorlevel" doit
 rem  correspondre au DERNIER cas encore possible.
 rem =====================================================================
@@ -69,6 +69,10 @@ echo     c. Tester les profils        rejoue chaque profil et verifie
 echo     d. Ouvrir UKMM
 echo     e. Ouvrir Cemu
 
+echo   REPARE LE CHARGEMENT INFINI
+echo     i. Le jeu demarre-t-il ? ...... 3 lignes, rien ne change
+echo     j. Reparer .................... retire les packs bloquants
+echo.
 echo   botw  (the CLI, in English ; "botw lang fr" switches to French)
 echo     f. botw menu ................ everything: mods, profiles, tools
 echo     g. New game ................. keeps the old one, starts clean
@@ -76,8 +80,10 @@ echo     h. Documentation ............. this file, French or English
 echo.
 echo     0. Quitter
 echo.
-choice /c 123456789abcdefgh0 /n /m "Choix (0 pour quitter) : "
-if errorlevel 18 exit /b 0
+choice /c 123456789abcdefghij0 /n /m "Choix (0 pour quitter) : "
+if errorlevel 20 exit /b 0
+if errorlevel 19 goto reparer
+if errorlevel 18 goto diagnostic
 if errorlevel 17 goto doc
 if errorlevel 16 goto nouvelle
 if errorlevel 15 goto botw
@@ -229,6 +235,36 @@ pause
 goto menu
 
 rem ---------------------------------------------------------------------
+rem Le chargement infini. Deux touches, parce que ce n'est pas la meme
+rem chose : "i" ne touche a rien et dit ce qui bloque, "j" repare.
+rem La cause n'est presque jamais le profil de mods : ce sont les packs
+rem graphiques de Cemu (voir botw\cemu.py).
+rem ---------------------------------------------------------------------
+:diagnostic
+if not exist "%BOTW%" goto :absent_botw
+python "%BOTW%" check
+echo.
+pause
+goto menu
+
+:reparer
+if not exist "%BOTW%" goto :absent_botw
+echo.
+echo   Retire les packs graphiques qui bloquent le chargement,
+echo   puis redeploie le profil actif. La sauvegarde n'est pas touchee.
+echo.
+python "%BOTW%" fix -y
+echo.
+pause
+goto menu
+
+:absent_botw
+echo.
+echo   Le dossier botw est introuvable : copie incomplete.
+pause
+goto menu
+
+rem ---------------------------------------------------------------------
 rem Documentation : le README du dossier botw, dans la langue demandee.
 rem ---------------------------------------------------------------------
 :doc
@@ -275,4 +311,4 @@ echo   !  courant : une partie par profil.                    !
 echo   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 echo.
 pause
-goto menu
+goto menu

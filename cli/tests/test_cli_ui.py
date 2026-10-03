@@ -2,6 +2,7 @@
 import builtins
 import io
 import os
+import re
 import subprocess
 import sys
 
@@ -22,6 +23,32 @@ def saisir(*reponses):
         except StopIteration:
             return ""
     return faux_input
+
+
+def numeros_du_menu(capsys, monkeypatch):
+    """Les numeros affiches devant chaque option du menu principal.
+
+    Le menu gagne une option a chaque nouvelle commande. Un test qui ecrirait
+    « 8) langue » casserait sans qu'aucun bug soit corrige : on relit donc
+    l'ecran tel qu'un humain le voit.
+    """
+    monkeypatch.setattr(builtins, "input", saisir("q"))
+    ui.run(config.load())
+    out = capsys.readouterr().out
+    nums = {}
+    for ligne in out.splitlines():
+        m = re.match(r"\s*(\d+)\)\s+(.*\S)\s*$", ligne)
+        if m:
+            nums[m.group(1)] = m.group(2)
+    return nums
+
+
+def numero_de(capsys, monkeypatch, libelle):
+    """Le numero de l'option dont le libelle est exactement `libelle`."""
+    for n, lbl in numeros_du_menu(capsys, monkeypatch).items():
+        if lbl == libelle:
+            return n
+    raise AssertionError("option absente du menu : %r" % libelle)
 
 
 def _eof(_prompt=""):
@@ -154,7 +181,9 @@ class TestMenu(object):
 
     def test_bouton_francais_affiche_le_readme(self, installation, monkeypatch,
                                               capsys):
-        monkeypatch.setattr(builtins, "input", saisir("f", "q"))
+        """Le raccourci D ouvre la doc en francais, meme depuis le mode
+        anglais : c'est le bouton du lanceur .bat."""
+        monkeypatch.setattr(builtins, "input", saisir("d", "q"))
         ui.run(config.load())
         assert "sur Cemu" in capsys.readouterr().out
 
@@ -175,13 +204,17 @@ class TestMenu(object):
         assert "not one of the choices" in capsys.readouterr().out
 
     def test_changement_de_langue(self, installation, monkeypatch, capsys):
-        monkeypatch.setattr(builtins, "input", saisir("8", "fr", "q"))
+        n = numero_de(capsys, monkeypatch, i18n._("ui.lang"))
+        monkeypatch.setattr(builtins, "input", saisir(n, "fr", "q"))
         ui.run(config.load())
         assert config.load()["lang"] == "fr"
         assert "Deux joueurs" in capsys.readouterr().out
 
     def test_langue_revenue_en_anglais(self, installation, monkeypatch, capsys):
-        monkeypatch.setattr(builtins, "input", saisir("8", "en", "q"))
+        """Aller-retour complet : revenir a l'anglais depuis l'anglais ne
+        prouverait rien, le defaut etant deja l'anglais."""
+        n = numero_de(capsys, monkeypatch, i18n._("ui.lang"))
+        monkeypatch.setattr(builtins, "input", saisir(n, "fr", n, "en", "q"))
         ui.run(config.load())
         assert config.load()["lang"] == "en"
 

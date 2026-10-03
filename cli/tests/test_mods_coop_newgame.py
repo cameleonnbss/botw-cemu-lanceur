@@ -2,6 +2,7 @@
 import io
 import json
 import os
+import re
 import zipfile
 
 import pytest
@@ -278,14 +279,57 @@ class TestOutils(object):
 
 
 class TestRaccourcisDeLangue(object):
+    """Les locales sont ecrites sans accents (ASCII) pour rester lisibles
+    dans une console Windows : on ne peut donc pas les relire a l'ceil nu.
+    On cherche des mots francais entiers. Volontairement absent :
+    « Sauv- », parce que Sauvegardes/ est un vrai nom de dossier - un chemin
+    legitime ne doit pas etre signale comme du francais.
+    """
+
+    _MOTIFS = re.compile(
+        r"\b(?:avec|pour|les|des|une|vous|votre|cette|dans|faut|aussi|est|"
+        r"sont|pas|qui|que|aucun|aucune|etre|meme|probleme|seulement|choix|"
+        r"profil)\b"
+        r"|\b(?:repon|deploi|fusionn)\w*", re.I)
+
+    def _francais(self, texte):
+        return bool(self._MOTIFS.search(texte))
+
+    def test_le_detecteur_reconnait_le_francais(self):
+        """Un detecteur qui ne trouve rien ne prouve rien : on le met en
+        echec sur du francais reel avant de l'appliquer aux 349 cles."""
+        for phrase in ("Le profil actif est entierement fusionne et deploye",
+                       "Repondez par oui ou non",
+                       "aucun pack graphique actif",
+                       "la sauvegarde vient de 'sur' et 'boost' est actif"):
+            assert self._francais(phrase), phrase
+
+    def test_le_detecteur_laisse_passer_l_anglais(self):
+        for phrase in ("Verification found 2 problem(s).",
+                       "Nothing to fix: no pack can stop the loading.",
+                       "save folder: Sauvegardes/NouvellePartie",
+                       "LOADING BLOCKER: ExtendedMemory - needs the game"
+                       " recompiled",
+                       "the UKMM pack is active:"
+                       " graphicPacks/BreathOfTheWild_UKMM"):
+            assert not self._francais(phrase), phrase
+
     def test_aucune_chaine_ne_reste_en_francais_en_mode_anglais(self):
         """Toutes les chaines 'en' doivent etre en anglais : on verifie
         qu'aucune n'a ete laissee en francais par megarde."""
         with io.open(os.path.join(i18n.LOCALES, "en.json"), encoding="utf-8") as f:
             en = json.load(f)
-        suspects = [k for k, v in en.items()
-                    if any(m in v for m in ("Defaut :", "Le profil", "Verification"))]
+        suspects = [k for k, v in en.items() if self._francais(v)]
         assert not suspects, suspects
+
+    def test_les_deux_locales_ont_le_meme_nombre_de_cles(self):
+        """Une cle presente dans une seule langue s'affiche brute dans
+        l'autre : le menu devient illisible au lieu d'echouer."""
+        with io.open(os.path.join(i18n.LOCALES, "en.json"), encoding="utf-8") as f:
+            en = set(json.load(f))
+        with io.open(os.path.join(i18n.LOCALES, "fr.json"), encoding="utf-8") as f:
+            fr = set(json.load(f))
+        assert en == fr, sorted(en ^ fr)
 
     def test_aucune_chaine_ne_reste_en_anglais_en_mode_francais(self):
         with io.open(os.path.join(i18n.LOCALES, "fr.json"), encoding="utf-8") as f:

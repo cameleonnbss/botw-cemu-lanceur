@@ -776,3 +776,95 @@ IMPORTANT : NE PAS MELANGER LES DEUX SYSTEMES
   disponibles : touche 6, 7 et 9. Le menu botw ne les remplace pas.
 
   English by default. French is a command away: `botw lang fr`.
+
+18. LE CHARGEMENT INFINI
+========================
+
+  Le jeu reste bloque sur son ecran de chargement. Aucun crash, aucune
+  erreur, aucune ligne de log. C'est le probleme le plus frequent, et il vient
+  presque toujours des PACKS GRAPHIQUES de Cemu, pas de tes mods.
+
+  Cemu garde leur liste dans %APPDATA%\Cemu\settings.xml. Deux familles
+  cassent un jeu modde :
+
+    - ExtendedMemory : repointe +2 Go de memoire et exige le JEU recompile.
+      Son propre rules.txt le dit.
+    - HD Map and Icons : remplace des fichiers du jeu, ce que les rules.txt
+      d'UKMM interdisent avec un autre chargeur de mods.
+
+  Les packs cosmetiques (DrawDistance, FPS++, DivineLaserBeam, Enhancements,
+  Graphics) ne sont pas dangereux mais se disputent les memes fichiers que
+  tes mods : ils sont desactives eux aussi. Les triches sont conservees, elles
+  ne touchent pas au code du jeu.
+
+  DEPUIS LE LANCEUR :
+
+      i    Le jeu demarre-t-il ?  Trois lignes. Ne change rien.
+      j    Reparer.              Retire les packs bloquants, redeploie le
+                                 profil actif. Ta sauvegarde n'est pas
+                                 touchee.
+
+  EN LIGNE DE COMMANDE :
+
+      python botw\botw.py check      dit ce qui bloque, ne change rien
+      python botw\botw.py fix        retire les packs bloquants et redeploie
+      python botw\botw.py fix -y     idem, sans demander confirmation
+
+  `check` regarde aussi deux choses qu'on ne voit pas depuis le jeu :
+
+    - LA SAUVEGARDE. Un fichier de sauvegarde ne s'ouvre qu'avec les mods qui
+      l'ont cree. `botw` note chaque deploiement, donc il peut te dire que ta
+      partie vient de 'sur' alors que 'boost' est actif. La charger
+      bloque, en silence, sans le moindre message.
+
+    - LE DEPLOIEMENT. Si le profil actif n'est pas entierement fusionne et
+      deploye, Cemu demarre avec un melange de fichiers.
+
+  Le code de sortie de `check` vaut 0 si rien ne peut bloquer, 1 sinon.
+
+  SI LE JEU REFUSE TOUJOURS DE DEMARRER :
+
+      python botw\botw.py newgame
+
+  Ca met l'emplacement de sauvegarde de cote, SANS le supprimer, et part sur
+  une partie neuve. L'ancienne est toujours la : `botw newgame revert` la
+  remet en place.
+
+
+19. LES GRAPHISMES ET LA CORRECTION DES COULEURS
+================================================
+
+  Le correctif du chargement infini (touche j) coupe aussi les packs
+  graphiques, parce qu'un jeu bloque vaut moins qu'une image terne. Mais ca
+  ne va pas : apres, l'image reste plate et il n'y avait aucun moyen de la
+  remettre. Voila la commande inverse :
+
+      python botw\botw.py graphics
+
+  Ca reactive :
+
+      Graphics      resolution, anticrenelage, resolution des ombres
+      Enhancements  CORRECTION DES COULEURS (prereglages Clarity), reflets
+      Workarounds   correctifs Cemu : crash AMD/NVIDIA, cloudes, herbe
+
+  Le pack Enhancements contient deja le prereglage Clarity de Serfrost, celui
+  que Cemu recommande : la correction des couleurs est donc active
+  immediatement. Pour un autre prereglage, choisis-le dans la fenetre des
+  packs graphiques de Cemu.
+
+  Deux garanties :
+
+    - les packs qui bloquent le chargement (ExtendedMemory, HD Map and
+      Icons) sont retires DANS LA MEME OPERATION. Reactiver l'image ne peut
+      donc jamais remettre le jeu dans l'etat qui le faisait boucler.
+
+    - le pack UKMM reste en premier dans la liste : c'est lui qui porte tes
+      mods.
+
+  Variantes :
+
+      python botw\botw.py graphics --mods   remet aussi DrawDistance, FPS++,
+                                           DivineLaserBeam
+      python botw\botw.py graphics --off    retour a l'image d'origine
+
+  Depuis le menu botw, la touche G fait la meme chose.

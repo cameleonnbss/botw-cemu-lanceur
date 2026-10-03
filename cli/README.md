@@ -9,6 +9,11 @@ tells you what is actually wrong instead of leaving you guessing.
 
 ```bat
 botw                 :: opens the menu
+botw check           :: will the game start? nothing is changed
+botw fix             :: repair the endless loading
+botw build           :: build a profile by answering questions
+botw art             :: the Triforce and Linkle, as text
+botw graphics         :: resolution + colour correction back on
 botw doctor          :: full health check
 botw deploy sur      :: switch the game to the "sans echec" profile
 botw catalog         :: the mod combinations proven to work
@@ -278,6 +283,11 @@ that does not match the profile**. Check §7.
 |---|---|
 | `botw` | open the menu |
 | `botw doctor` | full health check |
+| `botw check` | what can block the loading, changes nothing |
+| `botw fix [-y] [--keep-cosmetics] [--no-cheats] [--no-deploy]` | repair the endless loading |
+| `botw build [--name <n>] [--yes] [--no-deploy]` | build a profile by answering ten questions |
+| `botw art` | the Triforce and Linkle, as text |
+| `botw graphics [--mods] [--off]` | resolution and colour correction |
 | `botw deploy <profile> [--activate]` | merge and deploy |
 | `botw profile list\|show\|use\|create\|delete\|verify` | profiles |
 | `botw mods list\|search\|download\|install\|uninstall` | mods |
@@ -306,3 +316,97 @@ that does not match the profile**. Check §7.
 ## Licence
 
 MIT. This tool contains no game assets.
+
+---
+
+---
+
+---
+
+## The endless loading
+
+The game sits on its loading screen and never gets past it. No crash, no error,
+no log entry. It is the most reported problem there is, and it is almost never
+caused by the mods profile you just deployed.
+
+**It is the graphic packs.** Cemu keeps a list of them in
+`%APPDATA%\Cemu\settings.xml`. Two kinds break a modded game:
+
+| Pack | Why it blocks |
+|---|---|
+| `ExtendedMemory` | remaps +2 GB of memory and needs the *game* recompiled. Its own `rules.txt` says so, and says the code must not live in a mod. |
+| `HD_Map_and_Icons` | replaces game files, which UKMM's own `rules.txt` forbids alongside another mod loader. |
+
+Cosmetic packs (`DrawDistance`, `FPS++`, `DivineLaserBeam`, `Enhancements`,
+`Graphics`) are not dangerous, but they fight the mods over the same files, so
+they are switched off by default too. Cheats are kept: they do not touch game
+code.
+
+```bat
+botw check          :: says what blocks, changes nothing. Exit code 0 = fine.
+botw fix            :: removes the blocking packs, redeploys, keeps your save
+botw fix --minimal  :: same, but also turns the cheats off
+```
+
+The launcher does the same from keys **i** (diagnose) and **j** (repair).
+
+`botw check` also looks at two things that are invisible from the game:
+
+* **the save**. A save file only opens with the mods that created it - the key
+  is derived from the mod set. `botw` records every deployment, so it can tell
+  you the save belongs to `sur` while `boost` is active. Loading it hangs,
+  silently.
+* **the deployment**. If the active profile is not fully merged and deployed,
+  Cemu starts with a mixture of files.
+
+The exit code is 0 when nothing can block, 1 otherwise, so you can put it in a
+script.
+
+### If the game still will not start
+
+```bat
+botw newgame        :: archives the current slot, keeps it, starts clean
+```
+
+That is the answer when a save refuses to load. The old one is *moved*, never
+deleted; `botw newgame revert` puts it back.
+
+
+---
+
+## Graphics and colour correction
+
+`botw fix` switches off the graphic packs along with the ones that break the
+loading, because a locked-up game is worse than a plain-looking one. That left
+no way to put them back: the fix was one-way.
+
+```bat
+botw graphics           :: resolution, anti-aliasing, colour correction
+botw graphics --mods    :: also the third-party packs (DrawDistance, FPS++...)
+botw graphics --off     :: back to the plain picture
+```
+
+What it turns on:
+
+| Pack | What it changes |
+|---|---|
+| `Graphics` | resolution, anti-aliasing, shadow resolution |
+| `Enhancements` | **colour correction** (the *Clarity* presets), reflections, anisotropic filtering |
+| `Workarounds/*` | Cemu's compatibility fixes: AMD/NVIDIA crashes, stretched clouds, grass, CPU stutter |
+
+`Enhancements` already carries `$preset:int = 10` in its `[Default]` section,
+which is *Serfrost's Preset* - the one Cemu recommends. So colour correction
+is applied without us guessing at the XML format for presets. Want a different
+Clarity preset? Pick it in Cemu's own graphic-packs window.
+
+Two guarantees, both covered by tests:
+
+* the packs that cause the endless loading (`ExtendedMemory`,
+  `HD_Map_and_Icons`) are **removed in the same operation**. Turning the
+  picture back on can never put the game back in the state that hung it;
+* the UKMM pack stays first in the list - it is the one carrying your mods,
+  and the order is not neutral.
+
+The third-party packs stay off by default: `DrawDistance`, `FPS++` and
+`DivineLaserBeam` change the look far more than the official ones, and mods
+that touch the same files are the usual suspects for new problems.

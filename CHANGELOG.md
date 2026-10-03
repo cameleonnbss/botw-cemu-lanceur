@@ -2,6 +2,73 @@
 
 Toutes les versions publiées suivent [SemVer](https://semver.org/lang/fr/).
 
+## [1.1.0] — 4 octobre 2026
+
+### Ajouté
+- **Diagnostic et réparation du chargement infini** (`botw check`, `botw fix`).
+  La cause du blocage n'est presque jamais le profil de mods : ce sont les
+  packs graphiques de Cemu, gardés dans `%APPDATA%\Cemu\settings.xml`.
+  `ExtendedMemory` remappe +2 Go et exige le jeu recompilé ;
+  `HD_Map_and_Icons` remplace des fichiers du jeu, ce que les `rules.txt`
+  d'UKMM interdisent avec un autre chargeur. Les packs cosmétiques sont
+  désactivés aussi, les triches conservées.
+  `botw check` ne change rien et renvoie 0 si rien ne peut bloquer ; `botw fix`
+  retire les packs fautifs puis redéploie, sans toucher à la sauvegarde.
+- **Constructeur de profil** (`botw build`) : dix questions oui/non — dont
+  **Linkle** et **Second Wind**, les deux plus demandées. Les mods sont
+  assemblés du plus léger au plus lourd, le profil est vérifié avant d'être
+  déployé, et le nom est proposé d'après les réponses.
+- **Art ASCII** (`botw art`) : la Triforce et Linkle.
+- **Lanceur : deux touches de plus.** `i` diagnostique, `j` répare, `f` ouvre
+  le menu `botw`, `g` prépare une nouvelle partie, `h` la documentation.
+  Vingt touches, chacune testée par `outils/tester-lanceur.py`.
+- **Historique des déploiements** dans `Sauvegardes\NouvellePartie\slot.json` :
+  c'est lui qui permet de dire avec quels mods une sauvegarde a été créée.
+- **Graphismes et correction des couleurs** (`botw graphics`) : remet la
+  résolution, l’anticrénelage et les préréglages *Clarity* du pack
+  `Enhancements` — c’est-à-dire la **correction des couleurs** — plus les
+  huit correctifs de compatibilité de Cemu (`Workarounds`). C’est la commande
+  inverse de ce que `botw fix` fait sur ces packs : jusqu’ici, le correctif du
+  chargement était **irréversible**. Deux garanties, couvertes par les tests :
+  les packs bloquants (`ExtendedMemory`, `HD_Map_and_Icons`) sont retirés dans
+  la même opération, et le pack UKMM reste en premier dans la liste. Les packs
+  tiers (`DrawDistance`, `FPS++`, `DivineLaserBeam`) restent désactivés par
+  défaut et reviennent avec `--mods`. Touche `G` du menu.
+- **`outils/maj-bureau.py`** : recopie le programme vers le bureau et **prouve**
+  que la copie est identique (MD5 fichier par fichier), supprime les fichiers
+  devenus obsolètes, et revérifie qu'aucun `.bat` ou `.ps1` n'a perdu son
+  ASCII, son absence de BOM ou ses CRLF.
+
+### Corrigé
+- **`botw build` déployait un profil par accident quand stdin était fermé.**
+  Le garde-fou reposait sur `sys.stdin.isatty()`, qui renvoie *vrai* sous Git
+  Bash même avec `< /dev/null` : MSYS résout la redirection, Windows ne voit
+  qu'un flux. Les réponses par défaut suffisaient alors à créer un profil, le
+  déployer, le rendre actif — donc à rendre la sauvegarde existante
+  illisible, le pire résultat possible, et invisible. Le contrôle repose
+  désormais sur le fait qu'aucune question n'a pu être posée, avec un test
+  qui reproduit exactement le mensonge de `isatty`.
+- **`botw build` renvoyait un tuple en code de sortie.** `construire()` rend
+  `(nom, code)` et `cmd_build` le comparait à `0` : la condition n'était jamais
+  vraie, le profil n'était jamais activé, et `sys.exit()` recevait un tuple.
+- **`botw check` annonçait « tout va bien » à une sauvegarde incompatible.**
+  Le profil était lu comme « celui du dernier déploiement » : après
+  `deploy boost`, une partie enregistrée, puis `deploy autre`, la partie
+  était attribuée à `autre`. C'est précisément le cas que la commande doit
+  attraper. Le profil retenu est maintenant celui qui était actif quand la
+  sauvegarde a été écrite.
+- **Un compte de fichiers déployés négatif.** Le dossier du pack graphique
+  pouvait ne pas exister ; retrancher `rules.txt` donnait `-1`, et le
+  diagnostic signalait un décalage de déploiement qui n'existait pas.
+- **`botw build` sans terminal** explique désormais ce qu'il faut écrire
+  (`botw build --yes --name <nom>`) au lieu de faire son travail par défaut.
+
+### Divers
+- Deux caractères CJK qui s'étaient glissés dans `builder.py`, et un test qui
+  refuse désormais toute écriture étrangère dans les sources.
+- Les locales sont vérifiées dans les deux sens : 352 clés, et aucun test ne
+  fige plus un numéro d'option du menu.
+
 ## [1.0.0] — 4 octobre 2026
 
 ### Ajouté

@@ -35,7 +35,10 @@ LANCEUR = ["Lanceur-BOTW.bat", "Set-ProfilUKMM.ps1", "Sauvegardes-BOTW.ps1",
 
 OUTILS = ["verifier-profil.py", "conflits.py", "analyse-mods.py", "matrice.py",
           "reparer-manifests.py", "creer-profil.py", "editer-profil.py",
-          "tester-lanceur.py", "construire-projet.py"]
+          "tester-lanceur.py", "construire-projet.py", "maj-bureau.py"]
+
+# Outils qui vivent avec le programme plutot qu'a la racine du chantier.
+OUTIFS_DU_CLI = ["maj-bureau.py"]
 
 RAPPORTS = [("matrice-rapport-complet.md", "combinaisons-testees.md"),
             ("conflits.txt", "conflits-mods.txt"),
@@ -100,6 +103,10 @@ def main():
     print("outils/ :")
     for f in OUTILS:
         if copier(os.path.join(RACINE, f), os.path.join(DEPO, "outils", f)):
+            n += 1
+    for f in OUTIFS_DU_CLI:
+        if copier(os.path.join(CLI, "Outils", f),
+                  os.path.join(DEPO, "outils", f)):
             n += 1
     print("docs/ :")
     for src, dst in RAPPORTS:

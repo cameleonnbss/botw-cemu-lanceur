@@ -102,3 +102,59 @@ sauvegardes, place disque) et dit ce qui ne va pas.
 
 Pour savoir **quel mod** pose problème : touche `6`, et décocher un mod à la
 fois
+
+## Le chargement infini
+
+Le jeu reste sur son écran de chargement. Aucun crash, aucune erreur. C'est le
+problème le plus signalé, et il vient rarement de tes mods : ce sont les
+**packs graphiques** de Cemu, listés dans `%APPDATA%\Cemu\settings.xml`.
+
+| Pack | Pourquoi il bloque |
+|---|---|
+| `ExtendedMemory` | remappe +2 Go et exige le jeu **recompilé** |
+| `HD_Map_and_Icons` | remplace des fichiers du jeu, interdit avec UKMM |
+
+Les packs cosmétiques (`DrawDistance`, `FPS++`, `Enhancements`, `Graphics`)
+sont désactivés aussi : ils prennent les mêmes fichiers que les mods.
+
+**Depuis le lanceur :** touche **i** pour le diagnostic, **j** pour réparer.
+Rien n'est supprimé, ta sauvegarde n'est pas touchée.
+
+**En ligne de commande :**
+
+```bat
+python botw\botw.py check     :: dit ce qui bloque, ne change rien
+python botw\botw.py fix       :: retire les packs bloquants, puis redeploie
+```
+
+`check` vérifie aussi que la sauvegarde a bien été créée par le profil actif.
+Une sauvegarde ne s'ouvre qu'avec les mods qui l'ont créée, et le résultat
+serait un chargement infini sans un seul message.
+
+Si rien ne corrige le problème, une partie neuve sans perdre l'ancienne :
+
+```bat
+python botw\botw.py newgame
+```
+
+
+## Les graphismes
+
+`botw fix` (touche **j**) coupe les packs graphiques en même temps que ceux
+qui bloquent le chargement. Pour les remettre — résolution, anticrenelage et
+**correction des couleurs** :
+
+```bat
+python botw\botw.py graphics
+```
+
+Ça active `Graphics` (résolution, anticrenelage, ombres), `Enhancements`
+(**préréglages Clarity**, c'est-à-dire la correction des couleurs) et les
+correctifs de compatibilité de Cemu (`Workarounds`). `Enhancements` applique
+par défaut le préréglage de Serfrost, celui que Cemu recommande.
+
+Les packs qui bloquent le chargement restent désactivés : la commande les
+retire dans la même opération.
+
+Touche **G** du menu `botw`, ou :
+`python botw\botw.py graphics --off` pour revenir à l'image d'origine.

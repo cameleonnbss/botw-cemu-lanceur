@@ -154,7 +154,10 @@ def title(text):
 
 def banner():
     """En-tete commun : nom de l'outil + accroche, dans la langue choisie."""
+    from . import art
     print("")
+    art.triforce("yellow")
+    print()
     print("  " + paint("botw", "bold+cyan") + "  -  " + _("app.tagline"))
     print("  " + paint(_("lang.current", lang=lang()), "dim"))
 

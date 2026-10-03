@@ -30,7 +30,7 @@ import sys
 import tempfile
 
 BAT = os.path.join(os.path.expanduser("~"), "Desktop", "BOTW", "Lanceur-BOTW.bat")
-TOUCHES = "123456789abcdefgh0"
+TOUCHES = "123456789abcdefghij0"
 
 ATTENDU = [
     ("1", "-Profile combo"),
@@ -50,6 +50,8 @@ ATTENDU = [
     ("f", "botw.py"),
     ("g", "botw.py"),
     ("h", "botw.py"),
+    ("i", 'botw.py" check'),          # diagnostic : ne change rien
+    ("j", 'botw.py" fix -y'),         # correction du chargement infini
     ("0", None),                      # quitter : aucun appel attendu
 ]
 
@@ -62,7 +64,8 @@ def fabriquer(src, dst):
     t = re.sub(r"(?m)^pause\s*$", "rem pause", t)
     t = re.sub(r"(?m)^start \"\"", "echo OUVERTURE", t)
     t = t.replace("powershell -NoProfile -ExecutionPolicy Bypass -File", "echo APPEL")
-    # Les touches c, f, g, h appellent directement python : on neutralise aussi.
+    # Les touches c, f, g, h, i, j appellent directement python :
+    # on neutralise aussi.
     t = re.sub(r"(?m)^(\s*)python ", r"\1echo APPEL ", t)
     # La touche h pose une question avant d'appeler python : sans terminal, le
     # "set /p" tournerait en boucle. On le transforme en echo.
@@ -99,7 +102,7 @@ def main():
     # affiche "introuvable" et le test croirait a une erreur de routage.
     os.makedirs(os.path.join(dossier, "Outils"))
     io.open(os.path.join(dossier, "Outils", "matrice.py"), "w").write("# stub\n")
-    # Les touches f, g, h verifient que le dossier botw existe.
+    # Les touches f, g, h, i, j verifient que le dossier botw existe.
     os.makedirs(os.path.join(dossier, "botw"))
     io.open(os.path.join(dossier, "botw", "botw.py"), "w").write("# stub\n")
 

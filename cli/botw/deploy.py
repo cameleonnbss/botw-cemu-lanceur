@@ -247,6 +247,10 @@ def deploy(profile, cfg=None, quiet=False):
 
     n_deployed = count_files(gp) - 1          # -1 : rules.txt
     n_merged = count_files(merged)
+    # On note le profil : c'est le seul moyen de savoir, plus tard, si une
+    # sauvegarde a ete creee avec ce profil-la. Voir newgame.profil_de_la_partie.
+    from . import newgame
+    newgame.noter_profil(profile)
     return {"profile": profile, "merged": n_merged, "deployed": n_deployed,
             "hardlinks": linked}
 

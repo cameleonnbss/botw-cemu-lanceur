@@ -22,8 +22,84 @@ from . import config, deploy, i18n
 _ = i18n._
 
 INDEX = "nouvelle-partie.json"
+SLOT = "slot.json"
 DOSSIER = "NouvellePartie"
 DATE = time.strftime("%Y-%m-%d_%H%M%S")
+
+
+# On garde quelques deploiements d'historique. C'est ce qui permet de dire
+# quel profil etait actif quand la sauvegarde a ete ecrite.
+HISTORIQUE = 50
+
+# Marge de tolerance entre l'ecriture de la sauvegarde et l'horodatage du
+# deploiement : une seconde et une demi, parce que Cemu peut ecrire la partie
+# alors que le deploiement vient de finir.
+TOLERANCE = 2
+
+
+def _slot_file():
+    """Ou l'on note les deploiements successifs.
+
+    Le fichier de sauvegarde est chiffre : rien dans le jeu ne dit quel profil
+    l'a cree. On note donc nous-memes chaque deploiement, avec l'instant ou il
+    a eu lieu.
+
+    On garde un historique et non « le dernier profil » parce que l'ancien
+    etait faux dans un cas tres courant : deploiement de 'boost', partie
+    enregistree, puis deploiement d'un autre profil. En ne gardant que le
+    dernier, la partie se retrouve attribuee au nouveau profil alors qu'elle
+    appartient au precedent - et `botw check` annonce alors tout va bien
+    alors que charger cette partie bloquera a l'infini.
+    """
+    return os.path.join(_archives(), SLOT)
+
+
+def _lire_notes():
+    """L'historique des deploiements. Lit aussi l'ancien format {profil,
+    quand} : les fichiers deja ecrits sur le disque restent lisibles."""
+    try:
+        with open(_slot_file(), encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        return []
+    notes = data if isinstance(data, list) else [data]
+    return [n for n in notes
+            if isinstance(n, dict) and n.get("profil")
+            and isinstance(n.get("quand"), (int, float))]
+
+
+def noter_profil(profil):
+    """Ajoute un deploiement a l'historique."""
+    if not profil:
+        return False
+    notes = _lire_notes()
+    notes.append({"profil": profil, "quand": time.time()})
+    try:
+        os.makedirs(_archives(), exist_ok=True)
+        with open(_slot_file(), "w", encoding="utf-8", newline="\n") as f:
+            json.dump(notes[-HISTORIQUE:], f, indent=2)
+        return True
+    except OSError:
+        return False
+
+
+def profil_de_la_partie():
+    """Le profil qui etait deploye quand la sauvegarde a ete ecrite.
+
+    Ou '' si on ne peut pas le dire. On ne devine jamais : une sauvegarde
+    chargee avec les mauvais mods bloque a l'infini, et Cemu ne dit rien.
+    """
+    notes = _lire_notes()
+    if not notes or not has_game():
+        return ""
+    try:
+        mtime = os.path.getmtime(config.main_save_file())
+    except OSError:
+        return ""
+    avant = [n for n in notes if float(n["quand"]) <= mtime + TOLERANCE]
+    if not avant:
+        return ""       # la partie est plus ancienne que tout ce qu'on sait
+    return str(max(avant, key=lambda n: float(n["quand"]))["profil"])
 
 
 def _slot():
@@ -113,6 +189,7 @@ def prepare(profile=None, keep_backup=True):
     rows.append({"date": _stamp(), "profil": profile or "", "path": dest,
                  "octets": _size_of(dest)})
     write_index(rows)
+    noter_profil(profile or "")
     i18n.ok(_("newgame.backup", path=dest))
     i18n.ok(_("newgame.done"))
     return dest
@@ -162,6 +239,11 @@ def status():
         st = os.stat(config.main_save_file())
         i18n.ok(_("newgame.current", n=deploy.count_files(_slot()),
                   d=time.strftime("%Y-%m-%d %H:%M", time.localtime(st.st_mtime))))
+        p = profil_de_la_partie()
+        if p:
+            i18n.info(_("newgame.current_profile", p=p))
+        else:
+            i18n.warn(_("newgame.current_unknown"))
     else:
         i18n.info(_("newgame.nothing"))
     rows = read_index()
