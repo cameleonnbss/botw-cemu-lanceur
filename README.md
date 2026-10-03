@@ -34,11 +34,11 @@ Ce dépôt contient :
 
 | Touche | Action |
 |---|---|
-| `1` | Second Wind + tes mods |
-| `2` | Tes mods seuls (Linkle, îles, armes anciennes) |
-| `3` | Second Wind seul (extension complète) |
-| `4` | **BOOST** — armes, téléportation, vol rapide |
-| `5` | **SANS ÉCHEC** — le profil le plus complet, tous testés |
+| `1` | Second Wind + tes mods (profil `combo`) |
+| `2` | Tes mods seuls (profil `flo`) |
+| `3` | Second Wind seul (profil `secondwind`) |
+| `4` | **BOOST** — armes, téléportation, vol rapide (profil `boost`, le plus léger) |
+| `5` | **SANS ÉCHEC** — profil `sur` : Second Wind + tout le reste de vérifié |
 | `6` | **Choisis tes mods** — tu coches ce que tu veux |
 | `7` | Charger une partie — tes sauvegardes, avec nom et description |
 | `8` | Jeu à deux — deux manettes |
@@ -58,6 +58,11 @@ description que tu écris, conservés dans `Sauvegardes/parties.json`. La table
 liste tes parties, marque celle en cours (`<-- en cours`), et sait restaurer,
 renommer ou supprimer. Chaque restauration est suivie d'une **vérification MD5**
 — si la sauvegarde n'est pas rendue à l'identique, le script le dit.
+
+**Et surtout : chaque partie retient le profil UKMM qui était actif quand tu
+l'as enregistrée.** Charger une partie d'un autre profil affiche un avertissement
+encadré et redemande confirmation. C'est la façon la plus fiable d'éviter le
+blocage de l'écran de chargement, qui ne produit aucun message d'erreur.
 
 ---
 
@@ -114,6 +119,22 @@ produit la liste des paires de mods qui s'écrasent.
 manifeste ne le déclare** : UKMM ne le déploie jamais. C'est le genre de
 détail qui donne l'impression que « les mods ne marchent pas ».
 
+### 4. Le mod le plus dangereux, c'est Relics of the Past
+
+`conflits.py` liste les paires de mods qui partagent un fichier qu'UKMM ne
+sait pas fusionner. Le classement est sans appel :
+
+| Paire | Fichiers en commun non fusionnables |
+|---|---|
+| Relics of the Past ↔ Second Wind | 134 |
+| Ancient Weaponry ↔ Relics of the Past | 16 |
+| Second Wind ↔ Linkle | 15 |
+| Relics of the Past ↔ Linkle | 7 |
+
+Relics of the Past écrase 157 fichiers que trois autres mods fournissent
+aussi. C'est pour ça que le profil **sans échec** ne le contient pas, alors
+que `combo` et `flo` le gardent.
+
 ---
 
 ## Méthode du banc d'essai
@@ -129,6 +150,22 @@ Rien n'est simulé. Pour chaque combinaison :
 5. le profil jetable est supprimé (le disque a une place comptée).
 
 Les résultats sont dans [`docs/combinaisons-testees.md`](docs/combinaisons-testees.md).
+
+### Résultat de la campagne
+
+| Suite | Ce qu'elle teste | Essais | Échecs |
+|---|---|---|---|
+| `solo` | chaque mod seul | 14 | 0 |
+| `paires` | tous les couples de mods | 78 | 0 |
+| `sw` | Second Wind + chaque autre mod | 11 | 0 |
+| `cumul` | Second Wind complet + chaque autre mod | 11 | 0 |
+| `presets` | les 5 profils du lanceur | 5 | 0 |
+| **Total** | | **123** | **0** |
+
+Aucune combinaison ne casse la fusion. Cela ne veut pas dire que le jeu
+*démarre* avec toutes : ça veut dire que **tout est bien installé et déployé**.
+Ce qui reste à vérifier, c'est le seul test que personne ne peut faire à ta
+place : **lancer Cemu et appuyer sur A → Nouvelle partie**.
 
 ---
 

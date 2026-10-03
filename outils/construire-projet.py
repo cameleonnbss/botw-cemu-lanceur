@@ -34,7 +34,7 @@ LANCEUR = ["Lanceur-BOTW.bat", "Set-ProfilUKMM.ps1", "Sauvegardes-BOTW.ps1",
 
 OUTILS = ["verifier-profil.py", "conflits.py", "analyse-mods.py", "matrice.py",
           "reparer-manifests.py", "creer-profil.py", "editer-profil.py",
-          "construire-projet.py"]
+          "tester-lanceur.py", "construire-projet.py"]
 
 RAPPORTS = [("matrice-rapport-complet.md", "combinaisons-testees.md"),
             ("conflits.txt", "conflits-mods.txt"),

@@ -2,7 +2,7 @@
 
 Toutes les versions published_will follow [SemVer](https://semver.org/lang/fr/).
 
-## [0.4.0] — en cours
+## [0.4.0] — 3 octobre 2026
 
 ### Ajouté
 - **Banc d'essai des combinaisons** (`outils/matrice.py`) : 5 suites —
@@ -10,16 +10,24 @@ Toutes les versions published_will follow [SemVer](https://semver.org/lang/fr/).
   chaque mod), `cumul` (Second Wind + un mod), `presets` (les profils réels).
   Chaque essai fait la chaîne complète : fusion UKMM, déploiement vers Cemu,
   vérification fichier par fichier.
+  **Campagne complète : 123 essais, 0 échec, 63 minutes de calcul réel.**
 - **Analyse de conflits** (`outils/conflits.py`) : classe chaque fichier selon
   la règle réelle du moteur UKMM (`ResourceData::Binary` → dernier gagne ;
   `Mergeable`/`Sarc` → addition) et liste les paires de mods qui s'écrasent.
+  Classement : Relics of the Past écrase 157 fichiers fournis par trois
+  autres mods ; le profil « sans échec » l'exclut pour cette raison.
 - **Réparation des manifestes** (`outils/reparer-manifests.py`) : reconstruit
   le `manifest.yml` des mods totalement inertes, et ne touche qu'à eux.
 - **Vérification complète** (`lanceur/Verifier-Tout.ps1`, touche `b`) :
   UKMM, profil actif, pack déployé, `rules.txt`, pack de textes français,
-  sauvegardes, place disque.
+  cohérence du déploiement, sauvegardes, place disque. 12 contrôles.
 - **Test des profils** dans le lanceur (touche `c`).
-- **Profil « sans échec »** (touche `5`) : le set le plus complet, vérifié.
+- **Profil « sans échec »** (touche `5`, profil `sur`) : Second Wind complet
+  + 10 autres mods, 5 614 fichiers fusionnés, Relics of the Past exclu.
+- **Chaque sauvegarde retient son profil** : le gestionnaire de sauvegardes
+  note le profil UKMM actif à l'enregistrement et refuse de charger une partie
+  d'un autre profil sans avertissement encadré. C'est la cause numéro un du
+  blocage de l'écran de chargement.
 
 ### Corrigé
 - **`10x Speed Paraglider v2` ne faisait rien.** Son manifeste déclarait
