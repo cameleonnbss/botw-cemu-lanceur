@@ -19,6 +19,9 @@ JOUER                        OUTILS
                              d Ouvrir UKMM
                              e Ouvrir Cemu
                              0 Quitter
+
+botw  (la CLI, en anglais ; "botw lang fr" pour le francais)
+ f Menu botw                g Nouvelle partie         h Documentation
 ```
 
 Le menu affiche en permanence le **profil actif** et son nombre de mods. Si
@@ -63,6 +66,33 @@ de `user\80000001` sont des tampons internes). Pour plusieurs parties distinctes
 
 Une restauration copie d'abord la partie en cours, puis **vérifie par MD5** que la
 partie chargée est bien celle demandée.
+## Ouvert : le menu `botw`
+
+Touche **`f`** du lanceur, ou `python botw\botw.py` dans un terminal. C'est la
+meme chose que le menu du lanceur, mais en anglais par defaut, et ca va plus
+loin : tout ce que le lanceur fait est la une commande.
+
+```
+ 1 Play a game with a profile     5 External tools
+ 2 Mods                           6 Health check
+ 3 Profiles                       7 Read this documentation
+ 4 Two players                    8 Change the language
+ N start a NEW GAME               F Read the documentation in FRENCH
+ Q Quit
+```
+
+Les trois commandes que tu utiliseras le plus :
+
+```bat
+python botwotw.py lang fr                   REM tout en francais, definitivement
+python botwotw.py deploy sur --activate    REM fusionne, deploye, devient le defaut
+python botwotw.py doctor                   REM 15 controles, dit ce qui ne va pas
+```
+
+Si tu prefere la ligne de commande, tout y est : `botw --help`.
+Pour un seul lancement en francais, sans rien changer : `--lang fr`.
+
+---
 
 ## Dépannage
 
@@ -71,4 +101,4 @@ actif, `rules.txt`, pack de textes français, cohérence du déploiement,
 sauvegardes, place disque) et dit ce qui ne va pas.
 
 Pour savoir **quel mod** pose problème : touche `6`, et décocher un mod à la
-fois.
+fois

@@ -1,6 +1,63 @@
 # Journal des modifications
 
-Toutes les versions published_will follow [SemVer](https://semver.org/lang/fr/).
+Toutes les versions publiées suivent [SemVer](https://semver.org/lang/fr/).
+
+## [1.0.0] — 4 octobre 2026
+
+### Ajouté
+- **Le CLI `botw`** (`cli/`) : un vrai programme en ligne de commande, en
+  Python, sans dépendance externe. English by default, French with
+  `botw lang fr`. Menu interactif et commandes complètes : `doctor`, `deploy`,
+  `profile`, `mods`, `tools`, `catalog`, `coop`, `newgame`, `readme`, `config`,
+  `matrix`. Code de sortie 0 ou 1 pour chaque commande, donc utilisable dans
+  un script.
+- **Installation des outils externes depuis l'outil** :
+  `botw tools install-ukmm` télécharge la dernière version publiée sur GitHub
+  et vérifie son SHA-256 avant d'extraire ; `botw tools install-bcml` installe
+  BCML dans WSL avec un CPython autonome et un environnement virtuel isolé,
+  sans privilèges administrateur et sans toucher au Python du système.
+- **Téléchargement de mods** : `botw mods search` interroge la bibliothèque
+  locale puis GameBanana ; `botw mods download <id>` vérifie le MD5 publié
+  avant d'écrire le fichier, et `-i` enchaîne sur l'installation.
+- **Catalogue des combinaisons vérifiées** (`botw catalog`) : les cinq profils
+  du lanceur et leurs listes de mods, tels que mesurés par le banc d'essai.
+  `botw catalog sur --as hardcore --deploy` recrée la combinaison dans un
+  profil neuf et la déploie.
+- **Nouvelle partie** (`botw newgame`) : met l'emplacement de sauvegarde
+  courant de côté sans le supprimer, et `botw newgame revert` le remet en
+  place. C'est la parade documentée au blocage sur l'écran de chargement.
+  Index et archives dans un dossier à part, pour ne pas toucher au
+  `parties.json` du gestionnaire de sauvegardes.
+- **Jeu à deux** (`botw coop`) : réglage de `PadChannels` dans
+  `settings.xml`, et un guide Radmin VPN en cinq étapes qui affiche
+  l'adaptateur et l'adresse détectés.
+- **140 tests hors ligne** (`cli/tests`) : ils repointent `%APPDATA%`,
+  `%LOCALAPPDATA%` et `%USERPROFILE%` vers un dossier temporaire et ne
+  touchent jamais une vraie sauvegarde ni un vrai profil.
+- **Trois touches dans le lanceur** : `f` menu botw, `g` nouvelle partie,
+  `h` documentation en français ou anglais. Le test de routage passe de 16 à
+  19 touches, sans échec.
+- **`README.md` et `README.fr.md`** du CLI, accessibles par `botw readme`
+  et par les boutons `7` et `F` du menu.
+
+### Corrigé
+- `botw mods uninstall` supprimait les mauvais blocs de `profile.yml` dès
+  qu'il y en avait plus d'un : ils sont désormais retirés de la fin vers le
+  début.
+- Un zip de mod corrompu interrompait `profile verify` au lieu d'être
+  signalé : il est maintenant listé comme un mod en défaut, et les autres
+  mods sont vérifiés normalement.
+- `profile verify` annonçait des fichiers manquants pour un profil qui n'était
+  pas déployé. Le pack graphique ne contient que le profil actif : l'outil le
+  dit et ne compte plus que la fusion.
+- Le menu bouclait indéfiniment quand stdin était fermé (Ctrl+D, tâche
+  planifiée) : la réponse par défaut ne changeait jamais.
+- `botw catalog` et `botw profile delete` attendaient indéfiniment une
+  confirmation sans terminal ; ils refusent par défaut et acceptent `--yes`.
+- `mods install` et `mods uninstall` renvoyaient toujours « argument
+  manquant » : le test portait sur un mauvais nom d'argument.
+- Sortie console forcée en UTF-8 : les accents français ne provoquent plus
+  d'erreur d'encodage sur la console Windows.
 
 ## [0.4.0] — 3 octobre 2026
 

@@ -181,10 +181,72 @@ place : **lancer Cemu et appuyer sur A → Nouvelle partie**.
 
 ---
 
+## Le CLI `botw` — tout, en ligne de commande
+
+Le dossier [`cli/`](cli/) contient un vrai programme, en Python, sans
+dépendance. Le lanceur `.bat` fait une chose par touche ; `botw` fait tout,
+y compris ce que le lanceur ne fait pas : télécharger des mods, installer
+UKMM et BCML, créer un profil depuis une combinaison déjà testée, jouer à
+deux, et repartir d'une partie neuve.
+
+```bat
+cd cli
+python botw.py              REM ouvre le menu
+python botw.py --help       REM liste les commandes
+python botw.py doctor       REM 15 contrôles, dit ce qui ne va pas
+python botw.py deploy sur --activate
+python botw.py catalog      REM les combinaisons de mods prouvées
+python botw.py newgame      REM garde l'ancienne partie, démarre à zéro
+```
+
+**Anglais par défaut, français en une commande :**
+
+```bat
+python botw.py lang fr          REM définitivement
+python botw.py --lang fr doctor REM une seule fois
+```
+
+Le choix vaut pour tout : menu, messages d'erreur et même l'aide en ligne de
+commande. Deux boutons du menu font ce qu'on demande le plus : `N` pour
+préparer une nouvelle partie, `F` pour la documentation en français.
+
+### Ce qu'il sait faire
+
+| Commande | Effet |
+|---|---|
+| `doctor` | bilan de santé complet, code de sortie non nul si un contrôle échoue |
+| `deploy <profil>` | fusionne, déploie, recrée les liens durs et le pack de textes |
+| `profile list\|show\|use\|create\|delete\|verify` | profils UKMM et leur ordre de chargement |
+| `mods list\|search\|download\|install\|uninstall` | bibliothèque, GameBanana, MD5 vérifié |
+| `tools list\|install-ukmm\|install-bcml\|ukmm` | installe UKMM (SHA-256 vérifié) et BCML dans WSL |
+| `catalog [<nom>] [--deploy]` | recrée une combinaison vérifiée en profil |
+| `coop status\|enable\|disable\|radmin` | deux manettes, et Radmin VPN pour le réseau |
+| `newgame [revert <n>\|status]` | met la sauvegarde de côté sans la supprimer |
+| `readme [en\|fr]` | la documentation |
+| `matrix` | le banc d'essai des combinaisons |
+| `config` | lit et écrit les réglages |
+
+### Tests
+
+```bat
+cd cli
+python -m pytest tests -q
+```
+
+140 tests, tous hors ligne : ils repointent `%APPDATA%`, `%LOCALAPPDATA%` et
+`%USERPROFILE%` vers un dossier temporaire, donc ils ne touchent jamais une
+vraie installation ni une vraie sauvegarde.
+
+Documentation : [`cli/README.md`](cli/README.md) (English) ·
+[`cli/README.fr.md`](cli/README.fr.md) (Français)
+
+---
+
 ## Arborescence
 
 ```
 lanceur/     le lanceur et ses scripts (ASCII, sans BOM)
+cli/         le programme botw : CLI, menu, tests, documentation
 outils/      vérification de profil, analyse de conflits, banc d'essai
 docs/        combinaisons testées, inventaire des mods, conflits détaillés
 ```

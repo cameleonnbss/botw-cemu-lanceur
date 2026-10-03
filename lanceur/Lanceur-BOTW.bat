@@ -6,8 +6,9 @@ rem  "choice" (natif Windows) renvoie un CODE DE SORTIE numerique : pas de
 rem  comparaison de chaine fragile. Pas de "chcp 65001" ici : changer de page
 rem  de code vide le tampon d'entree de la console. Fichier en ASCII pur.
 rem
-rem  Ordre du menu : "choice /c 123456789abcde0" renvoie la POSITION de la
-rem  touche. 1->1 ... 9->9, a->10, b->11, c->12, d->13, e->14, 0->15.
+rem  Ordre du menu : "choice /c 123456789abcdefgh0" renvoie la POSITION
+rem  de la touche. 1->1 ... 9->9, a->10, b->11, c->12, d->13, e->14,
+rem  f->15, g->16, h->17, 0->18.
 rem  On teste donc de la fin vers le debut : chaque "if errorlevel" doit
 rem  correspondre au DERNIER cas encore possible.
 rem =====================================================================
@@ -23,6 +24,7 @@ set "COOP=%~dp0Coop-2Joueurs.ps1"
 set "PANNEAU=%~dp0Panel-Profils.ps1"
 set "VERIF=%~dp0Verifier-Tout.ps1"
 set "OUTILS=%~dp0Outils"
+set "BOTW=%~dp0botw\botw.py"
 set "CEMU=%USERPROFILE%\Downloads\cemu-2.6-windows-x64\Cemu_2.6\Cemu.exe"
 set "SETTINGS=%APPDATA%\ukmm\settings.yml"
 set "PROFILDIR=%LOCALAPPDATA%\ukmm\wiiu\profiles"
@@ -66,11 +68,19 @@ echo     b. Verifier et reparer       dit ce qui ne va pas
 echo     c. Tester les profils        rejoue chaque profil et verifie
 echo     d. Ouvrir UKMM
 echo     e. Ouvrir Cemu
+
+echo   botw  (the CLI, in English ; "botw lang fr" switches to French)
+echo     f. botw menu ................ everything: mods, profiles, tools
+echo     g. New game ................. keeps the old one, starts clean
+echo     h. Documentation ............. this file, French or English
 echo.
 echo     0. Quitter
 echo.
-choice /c 123456789abcde0 /n /m "Choix (0 pour quitter) : "
-if errorlevel 15 exit /b 0
+choice /c 123456789abcdefgh0 /n /m "Choix (0 pour quitter) : "
+if errorlevel 18 exit /b 0
+if errorlevel 17 goto doc
+if errorlevel 16 goto nouvelle
+if errorlevel 15 goto botw
 if errorlevel 14 goto cemu
 if errorlevel 13 goto ukmm
 if errorlevel 12 goto tester
@@ -187,6 +197,51 @@ if exist "%OUTILS%\matrice.py" (
 ) else (
   echo   Outils\matrice.py introuvable : copie incomplete du dossier.
 )
+echo.
+pause
+goto menu
+
+:botw
+if not exist "%BOTW%" (
+  echo   botw\botw.py introuvable : copie incomplete du dossier.
+  pause
+  goto menu
+)
+python "%BOTW%" ui
+goto menu
+
+rem ---------------------------------------------------------------------
+rem New game : moves the current save slot aside instead of deleting it.
+rem That is THE answer to a game stuck on the loading screen.
+rem ---------------------------------------------------------------------
+:nouvelle
+if not exist "%BOTW%" goto :nouvelle_sans_botw
+python "%BOTW%" newgame
+echo.
+pause
+goto menu
+:nouvelle_sans_botw
+echo.
+echo   Pour une nouvelle partie : A -^> Nouvelle partie dans Cemu.
+echo   Le dossier botw est introuvable, l ancienne ne peut pas etre
+echo   archivee automatiquement.
+pause
+goto menu
+
+rem ---------------------------------------------------------------------
+rem Documentation : le README du dossier botw, dans la langue demandee.
+rem ---------------------------------------------------------------------
+:doc
+if not exist "%BOTW%" (
+  echo   Le dossier botw est introuvable : copie incomplete.
+  pause
+  goto menu
+)
+echo.
+set "LANGUE=fr"
+set /p "LANGUE=Langue de la documentation (fr / en) [fr] : "
+if /i not "%LANGUE%"=="en" set "LANGUE=fr"
+python "%BOTW%" readme "%LANGUE%"
 echo.
 pause
 goto menu

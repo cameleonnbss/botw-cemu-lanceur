@@ -28,6 +28,12 @@ Double-clic. Menu :
    c. TESTER LES PROFILS .......... rejoue chaque profil et le verifie
    d. Ouvrir UKMM                 gestion graphique des mods
    e. Ouvrir Cemu
+
+   botw  (la CLI, en anglais ; "botw lang fr" pour le francais)
+     f. botw menu .............. tout : mods, profils, outils, sauvegardes
+     g. Nouvelle partie ........ garde l'ancienne, demarre a zero
+     h. Documentation ........... ce fichier, en francais ou anglais
+
    0. Quitter
 
 Le menu affiche en permanence le PROFIL ACTIF et son nombre de mods.
@@ -694,3 +700,79 @@ Elle regarde tout d'un coup et dit ce qui ne va pas :
   - les sauvegardes sont-elles la ?
   - reste-t-il de la place sur le disque ? en dessous de 2 Go, UKMM ne peut
     plus fusionner
+
+======================================================================
+17. LE MENU botw  (la CLI)
+======================================================================
+
+Le lanceur .bat va bien, mais il fait une chose par touche. Le dossier
+`botw\` contient un vrai programme en ligne de commande : tout ce qui est
+dans le lanceur y est, plus le telechargement de mods, l'installation de
+UKMM et de BCML, la creation de profils depuis le catalogue, et le jeu a
+deux.
+
+Y ENTRER
+
+  Touche `f` du lanceur, ou directement :
+
+      cd Desktop\BOTW
+      python botw\botw.py
+
+  Sans argument, un menu s'ouvre. Avec --help, la liste des commandes.
+
+LA LANGUE
+
+  Anglais par defaut, francais en une commande :
+
+      python botw\botw.py lang fr        definitif
+      python botw\botw.py lang en        retour a l'anglais
+      python botw\botw.py --lang fr doctor    une seule fois
+
+  Le choix est memorise dans %APPDATA%\botwcli\config.json et vaut pour
+  TOUT : menu, messages d'erreur, et meme l'aide en ligne de commande.
+
+LES COMMANDES UTILES
+
+  doctor          15 controles : UKMM, processus ouverts, fusion, pack
+                  deploye, sauvegardes, outils, place disque.
+                  Renvoie un code d'erreur si quelque chose cloche.
+
+  deploy <profil> Fusionne et redeploie. --activate en fait le defaut.
+  profile ...     list, show, use, create, delete, verify.
+  mods ...        list, search, download, install, uninstall.
+  tools ...       install-ukmm, install-bcml, list.
+  catalog ...     les combinaisons de mods verifiees (voir section 6).
+  coop ...        status, enable, disable, radmin.
+  newgame ...     status, revert, ou une nouvelle partie.
+  readme [en|fr]  ce document, ou README.fr.md.
+  matrix          le banc d'essai (pres d'une heure).
+
+DEUX EXEMPLES QUI REGLEMENT DES HEURES PERDUES
+
+  Le jeu bloque sur l'ecran de chargement apres un changement de mods :
+
+      python botw\botw.py newgame
+
+  Ca met l'emplacement de sauvegarde actuel de cote, SANS le supprimer, et
+  le remet dans le dossier Sauvegardes\NouvellePartie. La partie est
+  encore la : `botw newgame revert` la remet en place.
+
+  Un mod ne se voit pas en jeu :
+
+      python botw\botw.py profile verify sur
+
+  Ca relit le manifest.yml de chaque mod du profil et verifie, fichier par
+  fichier, que tout ce qu'ils declarent est reellement present, fusionne ET
+  deploye. Le message dit exactement lequel manque.
+
+IMPORTANT : NE PAS MELANGER LES DEUX SYSTEMES
+
+  Le lanceur .bat et le menu botw ecrivent tous les deux dans la
+  configuration d'UKMM. C'est voulu : ils utilisent exactement la meme
+  chaine de deploiement. Tu peux alterner librement. Un seul truc a
+  eviter : ne jamais lancer un deploiement pendant qu'un tourne.
+
+  Les scripts PowerShell (Choix-Mods, Panel-Profils, Sauvegardes) restent
+  disponibles : touche 6, 7 et 9. Le menu botw ne les remplace pas.
+
+  English by default. French is a command away: `botw lang fr`.
