@@ -1,0 +1,74 @@
+# Mods BOTW sur Cemu — guide court
+
+> 📖 **La documentation complète, c'est [`LISEZ-MOI.txt`](LISEZ-MOI.txt)** (16
+> sections : les mods, l'ordre de fusion, le blocage de l'écran de chargement,
+> les sauvegardes, le dépannage). Ce fichier n'est qu'un résumé.
+
+## Le plus simple : le lanceur
+
+Double-clic sur **`Lanceur-BOTW.bat`**, dans ce dossier.
+
+```
+JOUER                        OUTILS
+ 1 Second Wind + TES MODS     7 Charger une partie
+ 2 TES MODS seuls             8 Jeu a deux
+ 3 Second Wind seul          9 Panneau des profils
+ 4 BOOST                     a Graphismes
+ 5 SANS ECHEC                b Verifier et reparer
+ 6 CHOISIR TES MODS          c Tester les profils
+                             d Ouvrir UKMM
+                             e Ouvrir Cemu
+                             0 Quitter
+```
+
+Le menu affiche en permanence le **profil actif** et son nombre de mods. Si
+Linkle n'apparaît pas en jeu, regarde cette ligne.
+
+**Ferme Cemu avant toute option 1 à 6.** Le script refuse de travailler
+sinon, et il te dit pourquoi.
+
+| Touche | Profil UKMM | Mods en jeu |
+|---|---|---|
+| `1` | `combo` | Second Wind + tes 6 mods |
+| `2` | `flo` | Linkle, îles, Relics, armes anciennes |
+| `3` | `secondwind` | Second Wind seul |
+| `4` | `boost` | 10 mods, sans Second Wind — le plus léger |
+| `5` | `sur` | Second Wind + tout le reste qui a pu être vérifié |
+
+L'option `6` est la pièce maîtresse : tu coches les mods que tu veux, UKMM
+fusionne, redéploie, et tu joues.
+
+## ⚠️ Une partie par profil
+
+Charger une partie créée avec un autre jeu de mods **bloque l'écran de
+chargement, indéfiniment, sans message d'erreur**. C'est le problème numéro un.
+
+Le gestionnaire de sauvegardes note donc le profil UKMM actif au moment de
+chaque enregistrement, et **refuse de te laisser charger une partie d'un autre
+profil sans un avertissement explicite** (touche `7`).
+
+## Sauvegardes
+
+Le jeu n'a **qu'un seul emplacement de sauvegarde visible** (les dossiers `0` à `5`
+de `user\80000001` sont des tampons internes). Pour plusieurs parties distinctes :
+`Sauvegardes-BOTW.bat`, ou la touche `7` du lanceur.
+
+```
+1 Enregistrer ma partie    -> nom + description
+2 CHARGER une partie
+3 Charger une partie ET jouer
+4 Changer le nom / la description
+5 Supprimer une partie
+```
+
+Une restauration copie d'abord la partie en cours, puis **vérifie par MD5** que la
+partie chargée est bien celle demandée.
+
+## Dépannage
+
+La touche **`b` — Vérifier et réparer** regarde tout d'un coup (UKMM, profil
+actif, `rules.txt`, pack de textes français, cohérence du déploiement,
+sauvegardes, place disque) et dit ce qui ne va pas.
+
+Pour savoir **quel mod** pose problème : touche `6`, et décocher un mod à la
+fois.

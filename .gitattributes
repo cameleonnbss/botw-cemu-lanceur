@@ -1,0 +1,14 @@
+# Les fichiers executes par Windows doivent garder leurs fins de ligne
+# CRLF : cmd.exe et PowerShell 5.1 les traitent mal sinon (et un .bat en LF
+# peut s'arreter sur une ligne au hasard).
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.txt text eol=crlf
+
+# Le reste en LF, comme sur GitHub.
+* text=auto eol=lf
+
+# Ne jamais toucher aux binaires.
+*.zip binary
+*.png binary
+*.icns binary

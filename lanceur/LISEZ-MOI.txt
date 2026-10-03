@@ -1,0 +1,696 @@
+===========================================================================
+  ZELDA BREATH OF THE WILD sur CEMU  -  dossier de ressources
+===========================================================================
+
+Tout ce qu'il faut pour jouer en modded. Deux double-clics suffisent.
+
+
+---------------------------------------------------------------------------
+  1. POUR JOUER  ->  Lanceur-BOTW.bat
+---------------------------------------------------------------------------
+
+Double-clic. Menu :
+
+  === JOUER ===
+   1. Second Wind + TES MODS      tout en meme temps        (9 mods)
+   2. TES MODS seuls               Linkle, iles, armes anciennes
+   3. Second Wind seul            extension complete
+   4. BOOST ...................... armes, teleport, vol rapide  (LEGER)
+   5. SANS ECHEC ................ le plus complet, tous teste
+   6. CHOISIR TES MODS ........... tu coches ce que tu veux
+
+  === OUTILS ===
+   7. Charger une partie          tes parties, nom + description
+   8. Jeu a deux                  2 manettes
+   9. Panneau des profils         creer / dupliquer / supprimer
+   a. Graphismes                  mode rapide / mode belle image
+   b. VERIFIER ET REPARER ........ dit exactement ce qui ne va pas
+   c. TESTER LES PROFILS .......... rejoue chaque profil et le verifie
+   d. Ouvrir UKMM                 gestion graphique des mods
+   e. Ouvrir Cemu
+   0. Quitter
+
+Le menu affiche en permanence le PROFIL ACTIF et son nombre de mods.
+Si tu ne vois pas Linkle en jeu, regarde cette ligne.
+
+
+  >> L'OPTION 6, "CHOISIR TES MODS", c'est la piece maitresse.
+
+     Une liste de cases a cocher avec TOUS tes mods (ils sont lus dans le
+     dossier Mods\). Tu tapes les numeros a cocher ou decocher, par exemple :
+
+         1 6 7        -> tu decoches ces trois la
+         v            -> UKMM fusionne, redeploie, et tu vas jouer
+
+     Exemple : decoche "Second Wind (core)" et tu joues avec tous tes
+     autres mods mais SANS Second Wind. Coche Relics of the Past et tu
+     l'ajoutes. Les conflits connus sont signales en rouge a l'ecran.
+
+     Apres un changement, le profil actif est mis a jour tout seul : pas
+     besoin de repasser par le panneau des profils.
+
+
+  >> SECOND WIND + TES MODS EN MEME TEMPS : c'est fait, et verifie.
+
+     L'option 1 charge le profil "combo" qui contient les 9 mods :
+
+       Second Wind (core) + Shrine Overhaul + Eventide Fix
+       + The Linkle Mod 3.0.1
+       + Ancient Weaponry Mark II
+       + Islands Expansion v1.2
+       + Champion's Leathers
+       + Korok Extra Rewards + More Korok Seeds
+
+     Les 9 fusionnent a 100 % et se deplient ensemble (4760 fichiers).
+     Chaque mod garde ses propres fichiers : rien n'est ecrase.
+
+IMPORTANT : ferme Cemu ET UKMM avant de jouer (options 1 a 3). Le lanceur
+refuse de travailler si l'un des deux tourne : il te le dit et s'arrete,
+sans rien casser. C'est necessaire, UKMM garde le profil en memoire et
+le reecrirait a la fermeture.
+
+Seul un profil est charge a la fois : c'est le jeu qui l'exige, mais
+l'option 6 te laisse le composer exactement comme tu veux.
+
+BCML : plus dans le menu (il sertait de reference, il deploie par liens
+symboliques invisibles depuis Windows, donc inutilisable ici). Il reste
+lanceable a la main : voir le GUIDE-MODS-BOTW.md.
+
+
+---------------------------------------------------------------------------
+  2. SAUVEGARDES  ->  Sauvegardes-BOTW.bat
+---------------------------------------------------------------------------
+
+Le jeu n'a QU'UN seul emplacement de sauvegarde visible. Pour avoir
+plusieurs parties distinctes (par exemple une partie "Second Wind" et une
+partie "mods normaux"), il faut copier le dossier de sauvegarde et le
+remettre quand on veut. C'est exactement ce que fait cet outil :
+
+  1. Enregistrer ma partie     -> tu lui donnes un NOM et une DESCRIPTION
+  2. CHARGER une partie         -> la liste apparait, tu choisis un numero
+  3. Charger une partie ET jouer  -> ca charge et Cemu demarre tout seul
+  4. Changer le nom / la description
+  5. Supprimer une partie
+
+A chaque affichage, le menu te montre TOUTES tes parties en tableau :
+
+     #  NOM                      QUAND               TAILLE
+     1   Depart avant mods        03/10/2026 14:11      6,3 Mo
+          Partie de reference, prise avant toute installation
+     2   Ma partie du soir        03/10/2026 17:25      6,3 Mo   <-- en cours
+          ou j ai trouve les 4 statues
+
+La mention "<-- en cours" veut dire que c'est exactement la partie que le
+jeu utilise en ce moment. Les noms et les descriptions sont ranges dans
+.\Sauvegardes\parties.json : ne le supprime pas, c'est ta liste.
+
+Les accents marchent : tape-les normalement au clavier.
+
+Une restauration ne detruit jamais ta partie en cours : elle en fait
+d'abord une copie de securite. Apres avoir copie, elle verifie que la partie
+chargee est bien identique a l'original (empreinte MD5) et te le dit.
+
+Une sauvegarde fait environ 6 Mo. Chaque point de sauvegarde est donc
+minuscule.
+
+ATTENTION - c'est important :
+  Une partie n'est pas forcement compatible d'un profil de mods a l'autre.
+  Second Wind modifie profondement le monde et les acteurs. Charger une
+  partie "mods normaux" avec Second Wind actif peut faire crasher le jeu
+  ou perdre des objets. La regle simple :
+      un point de sauvegarde par profil de mods.
+
+
+---------------------------------------------------------------------------
+  3. FICHIERS DU DOSSIER
+---------------------------------------------------------------------------
+
+  Lanceur-BOTW.bat        menu principal (voir section 1)
+  Set-ProfilUKMM.ps1     le script que le lanceur appelle pour changer
+                         de profil. Ne le lance pas directement.
+  Sauvegardes-BOTW.bat    gestionnaire de sauvegardes (voir section 2)
+  Sauvegardes-BOTW.ps1   le moteur du gestionnaire
+  Graphismes-BOTW.ps1    mode graphique rapide / belle image
+                         (option a du lanceur, voir section 10)
+  Coop-2Joueurs.ps1       reglage du mode 2 manettes (voir section 6)
+  GUIDE-MODS-BOTW.md     le guide complet : UKMM, BCML, profils, pieges,
+                         ligne de commande, ajout de mods
+  LISEZ-MOI.txt          ce fichier
+
+  Mods/                  les 9 mods au format UKMM (.zip).
+                         Ce sont des LIENS PHYSIQUES (hardlinks) vers le
+                         dossier de stockage UKMM : ils font 888 Mo
+                         a l'ecran mais n'occupent pas un octet de plus
+                         sur ton disque. Tu peux les supprimer sans
+                         risque, UKMM garde ses originaux.
+  Outils/                scripts d'ajout de mods (telechargement
+                         GameBanana, conversion, mods a options)
+  Sauvegardes/           tes points de sauvegarde (crees par l'outil)
+                         + parties.json : la liste des noms/descriptions
+
+
+---------------------------------------------------------------------------
+  4. LES 9 MODS INSTALLES
+---------------------------------------------------------------------------
+
+Profil "MES MODS" (option 2 du lanceur) :
+
+  The Linkle Mod 3.0.1                  Linkle jouable a la place de Link
+  Ancient Weaponry Mark II              5 armes "anciennes" en 4K
+  Islands Expansion v1.2                nouvelles iles a explorer
+  Champion's Leathers + Lowered Hylian Hood    armures en plus
+  Korok Extra Rewards                   recompenses de korok plus genereuses
+  More Korok Seeds                      plus de graines de korok dispersees
+
+DESINSTALLE mais toujours present dans Mods\ : Relics of the Past (section 5).
+Il occupait exactement les memes emplacements d'armes qu'Ancient Weaponry
+(epee / lance-epee / lance / bouclier / arc) : les deux ne peuvent pas
+coexister, UKMM aurait choisi l'un des deux au hasard. Pour le remettre :
+
+    python editer-profil.py flo --remove "Ancient Weaponry Mark II"
+    cd /d %USERPROFILE%\Tools\UKMM
+    ukmm.exe install "%USERPROFILE%\Desktop\BOTW\Mods\Relics_of_the_Past.zip" flo
+
+Cote graphismes, SANS passer par UKMM (pack Cemu classique) :
+
+  HD Map and Icons    icones d'inventaire en 3x + carte en haute definition.
+                      Installe dans %APPDATA%\Cemu\graphicPacks\HD_Map_and_Icons
+                      Il s'applique automatiquement aux DEUX profils et ne
+                      touche aucun fichier de tes 169 autres packs (verifie :
+                      0 fichier en commun).
+
+Profil "SECOND WIND" (option 3 du lanceur) :
+
+  Second Wind (core) 1.9.14-alpha-7      extension complete
+  Second Wind - Shrine Overhaul         sanctuaires remakes
+  Second Wind - Eventide Fix            correction de l'Evenide
+
+Second Wind est une ALPHA : des bugs sont normaux.
+
+
+---------------------------------------------------------------------------
+  5. RELICS OF THE PAST - ce que ca fait vraiment
+---------------------------------------------------------------------------
+
+Ce n'est PAS un simple mod d'armures. C'est un mod de DIFFICULTE,
+par ShadowMarth-JTW. C'est probablement le mod le plus difficile
+existant pour BOTW.
+
+Concretement, d'apres les fichiers qu'il contient :
+
+  - Les armes deviennent beaucoup plus rares. 22 tables de butin
+    (DropTable) sont reecrites : ce qui tombait avant ne tombe plus.
+  - De nouvelles armes "reliques" (arcs anciens, etc.) occupent les
+    emplacements d'armes existants du jeu. 99 references d'acteurs
+    d'armes sont reassignees, avec leurs 53 parametres de degats.
+  - 12 recettes de cuisine et 11 icones d'inventaire sont ajoutees.
+  - Les ennemis sont plus dangereux : Bokoblins, Lizalfos et Moriblins
+    ont des variantes "Gold" et "Malice" (ils se Vyent des tores).
+  - Des changements de carte et d'evenements (RelicsEvents700).
+
+Consequence pour toi : ce mod change profondement l'equilibre du jeu.
+Si tu joues une partie deja avancee, tu n'auras pas les objets prevus
+pour la progression normale. Le mieux est de commencer une nouvelle
+partie avec, ou de le laisser de cote si tu veux juste les iles + Linkle.
+
+
+---------------------------------------------------------------------------
+  6 bis. LE PANNEAU DES PROFILS  (option 9 du lanceur)
+---------------------------------------------------------------------------
+
+C'est l'outil pour creer tes propres profils de mods. Un "profil" =
+un ensemble de mods + leur ordre de fusion. UKMM n'en deploie qu'un
+a la fois dans Cemu.
+
+Le panneau affiche toujours le tableau de bord :
+
+    Profil              Mods  Merges      Taille
+     *flo                   6    524       322 Mo   <- actif
+      secondwind            3   4262       1,4 Go
+
+  (* = profil charge en jeu ; merged = fichiers produits par la fusion)
+
+Ce que tu peux faire :
+
+  1. Basculer sur un profil   fusionne et redeploie vers Cemu
+  2. Creer un profil VIDE     start from zero, tu lui ajoutes les mods
+                              que tu veux
+  3. DUPLIQUER un profil      copie exacte de ses mods. Coût : 0 Mo,
+                              parce que les .zip sont partages entre tous
+                              les profils.
+  4. Renommer un profil
+  5. Supprimer un profil      le profil actif bascule automatiquement
+                              sur le profil le plus fourni
+  6. Gerer les mods d'un profil :
+        A. activer / desactiver un mod (sans le desinstaller)
+        R. retirer un mod de ce profil (le .zip reste dans Mods\)
+        I. installer un .zip depuis le dossier Mods\
+  0. Quitter
+
+EXEMPLES UTILES :
+
+  - "mes mods sans Linkle"   : duplique "MES MODS", retire Linkle
+  - "coop"                   : duplique "MES MODS", laisse tout
+  - "test Relics"            : cree un profil vide, installe
+                               Relics_of_the_Past.zip depuis Mods\
+
+ASTUCE : apres avoir modifie les mods d'un profil, retourne dans
+l'option 1 du panneau (Basculer) pour que le changement soit_visible en jeu.
+
+SECURITE : chaque modification de profile.yml est precedee d'une copie
+de sauvegarde en profile.yml.bak, dans le dossier du profil.
+
+Le profil "Default" (0 mod) est cree par UKMM lui-meme. Tu peux
+l'ignorer ou le supprimer, le panneau ne se rabattra jamais dessus.
+
+---------------------------------------------------------------------------
+  6. JEU A DEUX (avec ton frere)
+---------------------------------------------------------------------------
+
+Le mode 2 joueurs de BOTW est NATIF sur Wii U, aucun mod n'est
+necessaire. Le seul obstacle sous Cemu : par defaut Cemu n'ecoute
+qu'UNE manette.
+
+Lanceur -> option 8 "Jeu a deux" -> "Activer". Ca ecrit
+`<PadChannels>2</PadChannels>` dans le settings.xml de Cemu.
+(Pense a fermer Cemu avant : il ecrase ce fichier a la sortie.)
+
+ ensuite :
+  - branche 2 manettes XInput (manettes Xbox, ou pads PS/Xbox generiques)
+  - lance Cemu, dans le jeu appuie sur "+" / "Start" sur LES DEUX manettes
+  - le joueur 2 apparait en bleu, il peut rejoindre/quitter a tout moment
+
+ATTENTION avec Linkle : Linkle n'a pas de modele "Link joueur 2".
+Joueur 1 = Linkle, joueur 2 = Link normal. C'est le seul probleme connu.
+
+Pour revenir a 1 manette : option 8 -> "Desactiver".
+
+
+
+---------------------------------------------------------------------------
+  7. RAYTRACING ET ULTRA GRAPHICS - ce qui est possible ou pas
+---------------------------------------------------------------------------
+
+RAYTRACING : NON, pas sur Cemu.
+
+Cemu emule la Wii U en Vulkan/OpenGL. Il n'y a aucun ray tracing
+(RTX) dedans, et aucun pilote graphique ne peut en ajouter un. Ce n'est
+pas un reglage a chercher, la fonction n'existe pas dans l'emulateur.
+
+Ce qui s'en approche le plus, ce sont des SHADERS qui imitent des
+effets RT (reflets a l'ecran, occlusion, surexposition) : ils ont le
+meme rendu visuel mais ne sont pas de vrais reflets.
+
+TON ETAT ACTUEL (verifie dans settings.xml) :
+  - API Vulkan : deja activee, c'est le mieux pour Cemu
+  - UpscaleFilter = 1, AsyncCompile = actif : bien
+  - Tu as 0 pack de shader (.gfxpack) : tu peux en ajouter un
+  - Tu as 1 seule piste de manette (voir section 6)
+  - Pack HD Map and Icons : INSTALLE et actif (default = true)
+
+Pour "ultra graphics", le gain vient dans cet ordre :
+  1. Resolution interne 1080p ou 2160p (Cemu -> Options -> Graphics)
+  2. Un shader Cemu (ReFocus / Bfxaa, ou un .gfxpack telecharge)
+  3. Des mods de textures  ->  FAIT : HD Map and Icons
+  4. Mods d'armes et d'armures
+
+
+---------------------------------------------------------------------------
+  8. CE QUI A ETE VERIFIE / PAS VERIFIE
+---------------------------------------------------------------------------
+
+VERIFIE :
+  - UKMM fusionne et deploie correctement (verifie fichier par fichier)
+  - changement de profil : 0 fichier orphelin dans les deux sens
+  - sauvegarde / restauration : identique au bit pres
+  - tes 399 packs graphiques, tes reglages manette et tes sauvegardes
+    n'ont ete touches par rien de tout ca
+
+PAS VERIFIE :
+  - le jeu n'a jamais ete lance avec ces mods. Tout est bon sur le papier,
+    mais le rendu en jeu reste a confirmer.
+
+
+---------------------------------------------------------------------------
+  9. PROBLEMES COURANTS
+---------------------------------------------------------------------------
+
+"Mes mods ne s'affichent pas"
+  -> Cemu ne charge que les packs graphiques qu'il voit. Si BreathOfTheWild_UKMM
+     est absent de %APPDATA%\Cemu\graphicPacks\, relance le lanceur.
+     Ne supprime jamais le fichier rules.txt de ce dossier.
+
+"Cemu est encore ouvert"
+  -> ferme-le, puis recommence. Le script ne peut pas remplacer les fichiers
+     pendant que le jeu les a ouverts.
+
+"J'ai lance Second Wind et le jeu plante"
+  -> tu chargeais une partie faite sans Second Wind. Restaure un point de
+     sauvegarde cree avec l'autre profil (Sauvegardes-BOTW.bat, option 3).
+
+"ukmm.exe dit qu'un mod a des options"
+  -> certains mods (Royal Armoury, Umbrella Glider de Linkle) ne peuvent pas
+     etre installes en ligne de commande : passe par l'interface graphique
+     d'UKMM (option 9 du lanceur).
+
+
+---------------------------------------------------------------------------
+  10. "LE JEU CHARGE A L'INFINI"  ->  ce que j'ai trouve
+---------------------------------------------------------------------------
+
+Ce que tu as vu en lancant le profil combo (option 1) n'est pas un profil
+casse. Voila ce qui a ete verifie :
+
+  - Les 4760 fichiers du profil combo sont bien deployes dans Cemu.
+  - Aucun des 4759 fichiers fusionnes n'est abime : pas un seul .sbyml
+    corrompu, pas un fichier vide. UKMM n'a rien melange de travers.
+
+Le probleme est ailleurs : Cemu ne prepare PAS les shaders a l'avance.
+Il les compile pendant le jeu, a la volee, chaque fois qu'il rencontre un
+materiau qu'il n'a jamais vu. Changer de pack graphique, ou ajouter les
+milliers d'acteurs de Second Wind, l'oblige a compiler des milliers de
+shaders jamais vus.
+
+Or tes reglages demandaient des shaders enorme :
+
+  Enhanced Reflections ... 32 echantillons de reflet
+  Depth Of Field ......... active
+  anisotropie ............ 16x
+  distance de dessin ..... au maximum sur les 5 categories
+  ombres ................. 200% + distance "Very High"
+  FPS .................... 120 / 165
+
+L'ecran reste alors noir ou fige, et le PC semble bloque. Ce n'est pas un
+plantage : c'est une compilation. Le journal de Cemu (log.txt) montre qu'il
+est alle jusqu'a l'ecran-titre, puis s'est arrete net.
+
+PIEGE IMPORTANT : si tu fermes Cemu avant la fin, tout est perdu. Le cache
+n'est ecrit qu'a la fermeture propre du jeu. C'est ce qui s'est passe le
+premier coup - le cache des shaders date du 15:16 alors que la tentative
+etait de 17:11.
+
+LA SOLUTION, option a du lanceur -> "Graphismes"
+
+  Mode LEGER    : shaders simples, demarrage rapide
+  Mode COMPLET  : la belle image d'origine, 1re fois tres longue
+
+Fais ce test :
+  1. Ferme Cemu.
+  2. Lanceur -> option a -> mode LEGER.
+  3. Lanceur -> option 1 (combo) -> lance Cemu.
+
+  - Si le jeu demarre vite  -> tes 9 mods sont bons. C'etaient les reglages
+    graphiques. Tu peux repasser en mode COMPLET apres, et laisser
+    compiler 20-30 minutes la premiere fois.
+  - Si ca bloque encore en mode LEGER -> la cause est un mod precis. Va
+    dans option 6 "CHOISIR TES MODS" et decoche un mod a la fois pour
+    trouver lequel. Commence par Linkle et par Shrine Overhaul : ce sont
+    les deux qui remplacent le plus de choses du jeu d'origine.
+
+Le mode COMPLET d'origine est sauvegarde dans
+%APPDATA%\Cemu\settings.xml.botw-beauty.bak si jamais tu veux le
+recuperer a la main.
+
+---------------------------------------------------------------------------
+  13. LA LANGUE FRANCAISE
+---------------------------------------------------------------------------
+
+CE QUI EST DEJA EN FRANCAIS (et qui marche)
+
+  UKMM est configure sur "EUfr" (France) et il genere pour chaque profil un
+  pack de textes FRANCAIS :
+
+      <profil>/merged/content/Pack/Bootup_EUfr.pack
+
+  Il est bien deploye dans Cemu. Tout le texte du jeu d'origine (noms
+  d'objets, de koroks, de sanctuaires, descriptions...) s'affiche donc en
+  francais.
+
+  Attention : les mods livrent leurs textes en anglais (fichier
+  Msg_EUen.product.sarc). UKMM ne fait PAS traduire, il convertit vers le
+  francais ce qu'il connait deja.
+
+CE QUI RESTE EN ANGLAIS, ET POURQUOI JE NE PEUX PAS LE CHANGER
+
+  Le texte NOUVELlement ajoute par les mods n'existe pas en francais dans
+  le jeu d'origine, donc UKMM n'a rien a quoi le rattacher :
+
+    - les quetes de Second Wind
+    - les noms des iles d'Islands Expansion
+    - les dialogues de Farore's Wind
+    - les noms des koroks ajoutes
+
+  Il n'existe aucune traduction officielle de ces mods en francais.
+  Les fabriquer demanderait de traduire des milliers de phrases a la main,
+  sans outil et sans aucun moyen de verifier le resultat en jeu.
+
+  Ce n'est donc pas un bug de l'installation : c'est une absence de
+  traduction en amont, chez les auteurs des mods.
+
+EN RESUME
+
+  Interface, menus, textes du jeu ......... francais   (OK)
+  Textes ajoutes par les mods ............. anglais    (pas de source FR)
+
+
+---------------------------------------------------------------------------
+  12. CA BLOQUE A L'ECRAN DE CHARGEMENT  ->  la vraie cause
+---------------------------------------------------------------------------
+
+PREUVE
+
+  - Ta sauvegarde actuelle a ete ecrite le 03/10 a 17:28.
+  - Or les profils ont tous ete (re)fusionnes ENTRE 17:38 et 17:58 :
+        flo       17:38
+        secondwind 17:48
+        combo     17:55
+        boost     17:58
+
+  Ta sauvegarde est donc ANTERIEURE a tous les jeux de mods actuels.
+  Elle a ete creee avec une combinaison de mods qui n'existe plus
+  aujourd'hui. Et l'autre instantane (14:11) date d'avant TOUS les mods.
+
+  C'est exactement ce qui bloque a l'ecran de chargement : le jeu essaie
+  de reconciliation des Hundreds d'objets, d'armures et d'acteurs qui
+  sont dans la sauvegarde mais qui n'existent plus dans le profil actif.
+  Il tourne en boucle et n'arrive jamais a l'ecran de jeu.
+
+  Ce n'est donc ni les mods, ni les reglages graphiques. Les mods
+  fonctionnent : ils se chargent bien (Linkle apparait a l'ecran titre,
+  et le journal de Cemu confirme que le pack UKMM est actif).
+
+LE TEST QUI LE PROUVE, EN 2 MINUTES
+
+  1. Lance le profil que tu veux (option 4 = BOOST, ou 1 = combo).
+  2. Lance Cemu.
+  3. Appuie sur A pour ouvrir le menu, puis choisis
+        "Nouvelle partie"  ->  accepte les conditions ->  demarre.
+  4. Ne charge AUCUNE ancienne partie. Joue 2 minutes, sauvegarde.
+
+  Si le jeu demarre : c'etait bien la sauvegarde. Tu peux jouer.
+
+  Si le jeu bloque meme sur une partie neuve : la une, on regarde les
+  mods un par un avec l'option 6 (CHOISIR TES MODS).
+
+LA REGLE A RETENIR
+
+  Un profil de mods = une partie qui lui appartient.
+  Changer de profil = recommencer une partie.
+
+  Pour garder plusieurs parcours en meme temps, utilise l'option 7
+  (Charger une partie) : enregistre une partie par profil avant de
+  changer de mods. Tu pourras y revenir.
+
+
+A PROPOS DU MODE GRAPHIQUE
+-------------------------
+Le journal de Cemu du 03/10 17:59 montre que le jeu a bien demarre, mais
+avec les reglages "Complet" (reflets 32 echantillons, etc.). Le mode Leger
+n'avait donc pas ete applique au moment du test.
+
+Depuis, l'option a verifie ses reglages apres ecriture et affiche :
+
+     Verification (relue depuis le fichier) :
+        OK  Reflections
+        OK  Reflection Range
+        ...
+
+Si une ligne affiche "!!" a la place de "OK", c'est que le mode n'a pas
+pris : ferme Cemu et recommence. Un message rouge le dit clairement.
+
+Rappel : Cemu est ouvert = le mode ne peut PAS ete change, parce que
+Cemu reecrit son fichier de reglages a la fermeture et ecraserait le
+changement.
+
+
+---------------------------------------------------------------------------
+  11. LES MODS : CE QUI MARCHE, CE QUI NE MARCHE PAS
+---------------------------------------------------------------------------
+
+C'EST QUEL MOD LE VILLAGE ?
+---------------------------
+C'est Second Wind. Il en ajoute meme deux :
+
+  - Ordon Village, au nord de la Serenne Stable : PNJ, boutiques, forgeron,
+    mini-jeu, quetes et une petite histoire dediee.
+  - The Central Caverns : un deuxieme village-hub de taille comparable.
+
+
+MODS AJOUTES LE 03/10/2026
+--------------------------
+Nouveau profil "boost" = option 4 du lanceur. 10 mods, 1370 fichiers,
+506 Mo fusionnes : environ 3 fois plus leger que le profil combo.
+
+  Farore's Wind .................... tu marques un point, tu y reviens
+                                     instantanement (le sort d'Ocarina)
+  Hyrule Warriors Weapon Collection  840 fichiers : une collection
+                                     d'armes en plus
+  Seamless Warping ................. les voyages rapides ne font plus
+                                     d'ecran noir
+  10x Speed Paraglider v2 .......... tu planes 10 fois plus vite et sans
+                                     consommer d'endurance
+
+
+MODS REFUSES, ET POURQUOI
+-------------------------
+J'ai telecharge puis inspecte chacun de ces mods avant de dire non :
+
+  Definitive First Person View .... le zip contient des patch_*.asm
+                                    (framework BetterVR). Le manifeste
+                                    UKMM ne connait que "content" et
+                                    "aoc" : UKMM n'applique AUCUN patch
+                                    de code. Ce mod exige BCML.
+  Magnesis+ ...................... le .bnp fait 5,3 Mo dont 5,59 Mo de
+                                    vignette (thumb.png). Le vrai
+                                    contenu : 704 octets de regle
+                                    deepmerge. Il n'y a rien a installer.
+  No Hints ....................... reecrit les textes du jeu, il se bat
+                                    avec Second Wind et Islands
+                                    Expansion qui ajoutent des dialogues.
+  Quick Flurry Rush (UKMM) ....... 498 Mo pour une esquive plus rapide,
+                                    et le fichier est "raw", non compile.
+  Relics of the Past ............. reste dans le dossier Mods, mais PAS
+                                    avec Ancient Weaponry : les deux
+                                    occupent les memes emplacements
+                                    d'armes.
+
+
+L'ORDRE DE FUSION : LE VRAI SUJET
+---------------------------------
+UKMM empile les mods dans l'ordre du fichier profile.yml et LE DERNIER
+l'emporte. Le PREMIER de la liste est donc le plus faible.
+
+Deux erreurs ont ete corrigees :
+
+  - dans "flo", Linkle etait en PREMIER, donc le plus faible : tous les
+    autres mods ecrasaient la peau du personnage.
+  - dans "combo", Linkle passait SOUS Ancient Weaponry et Champion's
+    Leathers, alors qu'il doit passer au-dessus (doc UKMM : une peau doit
+    avoir une priorite superieure aux mods de stats d'armures, sinon bug
+    de textures).
+
+Regles appliquees dans tous les profils :
+
+  - Second Wind toujours en premier          = le plus faible
+  - ses modules optionnels juste au-dessus   (Eventide, Shrine Overhaul)
+  - Linkle toujours en dernier               = le plus fort
+  - 10x Paraglider SOUS Linkle               (les deux touchent Player_Link)
+  - pour la meme raison, pas de 10x Paraglider dans le profil combo
+
+A propos de Linkle + Second Wind : le FAQ officiel de Second Wind dit que
+le mod marche "for the most part" avec les autres, y compris Linkle. C'est
+donc officiellement supporte, et c'est pour ca que l'ordre de fusion a ete
+corrige plutot que de retirer l'un des deux.
+
+
+---------------------------------------------------------------------------
+  14. CE QUE LE TEST AUTOMATIQUE A TROUVE
+---------------------------------------------------------------------------
+
+On ne se contente pas de "fusionner sans erreur" : chaque combinaison est
+rejouee pour de vrai (fusion UKMM + deploiement vers Cemu), puis chaque
+fichier declare par chaque mod est recherche tel quel dans le dossier fusionne
+ET dans le pack graphique que Cemu lit. Le detail des 95 essais est dans le
+dossier docs/ du projet GitHub.
+
+14.1 Deux mods ne faisaient RIEN du tout
+---------------------------------------
+
+Un mod UKMM n'applique que les fichiers listes dans son manifest.yml.
+UKMM n'a aucun moyen de signaler un fichier ignore : le mod s'installe, la
+fusion reussit, rien ne signale.
+
+  - 10x Speed Paraglider v2 : son manifeste annonçait "Pack/TitleBG.pack",
+    absent de son zip. Son seul vrai fichier, Player_Link.baiprog, n'etait
+    donc jamais applique -> le vol a x10 n'existait pas.
+
+  - Second Wind - Eventide Fix : meme probleme, 21 fichiers ignores (modeles,
+    physique, sons). Le correctif Eventide n'a jamais ete actif.
+
+Les deux manifestes ont ete reconstruits. Les 12 autres mods, dont le
+manifeste ne couvre qu'une partie du zip, n'ont PAS ete touches : c'est la
+liste de leur auteur, on ne prend pas le risque de la modifier.
+
+Comment le voir : Outils\reparer-manifests.py, puis relancez le profil.
+Le test "SEUL : 10x Speed Paraglider" passe de 1 a 3 fichiers fusionnes,
+et "SEUL : Second Wind - Eventide Fix" de 1 a 23.
+
+14.2 UKMM ne sait pas fusionner tous les fichiers
+------------------------------------------------
+
+Lu dans le code source d'UKMM (crates/uk-mod/src/unpack.rs, fonction
+build_file) :
+
+  ResourceData::Mergeable(..) => les ajouts de tous les mods S'ADDITIONNENT
+  ResourceData::Sarc(..)      => les ajouts de tous les mods S'ADDITIONNENT
+  ResourceData::Binary(..)    => le DERNIER mod de la liste gagne
+
+Autrement dit : pour un .sbyml, un .sbactorpack ou un .smubin, l'ordre n'a
+presque aucune importance, tout s'empile. Pour tout le reste, l'ordre decide
+de tout et le perdant est purement et simplement efface.
+
+Outils\conflits.py applique exactement cette regle et sort la liste des
+paires de mods qui s'ecrasent, fichier par fichier.
+
+14.3 Un fichier peut etre livre par 7 mods et n'etre jamais utilise
+--------------------------------------------------------------------
+
+GameData/gamedata.sarc est present dans le zip de 7 mods, mais aucun
+manifeste ne le declare. UKMM ne le deploie donc jamais. C'est le genre de
+detail qui donne l'impression que "les mods ne marchent pas".
+
+---------------------------------------------------------------------------
+  15. LA TOUCHE "SANS ECHEC" (option 5)
+---------------------------------------------------------------------------
+
+C'est le profil le plus complet : tout ce qui a pu etre verifie en meme
+temps. C'est celui a essayer en premier.
+
+Rappel : une partie par profil. Charger une partie creee avec un autre
+profil bloque l'ecran de chargement sans message d'erreur.
+
+Si le jeu bloque malgre tout sur une NOUVELLE partie, ca n'est plus une
+sauvegarde. Dans ce cas :
+
+  1. touche b -> "Verifier et reparer" : ca liste ce qui cloche
+  2. touche 4 (BOOST) -> si BOOST demarre, le souci vient d'un mod de plus
+  3. touche 6 -> decocher un mod a la fois, c'est long mais c'est sur
+
+---------------------------------------------------------------------------
+  16. LA TOUCHE "VERIFIER ET REPARER" (option b)
+---------------------------------------------------------------------------
+
+Elle regarde tout d'un coup et dit ce qui ne va pas :
+
+  - UKMM est installe ? la configuration existe ?
+  - quel est le profil actif, il existe ?
+  - le profil est-il bien fusionne ?
+  - rules.txt est-il present ? (sans lui, Cemu ignore tout le pack et le
+    jeu demarre en vanilla, sans un mot)
+  - le pack de textes francais est-il deploye ? (sans lui, les noms ajoutes
+    par les mods sont vides)
+  - le nombre de fichiers deployes correspond-il au nombre de fichiers
+    fusionnes ? (sinon, des fichiers d'un autre profil traînent)
+  - les sauvegardes sont-elles la ?
+  - reste-t-il de la place sur le disque ? en dessous de 2 Go, UKMM ne peut
+    plus fusionner

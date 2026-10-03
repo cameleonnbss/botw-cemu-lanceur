@@ -1,0 +1,2661 @@
+==============================================================================
+  ANALYSE DES MODS UKMM  -  14 mods
+==============================================================================
+
+MOD                                          declarés      zip     SARC erreurs
+------------------------------------------------------------------------------
+10x Speed Paraglider v2                             1        1        0      0
+Ancient Weaponry Mark II                           20       48        0      0
+Champion's Leathers and Lowered Hylian Hood        65      163        0      0
+Farore's Wind                                       3        5        0      0
+Hyrule Warriors Weapon Collection                 840     1430        0      0
+Islands Expansion v1.2                             78      205        0      0
+Korok Extra Rewards                                49      110        0      0
+More Korok Seeds                                    1        3        0      0
+Relics of the Past                                687     1131        0      0
+Seamless Warping                                    5        5        0      0
+Second Wind (core)                               4141    11897        0      0
+Second Wind - Eventide Fix                          1       21        0      0
+Second Wind - Shrine Overhaul                     121      249        0      0
+The Linkle Mod 3.0.1                              321      370        0      0
+
+------------------------------------------------------------------------------
+  FICHIERS DECLARES EN COMMUN
+------------------------------------------------------------------------------
+
+  !! Relics of the Past
+     VS Second Wind (core)        -> 231 fichier(s) en commun
+        - aoc/0010/Map/AocField/Static.smubin
+        - aoc/0010/Map/MainField/A-6/A-6_Dynamic.smubin
+        - aoc/0010/Map/MainField/A-6/A-6_Static.smubin
+        - aoc/0010/Map/MainField/B-3/B-3_Dynamic.smubin
+        - aoc/0010/Map/MainField/B-3/B-3_Static.smubin
+        - aoc/0010/Map/MainField/B-5/B-5_Dynamic.smubin
+        - aoc/0010/Map/MainField/B-5/B-5_Static.smubin
+        - aoc/0010/Map/MainField/B-6/B-6_Static.smubin
+        - aoc/0010/Map/MainField/B-7/B-7_Dynamic.smubin
+        - aoc/0010/Map/MainField/B-8/B-8_Static.smubin
+        - aoc/0010/Map/MainField/C-1/C-1_Dynamic.smubin
+        - aoc/0010/Map/MainField/C-1/C-1_Static.smubin
+        - aoc/0010/Map/MainField/C-2/C-2_Dynamic.smubin
+        - aoc/0010/Map/MainField/C-2/C-2_Static.smubin
+        - aoc/0010/Map/MainField/C-4/C-4_Dynamic.smubin
+        - aoc/0010/Map/MainField/C-4/C-4_Static.smubin
+        - aoc/0010/Map/MainField/C-7/C-7_Dynamic.smubin
+        - aoc/0010/Map/MainField/C-7/C-7_Static.smubin
+        - aoc/0010/Map/MainField/C-8/C-8_Dynamic.smubin
+        - aoc/0010/Map/MainField/C-8/C-8_Static.smubin
+        ... et 211 autres
+
+  !! Ancient Weaponry Mark II
+     VS Relics of the Past        -> 20 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Actor/Pack/TwnObj_AncientOven_A_01.sbactorpack
+        - Actor/Pack/Weapon_Bow_024.sbactorpack
+        - Actor/Pack/Weapon_Lsword_026.sbactorpack
+        - Actor/Pack/Weapon_Shield_027.sbactorpack
+        - Actor/Pack/Weapon_Spear_026.sbactorpack
+        - Actor/Pack/Weapon_Sword_026.sbactorpack
+        - Model/Weapon_Bow_024.sbfres
+        - Model/Weapon_Lsword_026.sbfres
+        - Model/Weapon_Shield_027.sbfres
+        - Model/Weapon_Spear_026.sbfres
+        - Model/Weapon_Sword_026.sbfres
+        - Pack/Bootup.pack
+        - Pack/Bootup_EUen.pack
+        - Pack/Bootup_USen.pack
+        - UI/StockItem/Weapon_Bow_024.sbitemico
+        - UI/StockItem/Weapon_Lsword_026.sbitemico
+        - UI/StockItem/Weapon_Shield_027.sbitemico
+        - UI/StockItem/Weapon_Spear_026.sbitemico
+        - UI/StockItem/Weapon_Sword_026.sbitemico
+
+  !! Second Wind (core)
+     VS The Linkle Mod 3.0.1        -> 16 fichier(s) en commun
+        - Actor/Pack/Armor_053_Upper.sbactorpack
+        - Actor/Pack/Armor_160_Upper.sbactorpack
+        - Actor/Pack/Armor_171_Head.sbactorpack
+        - Actor/Pack/Armor_171_Upper.sbactorpack
+        - Actor/Pack/Armor_172_Head.sbactorpack
+        - Actor/Pack/Armor_174_Head.sbactorpack
+        - Actor/Pack/Armor_174_Upper.sbactorpack
+        - Actor/Pack/Armor_177_Head.sbactorpack
+        - Actor/Pack/Armor_177_Head_B.sbactorpack
+        - Actor/Pack/Armor_179_Head.sbactorpack
+        - Actor/Pack/Armor_180_Head.sbactorpack
+        - Actor/Pack/Armor_180_Upper.sbactorpack
+        - Actor/Pack/Armor_185_Head.sbactorpack
+        - Actor/Pack/Armor_185_Upper.sbactorpack
+        - Event/Demo007_2.sbeventpack
+        - Pack/TitleBG.pack
+
+  !! Hyrule Warriors Weapon Collection
+     VS Second Wind - Shrine Overhaul        -> 11 fichier(s) en commun
+        - Pack/Dungeon004.pack
+        - Pack/Dungeon021.pack
+        - Pack/Dungeon022.pack
+        - Pack/Dungeon028.pack
+        - Pack/Dungeon067.pack
+        - Pack/Dungeon068.pack
+        - Pack/Dungeon087.pack
+        - Pack/Dungeon099.pack
+        - Pack/Dungeon110.pack
+        - Pack/Dungeon112.pack
+        - Pack/Dungeon114.pack
+
+  !! Relics of the Past
+     VS The Linkle Mod 3.0.1        -> 10 fichier(s) en commun
+        - Actor/Pack/Armor_100_Head.sbactorpack
+        - Actor/Pack/Armor_100_Upper.sbactorpack
+        - Actor/Pack/Armor_101_Head.sbactorpack
+        - Actor/Pack/Armor_101_Upper.sbactorpack
+        - Actor/Pack/Armor_102_Head.sbactorpack
+        - Actor/Pack/Armor_102_Upper.sbactorpack
+        - Event/Demo037_0.sbeventpack
+        - Event/Demo331_0.sbeventpack
+        - Event/Demo378_0.sbeventpack
+        - Pack/TitleBG.pack
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Relics of the Past        -> 7 fichier(s) en commun
+        - aoc/0010/Map/MainField/E-4/E-4_Dynamic.smubin
+        - aoc/0010/Map/MainField/E-4/E-4_Static.smubin
+        - aoc/0010/Map/MainField/I-7/I-7_Static.smubin
+        - aoc/0010/Pack/AocMainField.pack
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+        - Pack/Bootup_USen.pack
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Second Wind (core)        -> 6 fichier(s) en commun
+        - aoc/0010/Map/MainField/E-4/E-4_Dynamic.smubin
+        - aoc/0010/Map/MainField/E-4/E-4_Static.smubin
+        - aoc/0010/Map/MainField/I-7/I-7_Static.smubin
+        - aoc/0010/Pack/AocMainField.pack
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+
+  !! Islands Expansion v1.2
+     VS Relics of the Past        -> 5 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+        - Pack/Bootup_EUen.pack
+        - Pack/Title.pack
+        - System/Version.txt
+
+  !! Islands Expansion v1.2
+     VS Second Wind (core)        -> 5 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+        - Pack/Bootup_EUen.pack
+        - Pack/Title.pack
+        - System/Version.txt
+
+  !! Ancient Weaponry Mark II
+     VS Second Wind (core)        -> 4 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Actor/Pack/TwnObj_AncientOven_A_01.sbactorpack
+        - Pack/Bootup.pack
+        - Pack/Bootup_EUen.pack
+
+  !! Korok Extra Rewards
+     VS Relics of the Past        -> 4 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+        - Pack/Bootup_EUen.pack
+        - Pack/TitleBG.pack
+
+  !! Korok Extra Rewards
+     VS Second Wind (core)        -> 4 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+        - Pack/Bootup_EUen.pack
+        - Pack/TitleBG.pack
+
+  !! Ancient Weaponry Mark II
+     VS Champion's Leathers and Lowered Hylian Hood        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+        - Pack/Bootup_USen.pack
+
+  !! Ancient Weaponry Mark II
+     VS Islands Expansion v1.2        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+        - Pack/Bootup_EUen.pack
+
+  !! Ancient Weaponry Mark II
+     VS Korok Extra Rewards        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+        - Pack/Bootup_EUen.pack
+
+  !! Islands Expansion v1.2
+     VS Korok Extra Rewards        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+        - Pack/Bootup_EUen.pack
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Islands Expansion v1.2        -> 2 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Korok Extra Rewards        -> 2 fichier(s) en commun
+        - Actor/ActorInfo.product.sbyml
+        - Pack/Bootup.pack
+
+  !! Hyrule Warriors Weapon Collection
+     VS Second Wind (core)        -> 2 fichier(s) en commun
+        - aoc/0010/Pack/AocMainField.pack
+        - Actor/Pack/Npc_MamonoShop.sbactorpack
+
+  !! Seamless Warping
+     VS Second Wind (core)        -> 2 fichier(s) en commun
+        - Event/Demo005_1.sbeventpack
+        - Pack/TitleBG.pack
+
+  !! 10x Speed Paraglider v2
+     VS Korok Extra Rewards        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! 10x Speed Paraglider v2
+     VS Relics of the Past        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! 10x Speed Paraglider v2
+     VS Seamless Warping        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! 10x Speed Paraglider v2
+     VS Second Wind (core)        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! 10x Speed Paraglider v2
+     VS Second Wind - Eventide Fix        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! 10x Speed Paraglider v2
+     VS The Linkle Mod 3.0.1        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! Ancient Weaponry Mark II
+     VS Second Wind - Shrine Overhaul        -> 1 fichier(s) en commun
+        - Pack/Bootup.pack
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Hyrule Warriors Weapon Collection        -> 1 fichier(s) en commun
+        - aoc/0010/Pack/AocMainField.pack
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Second Wind - Shrine Overhaul        -> 1 fichier(s) en commun
+        - Pack/Bootup.pack
+
+  !! Hyrule Warriors Weapon Collection
+     VS Relics of the Past        -> 1 fichier(s) en commun
+        - aoc/0010/Pack/AocMainField.pack
+
+  !! Islands Expansion v1.2
+     VS Second Wind - Shrine Overhaul        -> 1 fichier(s) en commun
+        - Pack/Bootup.pack
+
+  !! Korok Extra Rewards
+     VS Seamless Warping        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! Korok Extra Rewards
+     VS Second Wind - Eventide Fix        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! Korok Extra Rewards
+     VS Second Wind - Shrine Overhaul        -> 1 fichier(s) en commun
+        - Pack/Bootup.pack
+
+  !! Korok Extra Rewards
+     VS The Linkle Mod 3.0.1        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! Relics of the Past
+     VS Seamless Warping        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! Relics of the Past
+     VS Second Wind - Eventide Fix        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! Relics of the Past
+     VS Second Wind - Shrine Overhaul        -> 1 fichier(s) en commun
+        - Pack/Bootup.pack
+
+  !! Seamless Warping
+     VS Second Wind - Eventide Fix        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! Seamless Warping
+     VS The Linkle Mod 3.0.1        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! Second Wind (core)
+     VS Second Wind - Eventide Fix        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+  !! Second Wind (core)
+     VS Second Wind - Shrine Overhaul        -> 1 fichier(s) en commun
+        - Pack/Bootup.pack
+
+  !! Second Wind - Eventide Fix
+     VS The Linkle Mod 3.0.1        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+------------------------------------------------------------------------------
+  MEMES NOMS D'ENTREE DANS LES ZIPS
+------------------------------------------------------------------------------
+
+  !! Relics of the Past
+     VS Second Wind (core)        -> 281 fichier(s) en commun
+        - Actor/AS/Lynel_Appear.bas
+        - Actor/AS/Lynel_AttackEnd.bas
+        - Actor/AS/Lynel_AttackLoop.bas
+        - Actor/AS/Lynel_AttackStart.bas
+        - Actor/AS/Lynel_BattleTurn.bas
+        - Actor/AS/Lynel_Body_BattleTurn.bas
+        - Actor/AS/Lynel_Body_Move_Gear3.bas
+        - Actor/AS/Lynel_Body_Wait.bas
+        - Actor/AS/Lynel_Body_Wait_Curve_L.bas
+        - Actor/AS/Lynel_Body_Wait_Curve_R.bas
+        - Actor/AS/Lynel_Disappear.bas
+        - Actor/AS/Lynel_DrawBowFromWeapon.bas
+        - Actor/AS/Lynel_DrawWeapon.bas
+        - Actor/AS/Lynel_DrawWeaponFromBow.bas
+        - Actor/AS/Lynel_HoldWeapon.bas
+        - Actor/AS/Lynel_HornAttackEnd.bas
+        - Actor/AS/Lynel_HornAttackLoop.bas
+        - Actor/AS/Lynel_HornAttackStart.bas
+        - Actor/AS/Lynel_JumpAttack.bas
+        - Actor/AS/Lynel_Lost.bas
+        ... et 261 autres
+
+  !! Ancient Weaponry Mark II
+     VS Relics of the Past        -> 47 fichier(s) en commun
+        - Actor/AIProgram/EquipAncientFlame.baiprog
+        - Actor/AIProgram/EquipAncientSpark.baiprog
+        - Actor/AIProgram/Spear_Frost.baiprog
+        - Actor/ActorInfo.product.byml
+        - Actor/ActorLink/Weapon_Bow_024.bxml
+        - Actor/ActorLink/Weapon_Lsword_026.bxml
+        - Actor/ActorLink/Weapon_Shield_027.bxml
+        - Actor/ActorLink/Weapon_Spear_026.bxml
+        - Actor/ActorLink/Weapon_Sword_026.bxml
+        - Actor/Chemical/Weapon_Chemical_Fire.bchemical
+        - Actor/Chemical/Weapon_Chemical_Frost.bchemical
+        - Actor/Chemical/Weapon_Chemical_Spark.bchemical
+        - Actor/GeneralParamList/Weapon_Bow_024.bgparamlist
+        - Actor/GeneralParamList/Weapon_Lsword_026.bgparamlist
+        - Actor/GeneralParamList/Weapon_Shield_027.bgparamlist
+        - Actor/GeneralParamList/Weapon_Spear_026.bgparamlist
+        - Actor/GeneralParamList/Weapon_Sword_026.bgparamlist
+        - Actor/ModelList/Weapon_Bow_024.bmodellist
+        - Actor/ModelList/Weapon_Lsword_026.bmodellist
+        - Actor/ModelList/Weapon_Shield_027.bmodellist
+        ... et 27 autres
+
+  !! Second Wind (core)
+     VS Second Wind - Eventide Fix        -> 21 fichier(s) en commun
+        - Actor/AS/Player_FaceDefault.bas
+        - Actor/ActorLink/BluntArrow.bxml
+        - Actor/ActorLink/Item_Feather.bxml
+        - Actor/ActorLink/SealingArrow.bxml
+        - Actor/GeneralParamList/BluntArrow.bgparamlist
+        - Actor/GeneralParamList/Item_Feather.bgparamlist
+        - Actor/GeneralParamList/SealingArrow.bgparamlist
+        - Actor/ModelList/BluntArrow.bmodellist
+        - Actor/ModelList/Item_Feather.bmodellist
+        - Actor/ModelList/SealingArrow.bmodellist
+        - Actor/Pack/BluntArrow.bactorpack
+        - Actor/Pack/Item_Feather.bactorpack
+        - Actor/Pack/SealingArrow.bactorpack
+        - Actor/Physics/BluntArrow.bphysics
+        - EventFlow/Aoc3Resident.bfevfl
+        - EventFlow/Demo017_0.bfevfl
+        - Model/SecondWind_Animation.bfres
+        - Model/Weapon_Arrow_010.Tex2.bfres
+        - Model/Weapon_Arrow_010.bfres
+        - Model/Weapon_Arrow_012.Tex2.bfres
+        ... et 1 autres
+
+  !! Islands Expansion v1.2
+     VS Relics of the Past        -> 12 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+        - Layout/Common.blarc
+        - Layout/Title.blarc
+        - Message/Msg_EUen.product.sarc
+        - System/Version.txt
+        - timg/Logo2D_00^d.bflim
+        - timg/Logo_W_00^l.bflim
+        - timg/TitleBGLink_00^q.bflim
+        - timg/TitleBGMainB_01^q.bflim
+        - timg/TitleBG_00^o.bflim
+
+  !! Hyrule Warriors Weapon Collection
+     VS Second Wind - Shrine Overhaul        -> 11 fichier(s) en commun
+        - Map/CDungeon/Dungeon004/Dungeon004_Static.mubin
+        - Map/CDungeon/Dungeon021/Dungeon021_Static.mubin
+        - Map/CDungeon/Dungeon022/Dungeon022_Static.mubin
+        - Map/CDungeon/Dungeon028/Dungeon028_Static.mubin
+        - Map/CDungeon/Dungeon067/Dungeon067_Static.mubin
+        - Map/CDungeon/Dungeon068/Dungeon068_Static.mubin
+        - Map/CDungeon/Dungeon087/Dungeon087_Static.mubin
+        - Map/CDungeon/Dungeon099/Dungeon099_Static.mubin
+        - Map/CDungeon/Dungeon110/Dungeon110_Static.mubin
+        - Map/CDungeon/Dungeon112/Dungeon112_Static.mubin
+        - Map/CDungeon/Dungeon114/Dungeon114_Static.mubin
+
+  !! Islands Expansion v1.2
+     VS Second Wind (core)        -> 10 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+        - Layout/Common.blarc
+        - Layout/Title.blarc
+        - Map/MainField/E-5/E-5_Static.mubin
+        - Message/Msg_EUen.product.sarc
+        - System/Version.txt
+        - timg/Logo2D_00^d.bflim
+        - timg/Logo_W_00^l.bflim
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Relics of the Past        -> 7 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - Aoc/0010/Map/MainField/E-4/E-4_Dynamic.mubin
+        - Aoc/0010/Map/MainField/I-7/I-7_Static.mubin
+        - Aoc/0010/Pack/AocMainField.pack
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+        - Message/Msg_USen.product.sarc
+
+  !! Korok Extra Rewards
+     VS Second Wind (core)        -> 7 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - Actor/GeneralParamList/Item_Mushroom_D.bgparamlist
+        - Event/EventInfo.product.byml
+        - EventFlow/Demo017_0.bfevfl
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+        - Message/Msg_EUen.product.sarc
+
+  !! Korok Extra Rewards
+     VS Relics of the Past        -> 6 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - Event/EventInfo.product.byml
+        - EventFlow/Demo017_0.bfevfl
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+        - Message/Msg_EUen.product.sarc
+
+  !! Second Wind (core)
+     VS Second Wind - Shrine Overhaul        -> 6 fichier(s) en commun
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+        - timg/DLCLogoPack12LR_USen3^s.bflim
+        - timg/DLCLogoPack1_JPja3^s.bflim
+        - timg/DLCLogoPack1_USen3^s.bflim
+        - timg/Logo_W_00^l.bflim
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Second Wind (core)        -> 5 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - Aoc/0010/Map/MainField/E-4/E-4_Dynamic.mubin
+        - Aoc/0010/Map/MainField/I-7/I-7_Static.mubin
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+
+  !! Islands Expansion v1.2
+     VS Korok Extra Rewards        -> 4 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+        - Message/Msg_EUen.product.sarc
+
+  !! Ancient Weaponry Mark II
+     VS Champion's Leathers and Lowered Hylian Hood        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - GameData/gamedata.sarc
+        - Message/Msg_USen.product.sarc
+
+  !! Ancient Weaponry Mark II
+     VS Islands Expansion v1.2        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - GameData/gamedata.sarc
+        - Message/Msg_EUen.product.sarc
+
+  !! Ancient Weaponry Mark II
+     VS Korok Extra Rewards        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - GameData/gamedata.sarc
+        - Message/Msg_EUen.product.sarc
+
+  !! Ancient Weaponry Mark II
+     VS Second Wind (core)        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - GameData/gamedata.sarc
+        - Message/Msg_EUen.product.sarc
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Islands Expansion v1.2        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Korok Extra Rewards        -> 3 fichier(s) en commun
+        - Actor/ActorInfo.product.byml
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+
+  !! Islands Expansion v1.2
+     VS Second Wind - Shrine Overhaul        -> 3 fichier(s) en commun
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+        - timg/Logo_W_00^l.bflim
+
+  !! Relics of the Past
+     VS Second Wind - Shrine Overhaul        -> 3 fichier(s) en commun
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+        - timg/Logo_W_00^l.bflim
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Second Wind - Shrine Overhaul        -> 2 fichier(s) en commun
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+
+  !! Korok Extra Rewards
+     VS Second Wind - Shrine Overhaul        -> 2 fichier(s) en commun
+        - GameData/gamedata.sarc
+        - GameData/savedataformat.sarc
+
+  !! 10x Speed Paraglider v2
+     VS Relics of the Past        -> 1 fichier(s) en commun
+        - Actor/AIProgram/Player_Link.baiprog
+
+  !! Ancient Weaponry Mark II
+     VS Second Wind - Shrine Overhaul        -> 1 fichier(s) en commun
+        - GameData/gamedata.sarc
+
+  !! Champion's Leathers and Lowered Hylian Hood
+     VS Hyrule Warriors Weapon Collection        -> 1 fichier(s) en commun
+        - Aoc/0010/Pack/AocMainField.pack
+
+  !! Hyrule Warriors Weapon Collection
+     VS Relics of the Past        -> 1 fichier(s) en commun
+        - Aoc/0010/Pack/AocMainField.pack
+
+  !! Korok Extra Rewards
+     VS Second Wind - Eventide Fix        -> 1 fichier(s) en commun
+        - EventFlow/Demo017_0.bfevfl
+
+  !! Relics of the Past
+     VS Second Wind - Eventide Fix        -> 1 fichier(s) en commun
+        - EventFlow/Demo017_0.bfevfl
+
+  !! Seamless Warping
+     VS Second Wind (core)        -> 1 fichier(s) en commun
+        - EventFlow/Demo005_1.bfevfl
+
+  !! Second Wind (core)
+     VS The Linkle Mod 3.0.1        -> 1 fichier(s) en commun
+        - Pack/TitleBG.pack
+
+------------------------------------------------------------------------------
+  FICHIERS MODIFIES PAR 3 MODS OU PLUS
+------------------------------------------------------------------------------
+
+  Pack/TitleBG.pack
+      - 10x Speed Paraglider v2
+      - Korok Extra Rewards
+      - Relics of the Past
+      - Seamless Warping
+      - Second Wind (core)
+      - Second Wind - Eventide Fix
+      - The Linkle Mod 3.0.1
+  Pack/Bootup.pack
+      - Ancient Weaponry Mark II
+      - Champion's Leathers and Lowered Hylian Hood
+      - Islands Expansion v1.2
+      - Korok Extra Rewards
+      - Relics of the Past
+      - Second Wind (core)
+      - Second Wind - Shrine Overhaul
+  Actor/ActorInfo.product.sbyml
+      - Ancient Weaponry Mark II
+      - Champion's Leathers and Lowered Hylian Hood
+      - Islands Expansion v1.2
+      - Korok Extra Rewards
+      - Relics of the Past
+      - Second Wind (core)
+  Pack/Bootup_EUen.pack
+      - Ancient Weaponry Mark II
+      - Islands Expansion v1.2
+      - Korok Extra Rewards
+      - Relics of the Past
+      - Second Wind (core)
+  aoc/0010/Pack/AocMainField.pack
+      - Champion's Leathers and Lowered Hylian Hood
+      - Hyrule Warriors Weapon Collection
+      - Relics of the Past
+      - Second Wind (core)
+  Pack/Bootup_USen.pack
+      - Ancient Weaponry Mark II
+      - Champion's Leathers and Lowered Hylian Hood
+      - Relics of the Past
+  Actor/Pack/TwnObj_AncientOven_A_01.sbactorpack
+      - Ancient Weaponry Mark II
+      - Relics of the Past
+      - Second Wind (core)
+  aoc/0010/Map/MainField/I-7/I-7_Static.smubin
+      - Champion's Leathers and Lowered Hylian Hood
+      - Relics of the Past
+      - Second Wind (core)
+  aoc/0010/Map/MainField/E-4/E-4_Static.smubin
+      - Champion's Leathers and Lowered Hylian Hood
+      - Relics of the Past
+      - Second Wind (core)
+  aoc/0010/Map/MainField/E-4/E-4_Dynamic.smubin
+      - Champion's Leathers and Lowered Hylian Hood
+      - Relics of the Past
+      - Second Wind (core)
+  Pack/Title.pack
+      - Islands Expansion v1.2
+      - Relics of the Past
+      - Second Wind (core)
+  System/Version.txt
+      - Islands Expansion v1.2
+      - Relics of the Past
+      - Second Wind (core)
+
+------------------------------------------------------------------------------
+  CONFLITS REELS : fichiers partages qui NE se fusionnent pas
+  (le dernier mod de la liste ecrase les autres)
+------------------------------------------------------------------------------
+
+
+  Layout/Title.blarc                                        3 mod(s)
+      Islands Expansion v1.2                           3275824 o
+      Relics of the Past                               5067550 o
+      Second Wind (core)                                561324 o
+      -> ecart max 4506226 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Layout/BootUp.blarc                                       2 mod(s)
+      Relics of the Past                                 28636 o
+      Second Wind (core)                               1977884 o
+      -> ecart max 1949248 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  timg/Logo_W_00^l.bflim                                    4 mod(s)
+      Islands Expansion v1.2                            116414 o
+      Relics of the Past                                 28584 o
+      Second Wind (core)                               1977428 o
+      Second Wind - Shrine Overhaul                    1977428 o
+      -> ecart max 1948844 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Layout/Common.blarc                                       3 mod(s)
+      Islands Expansion v1.2                              9451 o
+      Relics of the Past                                388205 o
+      Second Wind (core)                               1892855 o
+      -> ecart max 1883404 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  timg/TitleBGMainB_01^q.bflim                              2 mod(s)
+      Islands Expansion v1.2                           1595433 o
+      Relics of the Past                                   280 o
+      -> ecart max 1595153 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  timg/Logo3DGameTitle_00^l.bflim                           2 mod(s)
+      Relics of the Past                                382286 o
+      Second Wind (core)                               1825093 o
+      -> ecart max 1442807 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  timg/TitleBG_00^o.bflim                                   2 mod(s)
+      Islands Expansion v1.2                           1563837 o
+      Relics of the Past                                400333 o
+      -> ecart max 1163504 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/H-3-0.hksc               2 mod(s)
+      Relics of the Past                               1544112 o
+      Second Wind (core)                               1269291 o
+      -> ecart max 274821 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/ActorInfo.product.byml                              6 mod(s)
+      Ancient Weaponry Mark II                            1733 o
+      Champion's Leathers and Lowered Hylian Hood         1549 o
+      Islands Expansion v1.2                              3871 o
+      Korok Extra Rewards                                 5096 o
+      Relics of the Past                                 11618 o
+      Second Wind (core)                                152906 o
+      -> ecart max 151357 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Quest/QuestProduct.bquestpack                             2 mod(s)
+      Relics of the Past                                 46443 o
+      Second Wind (core)                                  6879 o
+      -> ecart max 39564 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/E-4/E-4_Static.mubin               2 mod(s)
+      Relics of the Past                                 37594 o
+      Second Wind (core)                                   368 o
+      -> ecart max 37226 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/D-3/D-3_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2748 o
+      Second Wind (core)                                 32895 o
+      -> ecart max 30147 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/E-6/E-6_Static.mubin               2 mod(s)
+      Relics of the Past                                 26617 o
+      Second Wind (core)                                   320 o
+      -> ecart max 26297 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-6/F-6_Static.mubin               2 mod(s)
+      Relics of the Past                                 26568 o
+      Second Wind (core)                                   451 o
+      -> ecart max 26117 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/MainField/E-5/E-5_Static.mubin                        2 mod(s)
+      Islands Expansion v1.2                             29564 o
+      Second Wind (core)                                  3839 o
+      -> ecart max 25725 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-7/F-7_Static.mubin               2 mod(s)
+      Relics of the Past                                 21236 o
+      Second Wind (core)                                   319 o
+      -> ecart max 20917 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-6/H-6_Static.mubin               2 mod(s)
+      Relics of the Past                                 22396 o
+      Second Wind (core)                                  2468 o
+      -> ecart max 19928 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-3/H-3_Static.mubin               2 mod(s)
+      Relics of the Past                                 19001 o
+      Second Wind (core)                                   322 o
+      -> ecart max 18679 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-8/F-8_Static.mubin               2 mod(s)
+      Relics of the Past                                 18001 o
+      Second Wind (core)                                   528 o
+      -> ecart max 17473 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/E-4/E-4_Dynamic.mubin              3 mod(s)
+      Champion's Leathers and Lowered Hylian Hood          149 o
+      Relics of the Past                                 17276 o
+      Second Wind (core)                                   611 o
+      -> ecart max 17127 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/H-3-2.hksc               2 mod(s)
+      Relics of the Past                               1166102 o
+      Second Wind (core)                               1183137 o
+      -> ecart max 17035 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/D-5/D-5_Static.mubin               2 mod(s)
+      Relics of the Past                                 18301 o
+      Second Wind (core)                                  2345 o
+      -> ecart max 15956 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/D-3/D-3_Static.mubin               2 mod(s)
+      Relics of the Past                                  6621 o
+      Second Wind (core)                                 22558 o
+      -> ecart max 15937 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/F-6-2.hksc               2 mod(s)
+      Relics of the Past                               1164345 o
+      Second Wind (core)                               1179873 o
+      -> ecart max 15528 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-5/C-5_Static.mubin               2 mod(s)
+      Relics of the Past                                 15328 o
+      Second Wind (core)                                   540 o
+      -> ecart max 14788 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/F-6-0.hksc               2 mod(s)
+      Relics of the Past                                719034 o
+      Second Wind (core)                                733408 o
+      -> ecart max 14374 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Event/EventInfo.product.byml                              3 mod(s)
+      Korok Extra Rewards                                  441 o
+      Relics of the Past                                  1773 o
+      Second Wind (core)                                 13820 o
+      -> ecart max 13379 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/G-2-3.hksc               2 mod(s)
+      Relics of the Past                               2742370 o
+      Second Wind (core)                               2755669 o
+      -> ecart max 13299 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-6/I-6_Static.mubin               2 mod(s)
+      Relics of the Past                                 14214 o
+      Second Wind (core)                                  1022 o
+      -> ecart max 13192 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-5/G-5_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2995 o
+      Second Wind (core)                                 14657 o
+      -> ecart max 11662 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-4/H-4_Static.mubin               2 mod(s)
+      Relics of the Past                                 13803 o
+      Second Wind (core)                                  2284 o
+      -> ecart max 11519 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-1/I-1_Static.mubin               2 mod(s)
+      Relics of the Past                                 11687 o
+      Second Wind (core)                                   201 o
+      -> ecart max 11486 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/J-3/J-3_Static.mubin               2 mod(s)
+      Relics of the Past                                 11708 o
+      Second Wind (core)                                   451 o
+      -> ecart max 11257 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-4/B-4_Static.mubin               2 mod(s)
+      Relics of the Past                                 12466 o
+      Second Wind (core)                                  1443 o
+      -> ecart max 11023 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  timg/Logo2D_00^d.bflim                                    3 mod(s)
+      Islands Expansion v1.2                              9399 o
+      Relics of the Past                                  4185 o
+      Second Wind (core)                                 15196 o
+      -> ecart max 11011 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-3/H-3_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                 12903 o
+      Second Wind (core)                                  1996 o
+      -> ecart max 10907 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/E-8/E-8_Static.mubin               2 mod(s)
+      Relics of the Past                                 11011 o
+      Second Wind (core)                                   453 o
+      -> ecart max 10558 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-3/F-3_Static.mubin               2 mod(s)
+      Relics of the Past                                 11474 o
+      Second Wind (core)                                  1120 o
+      -> ecart max 10354 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-7/C-7_Static.mubin               2 mod(s)
+      Relics of the Past                                 10625 o
+      Second Wind (core)                                   324 o
+      -> ecart max 10301 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/D-2/D-2_Static.mubin               2 mod(s)
+      Relics of the Past                                 10404 o
+      Second Wind (core)                                   208 o
+      -> ecart max 10196 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-7/B-7_Static.mubin               2 mod(s)
+      Relics of the Past                                 10623 o
+      Second Wind (core)                                  1159 o
+      -> ecart max 9464 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-7/I-7_Static.mubin               3 mod(s)
+      Champion's Leathers and Lowered Hylian Hood          197 o
+      Relics of the Past                                  9329 o
+      Second Wind (core)                                  3209 o
+      -> ecart max 9132 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-2/G-2_Static.mubin               2 mod(s)
+      Relics of the Past                                  8995 o
+      Second Wind (core)                                   343 o
+      -> ecart max 8652 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/D-6/D-6_Static.mubin               2 mod(s)
+      Relics of the Past                                  8674 o
+      Second Wind (core)                                  1103 o
+      -> ecart max 7571 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-5/F-5_Static.mubin               2 mod(s)
+      Relics of the Past                                  8727 o
+      Second Wind (core)                                  1216 o
+      -> ecart max 7511 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/E-5/E-5_Static.mubin               2 mod(s)
+      Relics of the Past                                  8605 o
+      Second Wind (core)                                  1197 o
+      -> ecart max 7408 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-7/G-7_Static.mubin               2 mod(s)
+      Relics of the Past                                  8997 o
+      Second Wind (core)                                  1899 o
+      -> ecart max 7098 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-6/F-6_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  7063 o
+      Second Wind (core)                                   242 o
+      -> ecart max 6821 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-5/G-5_Static.mubin               2 mod(s)
+      Relics of the Past                                  3064 o
+      Second Wind (core)                                  9845 o
+      -> ecart max 6781 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-7/F-7_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  6805 o
+      Second Wind (core)                                   109 o
+      -> ecart max 6696 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-3/I-3_Static.mubin               2 mod(s)
+      Relics of the Past                                  6934 o
+      Second Wind (core)                                   626 o
+      -> ecart max 6308 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-6/B-6_Static.mubin               2 mod(s)
+      Relics of the Past                                  7283 o
+      Second Wind (core)                                  1014 o
+      -> ecart max 6269 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-8/F-8_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  6351 o
+      Second Wind (core)                                   115 o
+      -> ecart max 6236 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  EventFlow/Demo017_0.bfevfl                                4 mod(s)
+      Korok Extra Rewards                                13415 o
+      Relics of the Past                                  9132 o
+      Second Wind (core)                                 15255 o
+      Second Wind - Eventide Fix                         15223 o
+      -> ecart max 6123 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-7/B-7_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  5915 o
+      Second Wind (core)                                   194 o
+      -> ecart max 5721 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-5/H-5_Static.mubin               2 mod(s)
+      Relics of the Past                                  6741 o
+      Second Wind (core)                                  1074 o
+      -> ecart max 5667 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  EventFlow/Demo001_0.bfevfl                                2 mod(s)
+      Relics of the Past                                  5612 o
+      Second Wind (core)                                 11168 o
+      -> ecart max 5556 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/J-1/J-1_Static.mubin               2 mod(s)
+      Relics of the Past                                  5874 o
+      Second Wind (core)                                   322 o
+      -> ecart max 5552 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-5/I-5_Static.mubin               2 mod(s)
+      Relics of the Past                                  7796 o
+      Second Wind (core)                                  2274 o
+      -> ecart max 5522 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-4/G-4_Static.mubin               2 mod(s)
+      Relics of the Past                                  6316 o
+      Second Wind (core)                                   909 o
+      -> ecart max 5407 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/Static.mubin                       2 mod(s)
+      Relics of the Past                                  7200 o
+      Second Wind (core)                                  1868 o
+      -> ecart max 5332 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-3/C-3_Static.mubin               2 mod(s)
+      Relics of the Past                                  9108 o
+      Second Wind (core)                                  3865 o
+      -> ecart max 5243 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-3/G-3_Static.mubin               2 mod(s)
+      Relics of the Past                                  5356 o
+      Second Wind (core)                                   236 o
+      -> ecart max 5120 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/G-3-0.hksc               2 mod(s)
+      Relics of the Past                                970778 o
+      Second Wind (core)                                975609 o
+      -> ecart max 4831 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/D-8/D-8_Static.mubin               2 mod(s)
+      Relics of the Past                                  5643 o
+      Second Wind (core)                                  1108 o
+      -> ecart max 4535 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-6/G-6_Static.mubin               2 mod(s)
+      Relics of the Past                                  5816 o
+      Second Wind (core)                                  1334 o
+      -> ecart max 4482 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/E-7/E-7_Static.mubin               2 mod(s)
+      Relics of the Past                                  6806 o
+      Second Wind (core)                                  2359 o
+      -> ecart max 4447 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon021/Dungeon021_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    189 o
+      Second Wind - Shrine Overhaul                       4627 o
+      -> ecart max 4438 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-4/I-4_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  4706 o
+      Second Wind (core)                                   289 o
+      -> ecart max 4417 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-4/C-4_Static.mubin               2 mod(s)
+      Relics of the Past                                  5340 o
+      Second Wind (core)                                   992 o
+      -> ecart max 4348 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-5/B-5_Static.mubin               2 mod(s)
+      Relics of the Past                                  6009 o
+      Second Wind (core)                                  1662 o
+      -> ecart max 4347 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-3/I-3_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  4219 o
+      Second Wind (core)                                   142 o
+      -> ecart max 4077 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-8/G-8_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  4154 o
+      Second Wind (core)                                   115 o
+      -> ecart max 4039 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-8/G-8_Static.mubin               2 mod(s)
+      Relics of the Past                                  4648 o
+      Second Wind (core)                                   618 o
+      -> ecart max 4030 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-8/B-8_Static.mubin               2 mod(s)
+      Relics of the Past                                  4734 o
+      Second Wind (core)                                   744 o
+      -> ecart max 3990 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-8/C-8_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  4039 o
+      Second Wind (core)                                   272 o
+      -> ecart max 3767 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/G-2-0.hksc               2 mod(s)
+      Relics of the Past                                624532 o
+      Second Wind (core)                                628188 o
+      -> ecart max 3656 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/D-4/D-4_Static.mubin               2 mod(s)
+      Relics of the Past                                  6339 o
+      Second Wind (core)                                  2749 o
+      -> ecart max 3590 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/J-5/J-5_Static.mubin               2 mod(s)
+      Relics of the Past                                  4076 o
+      Second Wind (core)                                   498 o
+      -> ecart max 3578 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/H-3-1.hksc               2 mod(s)
+      Relics of the Past                               1039714 o
+      Second Wind (core)                               1043061 o
+      -> ecart max 3347 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-8/C-8_Static.mubin               2 mod(s)
+      Relics of the Past                                  5174 o
+      Second Wind (core)                                  1862 o
+      -> ecart max 3312 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-2/G-2_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  4548 o
+      Second Wind (core)                                  1544 o
+      -> ecart max 3004 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/E-5/E-5_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  3359 o
+      Second Wind (core)                                   403 o
+      -> ecart max 2956 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon004/Dungeon004_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    175 o
+      Second Wind - Shrine Overhaul                       2903 o
+      -> ecart max 2728 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-5/F-5_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2873 o
+      Second Wind (core)                                   256 o
+      -> ecart max 2617 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-4/F-4_Static.mubin               2 mod(s)
+      Relics of the Past                                  4012 o
+      Second Wind (core)                                  1459 o
+      -> ecart max 2553 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-6/C-6_Static.mubin               2 mod(s)
+      Relics of the Past                                  3625 o
+      Second Wind (core)                                  1157 o
+      -> ecart max 2468 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/D-7/D-7_Static.mubin               2 mod(s)
+      Relics of the Past                                  7926 o
+      Second Wind (core)                                 10338 o
+      -> ecart max 2412 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-3/B-3_Static.mubin               2 mod(s)
+      Relics of the Past                                  6010 o
+      Second Wind (core)                                  3623 o
+      -> ecart max 2387 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/H-3-3.hksc               2 mod(s)
+      Relics of the Past                               1105231 o
+      Second Wind (core)                               1107560 o
+      -> ecart max 2329 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/A-6/A-6_Static.mubin               2 mod(s)
+      Relics of the Past                                  2597 o
+      Second Wind (core)                                   277 o
+      -> ecart max 2320 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Ecosystem/LevelSensor.byml                                2 mod(s)
+      Relics of the Past                                  2923 o
+      Second Wind (core)                                   673 o
+      -> ecart max 2250 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/J-4/J-4_Static.mubin               2 mod(s)
+      Relics of the Past                                 10046 o
+      Second Wind (core)                                  7864 o
+      -> ecart max 2182 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-6/G-6_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2782 o
+      Second Wind (core)                                   614 o
+      -> ecart max 2168 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/G-3-2.hksc               2 mod(s)
+      Relics of the Past                               1299905 o
+      Second Wind (core)                               1301958 o
+      -> ecart max 2053 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/E-7/E-7_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2608 o
+      Second Wind (core)                                   652 o
+      -> ecart max 1956 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-1/C-1_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  1979 o
+      Second Wind (core)                                   272 o
+      -> ecart max 1707 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-1/I-1_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2476 o
+      Second Wind (core)                                   818 o
+      -> ecart max 1658 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-4/I-4_Static.mubin               2 mod(s)
+      Relics of the Past                                  2808 o
+      Second Wind (core)                                  1193 o
+      -> ecart max 1615 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-7/I-7_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2911 o
+      Second Wind (core)                                  1298 o
+      -> ecart max 1613 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-7/C-7_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  1652 o
+      Second Wind (core)                                   115 o
+      -> ecart max 1537 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/G-3/G-3_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  3119 o
+      Second Wind (core)                                  1618 o
+      -> ecart max 1501 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon067/Dungeon067_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    167 o
+      Second Wind - Shrine Overhaul                       1665 o
+      -> ecart max 1498 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon022/Dungeon022_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    168 o
+      Second Wind - Shrine Overhaul                       1665 o
+      -> ecart max 1497 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon087/Dungeon087_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    148 o
+      Second Wind - Shrine Overhaul                       1516 o
+      -> ecart max 1368 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-2/B-2_Static.mubin               2 mod(s)
+      Relics of the Past                                  3218 o
+      Second Wind (core)                                  4496 o
+      -> ecart max 1278 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/A-7/A-7_Static.mubin               2 mod(s)
+      Relics of the Past                                  5776 o
+      Second Wind (core)                                  6959 o
+      -> ecart max 1183 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon068/Dungeon068_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    173 o
+      Second Wind - Shrine Overhaul                       1337 o
+      -> ecart max 1164 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-3/B-3_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2950 o
+      Second Wind (core)                                  3943 o
+      -> ecart max 993 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-4/C-4_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  1057 o
+      Second Wind (core)                                   116 o
+      -> ecart max 941 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-2/C-2_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  1263 o
+      Second Wind (core)                                   366 o
+      -> ecart max 897 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AIProgram/Player_Link.baiprog                       2 mod(s)
+      10x Speed Paraglider v2                              222 o
+      Relics of the Past                                  1005 o
+      -> ecart max 783 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/I-2/I-2_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                   443 o
+      Second Wind (core)                                  1140 o
+      -> ecart max 697 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Ecosystem/AreaData.byml                                   2 mod(s)
+      Relics of the Past                                  1701 o
+      Second Wind (core)                                  2379 o
+      -> ecart max 678 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/D-2/D-2_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                   706 o
+      Second Wind (core)                                   114 o
+      -> ecart max 592 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-2/H-2_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2126 o
+      Second Wind (core)                                  1594 o
+      -> ecart max 532 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-7/H-7_Static.mubin               2 mod(s)
+      Relics of the Past                                  3640 o
+      Second Wind (core)                                  3181 o
+      -> ecart max 459 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon114/Dungeon114_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    151 o
+      Second Wind - Shrine Overhaul                        596 o
+      -> ecart max 445 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon110/Dungeon110_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    150 o
+      Second Wind - Shrine Overhaul                        593 o
+      -> ecart max 443 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon112/Dungeon112_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    154 o
+      Second Wind - Shrine Overhaul                        590 o
+      -> ecart max 436 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-2/C-2_Static.mubin               2 mod(s)
+      Relics of the Past                                   774 o
+      Second Wind (core)                                  1204 o
+      -> ecart max 430 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon099/Dungeon099_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    137 o
+      Second Wind - Shrine Overhaul                        524 o
+      -> ecart max 387 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Map/CDungeon/Dungeon028/Dungeon028_Static.mubin           2 mod(s)
+      Hyrule Warriors Weapon Collection                    173 o
+      Second Wind - Shrine Overhaul                        560 o
+      -> ecart max 387 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Cooking/CookData.byml                                     2 mod(s)
+      Relics of the Past                                   182 o
+      Second Wind (core)                                   562 o
+      -> ecart max 380 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-8/H-8_Static.mubin               2 mod(s)
+      Relics of the Past                                   593 o
+      Second Wind (core)                                   219 o
+      -> ecart max 374 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/B-5/B-5_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  2678 o
+      Second Wind (core)                                  2364 o
+      -> ecart max 314 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_CutSF.bas                                 2 mod(s)
+      Relics of the Past                                  1322 o
+      Second Wind (core)                                  1021 o
+      -> ecart max 301 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/C-1/C-1_Static.mubin               2 mod(s)
+      Relics of the Past                                  2072 o
+      Second Wind (core)                                  2357 o
+      -> ecart max 285 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/DropTable/Mineral_Jewel2.bdrop                      2 mod(s)
+      Relics of the Past                                    97 o
+      Second Wind (core)                                   362 o
+      -> ecart max 265 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_CutJumpSt.bas                             2 mod(s)
+      Relics of the Past                                   762 o
+      Second Wind (core)                                   535 o
+      -> ecart max 227 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_CutFall.bas                               2 mod(s)
+      Relics of the Past                                  1006 o
+      Second Wind (core)                                   784 o
+      -> ecart max 222 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_CutFallLand.bas                           2 mod(s)
+      Relics of the Past                                   932 o
+      Second Wind (core)                                   717 o
+      -> ecart max 215 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_CutS3.bas                                 2 mod(s)
+      Relics of the Past                                   715 o
+      Second Wind (core)                                   924 o
+      -> ecart max 209 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  EventFlow/Demo005_1.bfevfl                                2 mod(s)
+      Seamless Warping                                    5178 o
+      Second Wind (core)                                  5370 o
+      -> ecart max 192 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_CutJumpLand.bas                           2 mod(s)
+      Relics of the Past                                   782 o
+      Second Wind (core)                                   596 o
+      -> ecart max 186 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_WeaponThrowCharge.bas                     2 mod(s)
+      Relics of the Past                                   674 o
+      Second Wind (core)                                   850 o
+      -> ecart max 176 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-8/H-8_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                   497 o
+      Second Wind (core)                                   323 o
+      -> ecart max 174 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_CutS1.bas                                 2 mod(s)
+      Relics of the Past                                  1261 o
+      Second Wind (core)                                  1089 o
+      -> ecart max 172 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_054.bgparamlist      2 mod(s)
+      Relics of the Past                                   283 o
+      Second Wind (core)                                   117 o
+      -> ecart max 166 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Shield_033.bgparamlist      2 mod(s)
+      Relics of the Past                                   181 o
+      Second Wind (core)                                    29 o
+      -> ecart max 152 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_028.bgparamlist         2 mod(s)
+      Relics of the Past                                   195 o
+      Second Wind (core)                                    57 o
+      -> ecart max 138 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/F-6-3.hksc               2 mod(s)
+      Relics of the Past                                521409 o
+      Second Wind (core)                                521274 o
+      -> ecart max 135 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_015.bgparamlist       2 mod(s)
+      Relics of the Past                                   157 o
+      Second Wind (core)                                    29 o
+      -> ecart max 128 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-1/F-1_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                   262 o
+      Second Wind (core)                                   140 o
+      -> ecart max 122 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Model/Weapon_Lsword_026.bfres                             2 mod(s)
+      Ancient Weaponry Mark II                           50581 o
+      Relics of the Past                                 50701 o
+      -> ecart max 120 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/F-6-1.hksc               2 mod(s)
+      Relics of the Past                                641925 o
+      Second Wind (core)                                642043 o
+      -> ecart max 118 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  blyt/Title_00.bflyt                                       2 mod(s)
+      Relics of the Past                                  4515 o
+      Second Wind (core)                                  4400 o
+      -> ecart max 115 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/F-2/F-2_Static.mubin               2 mod(s)
+      Relics of the Past                                   348 o
+      Second Wind (core)                                   463 o
+      -> ecart max 115 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_015.bgparamlist       2 mod(s)
+      Relics of the Past                                   135 o
+      Second Wind (core)                                    21 o
+      -> ecart max 114 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/DamageParam/Enemy_Moriblin_Bone_Junior_Head.bdmgparam  2 mod(s)
+      Relics of the Past                                    60 o
+      Second Wind (core)                                   165 o
+      -> ecart max 105 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/DamageParam/Enemy_Lizalfos_Bone_Head.bdmgparam      2 mod(s)
+      Relics of the Past                                    60 o
+      Second Wind (core)                                   165 o
+      -> ecart max 105 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_014.bgparamlist       2 mod(s)
+      Relics of the Past                                   124 o
+      Second Wind (core)                                    29 o
+      -> ecart max 95 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_013.bgparamlist       2 mod(s)
+      Relics of the Past                                   124 o
+      Second Wind (core)                                    29 o
+      -> ecart max 95 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_014.bgparamlist       2 mod(s)
+      Relics of the Past                                   124 o
+      Second Wind (core)                                    29 o
+      -> ecart max 95 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_013.bgparamlist       2 mod(s)
+      Relics of the Past                                   124 o
+      Second Wind (core)                                    29 o
+      -> ecart max 95 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_015.bgparamlist      2 mod(s)
+      Relics of the Past                                   124 o
+      Second Wind (core)                                    29 o
+      -> ecart max 95 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_014.bgparamlist      2 mod(s)
+      Relics of the Past                                   124 o
+      Second Wind (core)                                    29 o
+      -> ecart max 95 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_013.bgparamlist      2 mod(s)
+      Relics of the Past                                   124 o
+      Second Wind (core)                                    29 o
+      -> ecart max 95 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Model/Weapon_Bow_024.bfres                                2 mod(s)
+      Ancient Weaponry Mark II                           69082 o
+      Relics of the Past                                 69173 o
+      -> ecart max 91 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Model/Weapon_Spear_026.bfres                              2 mod(s)
+      Ancient Weaponry Mark II                           43393 o
+      Relics of the Past                                 43479 o
+      -> ecart max 86 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_047.bgparamlist       2 mod(s)
+      Relics of the Past                                   112 o
+      Second Wind (core)                                    29 o
+      -> ecart max 83 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  timg/TitleBGLink_00^q.bflim                               2 mod(s)
+      Islands Expansion v1.2                               545 o
+      Relics of the Past                                   464 o
+      -> ecart max 81 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  EventFlow/Demo034_0.bfevfl                                2 mod(s)
+      Relics of the Past                                 20847 o
+      Second Wind (core)                                 20925 o
+      -> ecart max 78 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_047.bgparamlist       2 mod(s)
+      Relics of the Past                                   104 o
+      Second Wind (core)                                    29 o
+      -> ecart max 75 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_031.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                   123 o
+      -> ecart max 75 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_037.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                   123 o
+      -> ecart max 75 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_036.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                   123 o
+      -> ecart max 75 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/G-3-1.hksc               2 mod(s)
+      Relics of the Past                               1326052 o
+      Second Wind (core)                               1326125 o
+      -> ecart max 73 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/H-7/H-7_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                  3497 o
+      Second Wind (core)                                  3569 o
+      -> ecart max 72 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  EventFlow/GetDemo.bfevfl                                  2 mod(s)
+      Relics of the Past                                  7140 o
+      Second Wind (core)                                  7205 o
+      -> ecart max 65 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/ShopData/TwnObj_AncientOven_A_01.bshop              2 mod(s)
+      Ancient Weaponry Mark II                             157 o
+      Relics of the Past                                   222 o
+      -> ecart max 65 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/MainField/A-6/A-6_Dynamic.mubin              2 mod(s)
+      Relics of the Past                                   313 o
+      Second Wind (core)                                   375 o
+      -> ecart max 62 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_033.bgparamlist         2 mod(s)
+      Relics of the Past                                   123 o
+      Second Wind (core)                                    61 o
+      -> ecart max 62 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Model/Weapon_Sword_026.bfres                              2 mod(s)
+      Ancient Weaponry Mark II                           36319 o
+      Relics of the Past                                 36258 o
+      -> ecart max 61 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_WeaponEquipOn.bas                         2 mod(s)
+      Relics of the Past                                  2038 o
+      Second Wind (core)                                  1979 o
+      -> ecart max 59 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Model/Weapon_Shield_027.bfres                             2 mod(s)
+      Ancient Weaponry Mark II                           35135 o
+      Relics of the Past                                 35186 o
+      -> ecart max 51 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_047.bgparamlist      2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    29 o
+      -> ecart max 48 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_038.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    29 o
+      -> ecart max 48 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_032.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    29 o
+      -> ecart max 48 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_026.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    29 o
+      -> ecart max 48 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_009.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    29 o
+      -> ecart max 48 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_004.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    29 o
+      -> ecart max 48 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_003.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    29 o
+      -> ecart max 48 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_001.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    29 o
+      -> ecart max 48 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Pack/Armor_235_Head.bactorpack                      2 mod(s)
+      Relics of the Past                                   165 o
+      Second Wind (core)                                   118 o
+      -> ecart max 47 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_CutS2.bas                                 2 mod(s)
+      Relics of the Past                                   864 o
+      Second Wind (core)                                   909 o
+      -> ecart max 45 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/G-3-3.hksc               2 mod(s)
+      Relics of the Past                                759278 o
+      Second Wind (core)                                759318 o
+      -> ecart max 40 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_023.bgparamlist         2 mod(s)
+      Relics of the Past                                   100 o
+      Second Wind (core)                                    63 o
+      -> ecart max 37 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Aoc/0010/Map/AocField/Static.mubin                        2 mod(s)
+      Relics of the Past                                   920 o
+      Second Wind (core)                                   889 o
+      -> ecart max 31 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/ActorLink/Armor_235_Head.bxml                       2 mod(s)
+      Relics of the Past                                   215 o
+      Second Wind (core)                                   185 o
+      -> ecart max 30 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_026.bgparamlist      2 mod(s)
+      Ancient Weaponry Mark II                            1111 o
+      Relics of the Past                                  1138 o
+      -> ecart max 27 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_026.bgparamlist       2 mod(s)
+      Ancient Weaponry Mark II                            1212 o
+      Relics of the Past                                  1237 o
+      -> ecart max 25 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Item_Mushroom_D.bgparamlist        2 mod(s)
+      Korok Extra Rewards                                   54 o
+      Second Wind (core)                                    29 o
+      -> ecart max 25 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Shield_027.bgparamlist      2 mod(s)
+      Ancient Weaponry Mark II                             970 o
+      Relics of the Past                                   993 o
+      -> ecart max 23 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Effect/EffectInfo.byml                              2 mod(s)
+      Relics of the Past                                    74 o
+      Second Wind (core)                                    96 o
+      -> ecart max 22 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_040.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    57 o
+      -> ecart max 20 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_043.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_041.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_035.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_034.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_033.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_031.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_027.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_025.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_024.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_003.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_002.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_001.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_038.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_037.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_035.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_034.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_033.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_032.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_030.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_028.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_027.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_025.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_024.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_018.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_017.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_016.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_003.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_002.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_001.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_055.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_041.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_038.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_035.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_034.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_033.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_031.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_027.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_024.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_018.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_017.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_016.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_003.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_002.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_001.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    29 o
+      -> ecart max 19 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Pack/Enemy_Lizalfos_Bone_Junior_Head_AllDay.bactorpack  2 mod(s)
+      Relics of the Past                                   246 o
+      Second Wind (core)                                   264 o
+      -> ecart max 18 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_030.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    31 o
+      -> ecart max 17 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Sword_029.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    31 o
+      -> ecart max 17 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_029.bgparamlist       2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    31 o
+      -> ecart max 17 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Lsword_029.bgparamlist      2 mod(s)
+      Relics of the Past                                    48 o
+      Second Wind (core)                                    31 o
+      -> ecart max 17 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Pack/Enemy_Moriblin_Bone_Junior_Head_AllDay.bactorpack  2 mod(s)
+      Relics of the Past                                   244 o
+      Second Wind (core)                                   260 o
+      -> ecart max 16 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_035.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    61 o
+      -> ecart max 16 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_002.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    61 o
+      -> ecart max 16 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/ActorLink/Obj_ArrowBundle_A_100.bxml                2 mod(s)
+      Relics of the Past                                   195 o
+      Second Wind (core)                                   211 o
+      -> ecart max 16 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_036.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    62 o
+      -> ecart max 15 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_029.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    62 o
+      -> ecart max 15 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_017.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    62 o
+      -> ecart max 15 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_016.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    62 o
+      -> ecart max 15 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_014.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    62 o
+      -> ecart max 15 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_013.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    62 o
+      -> ecart max 15 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Obj_ArrowBundle_A_100.bgparamlist  2 mod(s)
+      Relics of the Past                                   283 o
+      Second Wind (core)                                   297 o
+      -> ecart max 14 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_015.bgparamlist         2 mod(s)
+      Relics of the Past                                    77 o
+      Second Wind (core)                                    64 o
+      -> ecart max 13 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/G-2-1.hksc               2 mod(s)
+      Relics of the Past                               2165376 o
+      Second Wind (core)                               2165364 o
+      -> ecart max 12 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/ActorLink/Weapon_Spear_026.bxml                     2 mod(s)
+      Ancient Weaponry Mark II                             288 o
+      Relics of the Past                                   297 o
+      -> ecart max 9 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Pack/Weapon_Sword_026.bactorpack                    2 mod(s)
+      Ancient Weaponry Mark II                             256 o
+      Relics of the Past                                   248 o
+      -> ecart max 8 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Pack/Weapon_Shield_033.bactorpack                   2 mod(s)
+      Relics of the Past                                    58 o
+      Second Wind (core)                                    51 o
+      -> ecart max 7 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Spear_026.bgparamlist       2 mod(s)
+      Ancient Weaponry Mark II                            1180 o
+      Relics of the Past                                  1187 o
+      -> ecart max 7 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/ActorLink/Weapon_Lsword_026.bxml                    2 mod(s)
+      Ancient Weaponry Mark II                             307 o
+      Relics of the Past                                   314 o
+      -> ecart max 7 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/ActorLink/Enemy_Lizalfos_Bone_Junior_Head_AllDay.bxml  2 mod(s)
+      Relics of the Past                                   289 o
+      Second Wind (core)                                   296 o
+      -> ecart max 7 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Awareness/TerrorFilter.bawntable                          2 mod(s)
+      Relics of the Past                                   147 o
+      Second Wind (core)                                   141 o
+      -> ecart max 6 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Weapon_Bow_024.bgparamlist         2 mod(s)
+      Ancient Weaponry Mark II                             982 o
+      Relics of the Past                                   976 o
+      -> ecart max 6 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Enemy_Moriblin_Bone_Junior_AllDay.bgparamlist  2 mod(s)
+      Relics of the Past                                   864 o
+      Second Wind (core)                                   859 o
+      -> ecart max 5 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  System/Version.txt                                        3 mod(s)
+      Islands Expansion v1.2                                40 o
+      Relics of the Past                                    44 o
+      Second Wind (core)                                    40 o
+      -> ecart max 4 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/GeneralParamList/Enemy_Lizalfos_Bone_Junior_AllDay.bgparamlist  2 mod(s)
+      Relics of the Past                                   868 o
+      Second Wind (core)                                   864 o
+      -> ecart max 4 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Pack/Obj_ArrowBundle_A_100.bactorpack               2 mod(s)
+      Relics of the Past                                   166 o
+      Second Wind (core)                                   169 o
+      -> ecart max 3 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/ActorLink/Enemy_Moriblin_Bone_Junior_Head_AllDay.bxml  2 mod(s)
+      Relics of the Past                                   304 o
+      Second Wind (core)                                   307 o
+      -> ecart max 3 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/AS/Player_CutDash.bas                               2 mod(s)
+      Relics of the Past                                   568 o
+      Second Wind (core)                                   566 o
+      -> ecart max 2 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Physics/StaticCompound/MainField/G-2-2.hksc               2 mod(s)
+      Relics of the Past                               1462281 o
+      Second Wind (core)                               1462280 o
+      -> ecart max 1 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Recipe/Weapon_Spear_026.brecipe                     2 mod(s)
+      Ancient Weaponry Mark II                              48 o
+      Relics of the Past                                    47 o
+      -> ecart max 1 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Pack/Weapon_Shield_027.bactorpack                   2 mod(s)
+      Ancient Weaponry Mark II                             246 o
+      Relics of the Past                                   245 o
+      -> ecart max 1 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Pack/Weapon_Lsword_026.bactorpack                   2 mod(s)
+      Ancient Weaponry Mark II                             239 o
+      Relics of the Past                                   238 o
+      -> ecart max 1 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  Actor/Pack/Weapon_Bow_024.bactorpack                      2 mod(s)
+      Ancient Weaponry Mark II                             263 o
+      Relics of the Past                                   264 o
+      -> ecart max 1 octets : le plus petit est purement et
+         simplement remplace par le plus gros.
+
+  timg/DLCLogoPack1_USen3^s.bflim                           2 mod(s)
+      Second Wind (core)                                 10495 o
+      Second Wind - Shrine Overhaul                      10495 o
+
+  timg/DLCLogoPack1_JPja3^s.bflim                           2 mod(s)
+      Second Wind (core)                                  8288 o
+      Second Wind - Shrine Overhaul                       8288 o
+
+  timg/DLCLogoPack12LR_USen3^s.bflim                        2 mod(s)
+      Second Wind (core)                                  5372 o
+      Second Wind - Shrine Overhaul                       5372 o
+
+  anim/Title_00_In.bflan                                    2 mod(s)
+      Relics of the Past                                   281 o
+      Second Wind (core)                                   281 o
+
+  UI/StockItem/Weapon_Sword_026.bitemico                    2 mod(s)
+      Ancient Weaponry Mark II                           21210 o
+      Relics of the Past                                 21210 o
+
+  UI/StockItem/Weapon_Spear_026.bitemico                    2 mod(s)
+      Ancient Weaponry Mark II                           15717 o
+      Relics of the Past                                 15717 o
+
+  UI/StockItem/Weapon_Shield_027.bitemico                   2 mod(s)
+      Ancient Weaponry Mark II                           37529 o
+      Relics of the Past                                 37529 o
+
+  UI/StockItem/Weapon_Lsword_026.bitemico                   2 mod(s)
+      Ancient Weaponry Mark II                           30995 o
+      Relics of the Past                                 30995 o
+
+  UI/StockItem/Weapon_Bow_024.bitemico                      2 mod(s)
+      Ancient Weaponry Mark II                           15877 o
+      Relics of the Past                                 15877 o
+
+  Model/Weapon_Arrow_012.bfres                              2 mod(s)
+      Second Wind (core)                                 19687 o
+      Second Wind - Eventide Fix                         19687 o
+
+  Model/Weapon_Arrow_012.Tex2.bfres                         2 mod(s)
+      Second Wind (core)                                 31871 o
+      Second Wind - Eventide Fix                         31871 o
+
+  Model/Weapon_Arrow_010.bfres                              2 mod(s)
+      Second Wind (core)                                 24253 o
+      Second Wind - Eventide Fix                         24253 o
+
+  Model/Weapon_Arrow_010.Tex2.bfres                         2 mod(s)
+      Second Wind (core)                                 19775 o
+      Second Wind - Eventide Fix                         19775 o
+
+  Model/SecondWind_Animation.bfres                          2 mod(s)
+      Second Wind (core)                                942414 o
+      Second Wind - Eventide Fix                        942414 o
+
+  EventFlow/Aoc3Resident.bfevfl                             2 mod(s)
+      Second Wind (core)                                  1598 o
+      Second Wind - Eventide Fix                          1598 o
+
+  Actor/Recipe/Weapon_Sword_026.brecipe                     2 mod(s)
+      Ancient Weaponry Mark II                              47 o
+      Relics of the Past                                    47 o
+
+  Actor/Recipe/Weapon_Shield_027.brecipe                    2 mod(s)
+      Ancient Weaponry Mark II                              59 o
+      Relics of the Past                                    59 o
+
+  Actor/Recipe/Weapon_Lsword_026.brecipe                    2 mod(s)
+      Ancient Weaponry Mark II                              50 o
+      Relics of the Past                                    50 o
+
+  Actor/Recipe/Weapon_Bow_024.brecipe                       2 mod(s)
+      Ancient Weaponry Mark II                              49 o
+      Relics of the Past                                    49 o
+
+  Actor/Recipe/Armor_235_Head.brecipe                       2 mod(s)
+      Relics of the Past                                    49 o
+      Second Wind (core)                                    49 o
+
+  Actor/Physics/Weapon_Shield_027.bphysics                  2 mod(s)
+      Ancient Weaponry Mark II                             863 o
+      Relics of the Past                                   863 o
+
+  Actor/Physics/BluntArrow.bphysics                         2 mod(s)
+      Second Wind (core)                                   670 o
+      Second Wind - Eventide Fix                           670 o
+
+  Actor/Pack/Weapon_Spear_026.bactorpack                    2 mod(s)
+      Ancient Weaponry Mark II                             227 o
+      Relics of the Past                                   227 o
+
+  Actor/Pack/SealingArrow.bactorpack                        2 mod(s)
+      Second Wind (core)                                   166 o
+      Second Wind - Eventide Fix                           166 o
+
+  Actor/Pack/Item_Feather.bactorpack                        2 mod(s)
+      Second Wind (core)                                   220 o
+      Second Wind - Eventide Fix                           220 o
+
+  Actor/Pack/Enemy_Moriblin_Bone_Junior_AllDay.bactorpack   2 mod(s)
+      Relics of the Past                                  1241 o
+      Second Wind (core)                                  1241 o
+
+  Actor/Pack/Enemy_Lizalfos_Bone_Junior_AllDay.bactorpack   2 mod(s)
+      Relics of the Past                                  1349 o
+      Second Wind (core)                                  1349 o
+
+  Actor/Pack/BluntArrow.bactorpack                          2 mod(s)
+      Second Wind (core)                                   163 o
+      Second Wind - Eventide Fix                           163 o
+
+  Actor/ModelList/Weapon_Sword_026.bmodellist               2 mod(s)
+      Ancient Weaponry Mark II                              50 o
+      Relics of the Past                                    50 o
+
+  Actor/ModelList/Weapon_Spear_026.bmodellist               2 mod(s)
+      Ancient Weaponry Mark II                              49 o
+      Relics of the Past                                    49 o
+
+  Actor/ModelList/Weapon_Shield_027.bmodellist              2 mod(s)
+      Ancient Weaponry Mark II                              52 o
+      Relics of the Past                                    52 o
+
+  Actor/ModelList/Weapon_Lsword_026.bmodellist              2 mod(s)
+      Ancient Weaponry Mark II                              56 o
+      Relics of the Past                                    56 o
+
+  Actor/ModelList/Weapon_Bow_024.bmodellist                 2 mod(s)
+      Ancient Weaponry Mark II                              49 o
+      Relics of the Past                                    49 o
+
+  Actor/ModelList/SealingArrow.bmodellist                   2 mod(s)
+      Second Wind (core)                                    57 o
+      Second Wind - Eventide Fix                            57 o
+
+  Actor/ModelList/Item_Feather.bmodellist                   2 mod(s)
+      Second Wind (core)                                    80 o
+      Second Wind - Eventide Fix                            80 o
+
+  Actor/ModelList/BluntArrow.bmodellist                     2 mod(s)
+      Second Wind (core)                                    57 o
+      Second Wind - Eventide Fix                            57 o
+
+  Actor/GeneralParamList/SealingArrow.bgparamlist           2 mod(s)
+      Second Wind (core)                                   337 o
+      Second Wind - Eventide Fix                           337 o
+
+  Actor/GeneralParamList/Item_Feather.bgparamlist           2 mod(s)
+      Second Wind (core)                                   205 o
+      Second Wind - Eventide Fix                           205 o
+
+  Actor/GeneralParamList/BluntArrow.bgparamlist             2 mod(s)
+      Second Wind (core)                                   509 o
+      Second Wind - Eventide Fix                           509 o
+
+  Actor/GeneralParamList/Armor_235_Head.bgparamlist         2 mod(s)
+      Relics of the Past                                   150 o
+      Second Wind (core)                                   150 o
+
+  Actor/Chemical/Weapon_Chemical_Spark.bchemical            2 mod(s)
+      Ancient Weaponry Mark II                             136 o
+      Relics of the Past                                   136 o
+
+  Actor/Chemical/Weapon_Chemical_Frost.bchemical            2 mod(s)
+      Ancient Weaponry Mark II                             136 o
+      Relics of the Past                                   136 o
+
+  Actor/Chemical/Weapon_Chemical_Fire.bchemical             2 mod(s)
+      Ancient Weaponry Mark II                             138 o
+      Relics of the Past                                   138 o
+
+  Actor/ActorLink/Weapon_Sword_026.bxml                     2 mod(s)
+      Ancient Weaponry Mark II                             303 o
+      Relics of the Past                                   303 o
+
+  Actor/ActorLink/Weapon_Shield_033.bxml                    2 mod(s)
+      Relics of the Past                                    55 o
+      Second Wind (core)                                    55 o
+
+  Actor/ActorLink/Weapon_Shield_027.bxml                    2 mod(s)
+      Ancient Weaponry Mark II                             275 o
+      Relics of the Past                                   275 o
+
+  Actor/ActorLink/Weapon_Bow_024.bxml                       2 mod(s)
+      Ancient Weaponry Mark II                             266 o
+      Relics of the Past                                   266 o
+
+  Actor/ActorLink/SealingArrow.bxml                         2 mod(s)
+      Second Wind (core)                                   188 o
+      Second Wind - Eventide Fix                           188 o
+
+  Actor/ActorLink/Item_Feather.bxml                         2 mod(s)
+      Second Wind (core)                                   259 o
+      Second Wind - Eventide Fix                           259 o
+
+  Actor/ActorLink/Enemy_Moriblin_Bone_Junior_AllDay.bxml    2 mod(s)
+      Relics of the Past                                   362 o
+      Second Wind (core)                                   362 o
+
+  Actor/ActorLink/Enemy_Lizalfos_Bone_Junior_AllDay.bxml    2 mod(s)
+      Relics of the Past                                   329 o
+      Second Wind (core)                                   329 o
+
+  Actor/ActorLink/BluntArrow.bxml                           2 mod(s)
+      Second Wind (core)                                   176 o
+      Second Wind - Eventide Fix                           176 o
+
+  Actor/AS/Player_FaceDefault.bas                           2 mod(s)
+      Second Wind (core)                                   865 o
+      Second Wind - Eventide Fix                           865 o
+
+  Actor/AS/Lynel_WaitStop.bas                               2 mod(s)
+      Relics of the Past                                   622 o
+      Second Wind (core)                                   622 o
+
+  Actor/AS/Lynel_Wait.bas                                   2 mod(s)
+      Relics of the Past                                   671 o
+      Second Wind (core)                                   671 o
+
+  Actor/AS/Lynel_Search.bas                                 2 mod(s)
+      Relics of the Past                                   285 o
+      Second Wind (core)                                   285 o
+
+  Actor/AS/Lynel_RoarStart.bas                              2 mod(s)
+      Relics of the Past                                   409 o
+      Second Wind (core)                                   409 o
+
+  Actor/AS/Lynel_RoarLoop.bas                               2 mod(s)
+      Relics of the Past                                   248 o
+      Second Wind (core)                                   248 o
+
+  Actor/AS/Lynel_RoarEnd.bas                                2 mod(s)
+      Relics of the Past                                   242 o
+      Second Wind (core)                                   242 o
+
+  Actor/AS/Lynel_PreJumpAttack.bas                          2 mod(s)
+      Relics of the Past                                   312 o
+      Second Wind (core)                                   312 o
+
+  Actor/AS/Lynel_Move_Gear3.bas                             2 mod(s)
+      Relics of the Past                                   946 o
+      Second Wind (core)                                   946 o
+
+  Actor/AS/Lynel_Miss.bas                                   2 mod(s)
+      Relics of the Past                                   591 o
+      Second Wind (core)                                   591 o
+
+  Actor/AS/Lynel_Lost.bas                                   2 mod(s)
+      Relics of the Past                                   284 o
+      Second Wind (core)                                   284 o
+
+  Actor/AS/Lynel_JumpAttack.bas                             2 mod(s)
+      Relics of the Past                                   382 o
+      Second Wind (core)                                   382 o
+
+  Actor/AS/Lynel_HornAttackStart.bas                        2 mod(s)
+      Relics of the Past                                   288 o
+      Second Wind (core)                                   288 o
+
+  Actor/AS/Lynel_HornAttackLoop.bas                         2 mod(s)
+      Relics of the Past                                   292 o
+      Second Wind (core)                                   292 o
+
+  Actor/AS/Lynel_HornAttackEnd.bas                          2 mod(s)
+      Relics of the Past                                   331 o
+      Second Wind (core)                                   331 o
+
+  Actor/AS/Lynel_HoldWeapon.bas                             2 mod(s)
+      Relics of the Past                                   274 o
+      Second Wind (core)                                   274 o
+
+  Actor/AS/Lynel_DrawWeaponFromBow.bas                      2 mod(s)
+      Relics of the Past                                   289 o
+      Second Wind (core)                                   289 o
+
+  Actor/AS/Lynel_DrawWeapon.bas                             2 mod(s)
+      Relics of the Past                                   376 o
+      Second Wind (core)                                   376 o
+
+  Actor/AS/Lynel_DrawBowFromWeapon.bas                      2 mod(s)
+      Relics of the Past                                   295 o
+      Second Wind (core)                                   295 o
+
+  Actor/AS/Lynel_Disappear.bas                              2 mod(s)
+      Relics of the Past                                   205 o
+      Second Wind (core)                                   205 o
+
+  Actor/AS/Lynel_Body_Wait_Curve_R.bas                      2 mod(s)
+      Relics of the Past                                   336 o
+      Second Wind (core)                                   336 o
+
+  Actor/AS/Lynel_Body_Wait_Curve_L.bas                      2 mod(s)
+      Relics of the Past                                   334 o
+      Second Wind (core)                                   334 o
+
+  Actor/AS/Lynel_Body_Wait.bas                              2 mod(s)
+      Relics of the Past                                   805 o
+      Second Wind (core)                                   805 o
+
+  Actor/AS/Lynel_Body_Move_Gear3.bas                        2 mod(s)
+      Relics of the Past                                   822 o
+      Second Wind (core)                                   822 o
+
+  Actor/AS/Lynel_Body_BattleTurn.bas                        2 mod(s)
+      Relics of the Past                                   475 o
+      Second Wind (core)                                   475 o
+
+  Actor/AS/Lynel_BattleTurn.bas                             2 mod(s)
+      Relics of the Past                                   414 o
+      Second Wind (core)                                   414 o
+
+  Actor/AS/Lynel_AttackStart.bas                            2 mod(s)
+      Relics of the Past                                   304 o
+      Second Wind (core)                                   304 o
+
+  Actor/AS/Lynel_AttackLoop.bas                             2 mod(s)
+      Relics of the Past                                   236 o
+      Second Wind (core)                                   236 o
+
+  Actor/AS/Lynel_AttackEnd.bas                              2 mod(s)
+      Relics of the Past                                   344 o
+      Second Wind (core)                                   344 o
+
+  Actor/AS/Lynel_Appear.bas                                 2 mod(s)
+      Relics of the Past                                   202 o
+      Second Wind (core)                                   202 o
+
+  Actor/AIProgram/Spear_Frost.baiprog                       2 mod(s)
+      Ancient Weaponry Mark II                            1289 o
+      Relics of the Past                                  1289 o
+
+  Actor/AIProgram/EquipAncientSpark.baiprog                 2 mod(s)
+      Ancient Weaponry Mark II                            1269 o
+      Relics of the Past                                  1269 o
+
+  Actor/AIProgram/EquipAncientFlame.baiprog                 2 mod(s)
+      Ancient Weaponry Mark II                            1269 o
+      Relics of the Past                                  1269 o
+

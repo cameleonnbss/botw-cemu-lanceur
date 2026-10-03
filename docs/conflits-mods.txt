@@ -1,0 +1,915 @@
+==============================================================================
+  CONFLITS REELS ENTRE MODS   (14 mods)
+  M = fusionne par UKMM (sans risque)   S = archive fusionnable
+  B = NON fusionnable : le dernier mod de la liste gagne
+==============================================================================
+
+MOD                                            declar      M      S      B
+------------------------------------------------------------------------------
+10x Speed Paraglider v2                             2      1      0      0
+Ancient Weaponry Mark II                           20      1      2     15
+Champion's Leathers and Lowered Hylian Hood        65      1      2     54
+Farore's Wind                                       3      0      0      3
+Hyrule Warriors Weapon Collection                 840      0      1    760
+Islands Expansion v1.2                             78      3      1     71
+Korok Extra Rewards                                49      2      1     44
+More Korok Seeds                                    1      0      0      1
+Relics of the Past                                687      1      4    249
+Seamless Warping                                    5      3      0      0
+Second Wind (core)                               4141     41     14   3848
+Second Wind - Eventide Fix                         22     13      3      5
+Second Wind - Shrine Overhaul                     121      0      1      0
+The Linkle Mod 3.0.1                              321      0      1    306
+
+------------------------------------------------------------------------------
+  ETAPE 1 - fichiers partages que UKMM SAIT fusionner
+  (les ajouts des mods s'additionnent : ordre sans importance)
+------------------------------------------------------------------------------
+
+  Pack/TitleBG.pack                                          7 mod(s)
+      - 10x Speed Paraglider v2
+      - Korok Extra Rewards
+      - Relics of the Past
+      - Seamless Warping
+      - Second Wind (core)
+      - Second Wind - Eventide Fix
+      - The Linkle Mod 3.0.1
+  Pack/Bootup.pack                                           7 mod(s)
+      - Ancient Weaponry Mark II
+      - Champion's Leathers and Lowered Hylian Hood
+      - Islands Expansion v1.2
+      - Korok Extra Rewards
+      - Relics of the Past
+      - Second Wind (core)
+      - Second Wind - Shrine Overhaul
+  Actor/ActorInfo.product.sbyml                              6 mod(s)
+      - Ancient Weaponry Mark II
+      - Champion's Leathers and Lowered Hylian Hood
+      - Islands Expansion v1.2
+      - Korok Extra Rewards
+      - Relics of the Past
+      - Second Wind (core)
+  Pack/Bootup_EUen.pack                                      5 mod(s)
+      - Ancient Weaponry Mark II
+      - Islands Expansion v1.2
+      - Korok Extra Rewards
+      - Relics of the Past
+      - Second Wind (core)
+  aoc/0010/Pack/AocMainField.pack                            4 mod(s)
+      - Champion's Leathers and Lowered Hylian Hood
+      - Hyrule Warriors Weapon Collection
+      - Relics of the Past
+      - Second Wind (core)
+  Pack/Bootup_USen.pack                                      3 mod(s)
+      - Ancient Weaponry Mark II
+      - Champion's Leathers and Lowered Hylian Hood
+      - Relics of the Past
+  aoc/0010/Map/MainField/E-4/E-4_Dynamic.smubin              3 mod(s)
+      - Champion's Leathers and Lowered Hylian Hood
+      - Relics of the Past
+      - Second Wind (core)
+  aoc/0010/Map/MainField/E-4/E-4_Static.smubin               3 mod(s)
+      - Champion's Leathers and Lowered Hylian Hood
+      - Relics of the Past
+      - Second Wind (core)
+  aoc/0010/Map/MainField/I-7/I-7_Static.smubin               3 mod(s)
+      - Champion's Leathers and Lowered Hylian Hood
+      - Relics of the Past
+      - Second Wind (core)
+  Pack/Title.pack                                            3 mod(s)
+      - Islands Expansion v1.2
+      - Relics of the Past
+      - Second Wind (core)
+  Pack/Dungeon004.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon021.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon022.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon028.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon067.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon068.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon087.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon099.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon110.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon112.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Pack/Dungeon114.pack                                       2 mod(s)
+      - Hyrule Warriors Weapon Collection
+      - Second Wind - Shrine Overhaul
+  Actor/Pack/Enemy_Bokoblin_Junior.sbactorpack               2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Enemy_Guardian_Mini_Junior.sbactorpack          2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Enemy_Lynel_Dark.sbactorpack                    2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Enemy_Moriblin_Bone_Junior.sbactorpack          2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Enemy_Moriblin_Junior.sbactorpack               2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Enemy_SiteBoss_Sword_Castle.sbactorpack         2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Obj_Mineral_B_01.sbactorpack                    2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Weapon_Bow_023.sbactorpack                      2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Weapon_Bow_028.sbactorpack                      2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Weapon_Bow_040.sbactorpack                      2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Weapon_Lsword_031.sbactorpack                   2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Weapon_Sword_013.sbactorpack                    2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Weapon_Sword_014.sbactorpack                    2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Actor/Pack/Weapon_Sword_015.sbactorpack                    2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Event/Demo034_0.sbeventpack                                2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  Event/Demo331_0.sbeventpack                                2 mod(s)
+      - Relics of the Past
+      - The Linkle Mod 3.0.1
+  Event/Demo378_0.sbeventpack                                2 mod(s)
+      - Relics of the Past
+      - The Linkle Mod 3.0.1
+  Event/Npc_King_Common.sbeventpack                          2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+  aoc/0010/Map/AocField/Static.smubin                        2 mod(s)
+      - Relics of the Past
+      - Second Wind (core)
+
+  ... et 72 autres fichiers fusionnables partages.
+
+------------------------------------------------------------------------------
+  ETAPE 2 - DANGER : fichiers partages que UKMM NE SAIT PAS
+  fusionner. Ici l'ordre decide : le dernier mod ecrase les autres.
+------------------------------------------------------------------------------
+
+
+  !! Actor/Pack/TwnObj_AncientOven_A_01.sbactorpack              3 mod(s)
+      Ancient Weaponry Mark II                       ?         0 o
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! System/Version.txt                                          3 mod(s)
+      Islands Expansion v1.2                         B        40 o
+      Relics of the Past                             B        44 o
+      Second Wind (core)                             B        40 o
+      -> ecart 4 octets : le plus petit est efface.
+
+  !! Actor/Pack/Weapon_Bow_024.sbactorpack                       2 mod(s)
+      Ancient Weaponry Mark II                       B       263 o
+      Relics of the Past                             B       264 o
+      -> ecart 1 octets : le plus petit est efface.
+
+  !! Actor/Pack/Weapon_Lsword_026.sbactorpack                    2 mod(s)
+      Ancient Weaponry Mark II                       B       239 o
+      Relics of the Past                             B       238 o
+      -> ecart 1 octets : le plus petit est efface.
+
+  !! Actor/Pack/Weapon_Shield_027.sbactorpack                    2 mod(s)
+      Ancient Weaponry Mark II                       B       246 o
+      Relics of the Past                             B       245 o
+      -> ecart 1 octets : le plus petit est efface.
+
+  !! Actor/Pack/Weapon_Spear_026.sbactorpack                     2 mod(s)
+      Ancient Weaponry Mark II                       B       227 o
+      Relics of the Past                             B       227 o
+
+  !! Actor/Pack/Weapon_Sword_026.sbactorpack                     2 mod(s)
+      Ancient Weaponry Mark II                       B       256 o
+      Relics of the Past                             B       248 o
+      -> ecart 8 octets : le plus petit est efface.
+
+  !! Model/Weapon_Bow_024.sbfres                                 2 mod(s)
+      Ancient Weaponry Mark II                       B     69082 o
+      Relics of the Past                             B     69173 o
+      -> ecart 91 octets : le plus petit est efface.
+
+  !! Model/Weapon_Lsword_026.sbfres                              2 mod(s)
+      Ancient Weaponry Mark II                       B     50581 o
+      Relics of the Past                             B     50701 o
+      -> ecart 120 octets : le plus petit est efface.
+
+  !! Model/Weapon_Shield_027.sbfres                              2 mod(s)
+      Ancient Weaponry Mark II                       B     35135 o
+      Relics of the Past                             B     35186 o
+      -> ecart 51 octets : le plus petit est efface.
+
+  !! Model/Weapon_Spear_026.sbfres                               2 mod(s)
+      Ancient Weaponry Mark II                       B     43393 o
+      Relics of the Past                             B     43479 o
+      -> ecart 86 octets : le plus petit est efface.
+
+  !! Model/Weapon_Sword_026.sbfres                               2 mod(s)
+      Ancient Weaponry Mark II                       B     36319 o
+      Relics of the Past                             B     36258 o
+      -> ecart 61 octets : le plus petit est efface.
+
+  !! UI/StockItem/Weapon_Bow_024.sbitemico                       2 mod(s)
+      Ancient Weaponry Mark II                       B     15877 o
+      Relics of the Past                             B     15877 o
+
+  !! UI/StockItem/Weapon_Lsword_026.sbitemico                    2 mod(s)
+      Ancient Weaponry Mark II                       B     30995 o
+      Relics of the Past                             B     30995 o
+
+  !! UI/StockItem/Weapon_Shield_027.sbitemico                    2 mod(s)
+      Ancient Weaponry Mark II                       B     37529 o
+      Relics of the Past                             B     37529 o
+
+  !! UI/StockItem/Weapon_Spear_026.sbitemico                     2 mod(s)
+      Ancient Weaponry Mark II                       B     15717 o
+      Relics of the Past                             B     15717 o
+
+  !! UI/StockItem/Weapon_Sword_026.sbitemico                     2 mod(s)
+      Ancient Weaponry Mark II                       B     21210 o
+      Relics of the Past                             B     21210 o
+
+  !! Actor/Pack/Npc_MamonoShop.sbactorpack                       2 mod(s)
+      Hyrule Warriors Weapon Collection              B       565 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Armor_100_Head.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      The Linkle Mod 3.0.1                           B       163 o
+
+  !! Actor/Pack/Armor_100_Upper.sbactorpack                      2 mod(s)
+      Relics of the Past                             ?         0 o
+      The Linkle Mod 3.0.1                           B       178 o
+
+  !! Actor/Pack/Armor_101_Head.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      The Linkle Mod 3.0.1                           B       162 o
+
+  !! Actor/Pack/Armor_101_Upper.sbactorpack                      2 mod(s)
+      Relics of the Past                             ?         0 o
+      The Linkle Mod 3.0.1                           B       177 o
+
+  !! Actor/Pack/Armor_102_Head.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      The Linkle Mod 3.0.1                           B       163 o
+
+  !! Actor/Pack/Armor_102_Upper.sbactorpack                      2 mod(s)
+      Relics of the Past                             ?         0 o
+      The Linkle Mod 3.0.1                           B       178 o
+
+  !! Actor/Pack/Armor_235_Head.sbactorpack                       2 mod(s)
+      Relics of the Past                             B       165 o
+      Second Wind (core)                             B       118 o
+      -> ecart 47 octets : le plus petit est efface.
+
+  !! Actor/Pack/Enemy_Bokoblin_Dark.sbactorpack                  2 mod(s)
+      Relics of the Past                             B        46 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Enemy_Bokoblin_Gold.sbactorpack                  2 mod(s)
+      Relics of the Past                             B        46 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Enemy_Lizalfos_Bone_Junior_AllDay.sbactorpack    2 mod(s)
+      Relics of the Past                             B      1349 o
+      Second Wind (core)                             B      1349 o
+
+  !! Actor/Pack/Enemy_Lizalfos_Bone_Junior_Head_AllDay.sbactorpack  2 mod(s)
+      Relics of the Past                             B       246 o
+      Second Wind (core)                             B       264 o
+      -> ecart 18 octets : le plus petit est efface.
+
+  !! Actor/Pack/Enemy_Lizalfos_Dark.sbactorpack                  2 mod(s)
+      Relics of the Past                             B        46 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Enemy_Lizalfos_Gold.sbactorpack                  2 mod(s)
+      Relics of the Past                             B        46 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Enemy_Lynel_Gold.sbactorpack                     2 mod(s)
+      Relics of the Past                             B        46 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Enemy_Moriblin_Bone_Junior_AllDay.sbactorpack    2 mod(s)
+      Relics of the Past                             B      1241 o
+      Second Wind (core)                             B      1241 o
+
+  !! Actor/Pack/Enemy_Moriblin_Bone_Junior_Head.sbactorpack      2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        61 o
+
+  !! Actor/Pack/Enemy_Moriblin_Bone_Junior_Head_AllDay.sbactorpack  2 mod(s)
+      Relics of the Past                             B       244 o
+      Second Wind (core)                             B       260 o
+      -> ecart 16 octets : le plus petit est efface.
+
+  !! Actor/Pack/Enemy_Moriblin_Dark.sbactorpack                  2 mod(s)
+      Relics of the Past                             B        46 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Enemy_Moriblin_Gold.sbactorpack                  2 mod(s)
+      Relics of the Past                             B        46 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Enemy_SiteBoss_Spear_Castle.sbactorpack          2 mod(s)
+      Relics of the Past                             B        61 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Kibako_Contain_01.sbactorpack                    2 mod(s)
+      Relics of the Past                             B        74 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Obj_ArrowBundle_A_100.sbactorpack                2 mod(s)
+      Relics of the Past                             B       166 o
+      Second Wind (core)                             B       169 o
+      -> ecart 3 octets : le plus petit est efface.
+
+  !! Actor/Pack/Weapon_Bow_001.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_002.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_003.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_004.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_006.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_009.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_011.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_013.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_014.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_015.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_016.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_017.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_026.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_027.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_029.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_030.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_032.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_033.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_035.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_036.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Bow_038.sbactorpack                       2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        48 o
+
+  !! Actor/Pack/Weapon_Lsword_001.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_002.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_003.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_004.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_005.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_006.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_010.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_011.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_012.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_013.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_014.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_015.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_016.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_017.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_018.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_024.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_027.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_029.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_033.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_034.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_035.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_036.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_037.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_038.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_041.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_047.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Lsword_054.sbactorpack                    2 mod(s)
+      Relics of the Past                             B        95 o
+      Second Wind (core)                             ?         0 o
+
+  !! Actor/Pack/Weapon_Lsword_055.sbactorpack                    2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        51 o
+
+  !! Actor/Pack/Weapon_Shield_033.sbactorpack                    2 mod(s)
+      Relics of the Past                             B        58 o
+      Second Wind (core)                             B        51 o
+      -> ecart 7 octets : le plus petit est efface.
+
+  !! Actor/Pack/Weapon_Spear_001.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_002.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_003.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_004.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_005.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_006.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_007.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_008.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_009.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_010.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_011.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_012.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_013.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_014.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_015.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_016.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_017.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_018.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_024.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_025.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_027.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_028.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_029.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_030.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_031.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_032.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_033.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_034.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_035.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_037.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_038.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Spear_047.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        49 o
+
+  !! Actor/Pack/Weapon_Sword_001.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_002.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_003.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_004.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_005.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_006.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_024.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_025.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_027.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_029.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_030.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_031.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_033.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_034.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_035.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_041.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_043.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Actor/Pack/Weapon_Sword_047.sbactorpack                     2 mod(s)
+      Relics of the Past                             ?         0 o
+      Second Wind (core)                             B        50 o
+
+  !! Event/Demo037_0.sbeventpack                                 2 mod(s)
+      Relics of the Past                             B        25 o
+      The Linkle Mod 3.0.1                           ?         0 o
+
+  !! Physics/StaticCompound/MainField/F-6-0.shksc                2 mod(s)
+      Relics of the Past                             B    719034 o
+      Second Wind (core)                             B    733408 o
+      -> ecart 14374 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/F-6-1.shksc                2 mod(s)
+      Relics of the Past                             B    641925 o
+      Second Wind (core)                             B    642043 o
+      -> ecart 118 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/F-6-2.shksc                2 mod(s)
+      Relics of the Past                             B   1164345 o
+      Second Wind (core)                             B   1179873 o
+      -> ecart 15528 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/F-6-3.shksc                2 mod(s)
+      Relics of the Past                             B    521409 o
+      Second Wind (core)                             B    521274 o
+      -> ecart 135 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/G-2-0.shksc                2 mod(s)
+      Relics of the Past                             B    624532 o
+      Second Wind (core)                             B    628188 o
+      -> ecart 3656 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/G-2-1.shksc                2 mod(s)
+      Relics of the Past                             B   2165376 o
+      Second Wind (core)                             B   2165364 o
+      -> ecart 12 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/G-2-2.shksc                2 mod(s)
+      Relics of the Past                             B   1462281 o
+      Second Wind (core)                             B   1462280 o
+      -> ecart 1 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/G-2-3.shksc                2 mod(s)
+      Relics of the Past                             B   2742370 o
+      Second Wind (core)                             B   2755669 o
+      -> ecart 13299 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/G-3-0.shksc                2 mod(s)
+      Relics of the Past                             B    970778 o
+      Second Wind (core)                             B    975609 o
+      -> ecart 4831 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/G-3-1.shksc                2 mod(s)
+      Relics of the Past                             B   1326052 o
+      Second Wind (core)                             B   1326125 o
+      -> ecart 73 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/G-3-2.shksc                2 mod(s)
+      Relics of the Past                             B   1299905 o
+      Second Wind (core)                             B   1301958 o
+      -> ecart 2053 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/G-3-3.shksc                2 mod(s)
+      Relics of the Past                             B    759278 o
+      Second Wind (core)                             B    759318 o
+      -> ecart 40 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/H-3-0.shksc                2 mod(s)
+      Relics of the Past                             B   1544112 o
+      Second Wind (core)                             B   1269291 o
+      -> ecart 274821 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/H-3-1.shksc                2 mod(s)
+      Relics of the Past                             B   1039714 o
+      Second Wind (core)                             B   1043061 o
+      -> ecart 3347 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/H-3-2.shksc                2 mod(s)
+      Relics of the Past                             B   1166102 o
+      Second Wind (core)                             B   1183137 o
+      -> ecart 17035 octets : le plus petit est efface.
+
+  !! Physics/StaticCompound/MainField/H-3-3.shksc                2 mod(s)
+      Relics of the Past                             B   1105231 o
+      Second Wind (core)                             B   1107560 o
+      -> ecart 2329 octets : le plus petit est efface.
+
+  !! Actor/Pack/Armor_053_Upper.sbactorpack                      2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       163 o
+
+  !! Actor/Pack/Armor_160_Upper.sbactorpack                      2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       101 o
+
+  !! Actor/Pack/Armor_171_Head.sbactorpack                       2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       125 o
+
+  !! Actor/Pack/Armor_171_Upper.sbactorpack                      2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       137 o
+
+  !! Actor/Pack/Armor_172_Head.sbactorpack                       2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       105 o
+
+  !! Actor/Pack/Armor_174_Head.sbactorpack                       2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       160 o
+
+  !! Actor/Pack/Armor_174_Upper.sbactorpack                      2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       116 o
+
+  !! Actor/Pack/Armor_177_Head.sbactorpack                       2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       121 o
+
+  !! Actor/Pack/Armor_177_Head_B.sbactorpack                     2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       124 o
+
+  !! Actor/Pack/Armor_179_Head.sbactorpack                       2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       105 o
+
+  !! Actor/Pack/Armor_180_Head.sbactorpack                       2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       146 o
+
+  !! Actor/Pack/Armor_180_Upper.sbactorpack                      2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       141 o
+
+  !! Actor/Pack/Armor_185_Head.sbactorpack                       2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       105 o
+
+  !! Actor/Pack/Armor_185_Upper.sbactorpack                      2 mod(s)
+      Second Wind (core)                             ?         0 o
+      The Linkle Mod 3.0.1                           B       101 o
+
+  !! Event/Demo007_2.sbeventpack                                 2 mod(s)
+      Second Wind (core)                             B        46 o
+      The Linkle Mod 3.0.1                           ?         0 o
+
+------------------------------------------------------------------------------
+  COUPES DANGEREUSES (fichiers non fusionnables en commun)
+------------------------------------------------------------------------------
+
+  Relics of the Past                           VS Second Wind (core)                           : 134
+  Ancient Weaponry Mark II                     VS Relics of the Past                           : 16
+  Second Wind (core)                           VS The Linkle Mod 3.0.1                         : 15
+  Relics of the Past                           VS The Linkle Mod 3.0.1                         : 7
+  Hyrule Warriors Weapon Collection            VS Second Wind (core)                           : 1
+  Islands Expansion v1.2                       VS Second Wind (core)                           : 1
+  Ancient Weaponry Mark II                     VS Second Wind (core)                           : 1
+  Islands Expansion v1.2                       VS Relics of the Past                           : 1
+

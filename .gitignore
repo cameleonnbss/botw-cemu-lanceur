@@ -1,0 +1,44 @@
+# --- Fichiers de jeu : JAMAIS dans un depot -------------------------------
+*.zip
+*.zip.tmp
+*.rpx
+*.wad
+*.elf
+*.npdm
+*.rvpz
+!docs/*.zip.example
+Mods/
+extracted/
+sw/
+mods/
+game-dump/
+*.bsp
+*.bfres
+*.sbyml
+
+# --- Donnees personnelles du joueur ----------------------------------------
+Sauvegardes/
+parties.json
+*.bak
+settings.xml
+settings.yml
+log.txt
+
+# --- Rapports generes : regeneres par construire-projet.py ----------------
+matrice-rapport.json
+conflits.json
+analyse-mods.json
+manifests-avant-reparation/
+
+# --- Python ----------------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# --- Windows / PowerShell ---------------------------------------------------
+Thumbs.db
+desktop.ini
+*.lnk
+$RECYCLE.BIN/
+System Volume Information/
