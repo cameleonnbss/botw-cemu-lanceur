@@ -301,6 +301,16 @@ def _pack_officiel(nom):
     return "downloadedGraphicPacks/BreathOfTheWild/%s/rules.txt" % relatif
 
 
+# L'entree DrawDistance telle que le settings.xml de la fixture l'ecrit :
+# imbriquee, avec son <Preset>. La retirer demande le texte exact.
+DRAW = ('<Entry filename="graphicPacks/downloadedGraphicPacks/BreathOfTheWild'
+        '/Mods/DrawDistance/rules.txt">\n'
+        '            <Preset>\n'
+        '                <category>Extremes</category>\n'
+        '            </Preset>\n'
+        '        </Entry>\n')
+
+
 class TestGraphismes(object):
     """`botw fix` retire les packs graphiques pour debloquer le chargement. Il
     faut pouvoir les remettre, sinon le correctif est irreversible."""
@@ -354,20 +364,18 @@ class TestGraphismes(object):
         """Le settings.xml de la fixture a DrawDistance actif : on le coupe
         d'abord, sinon on testerait l'etat de depart et non la commande."""
         _pack_mod("DrawDistance")
-        ecrire(config.cemu_settings(),
-               SETTINGS_ICU.replace(
-                   '<Entry filename="graphicPacks/downloadedGraphicPacks'
-                   '/BreathOfTheWild/Mods/DrawDistance/rules.txt">\n'
-                   '            <Preset>\n'
-                   '                <category>Extremes</category>\n'
-                   '            </Preset>\n'
-                   '        </Entry>\n', ""))
+        ecrire(config.cemu_settings(), SETTINGS_ICU.replace(DRAW, ""))
         assert not any("DrawDistance" in c for c in cemu.active_packs())
         cemu.activer_graphismes()
         assert not any("DrawDistance" in c for c in cemu.active_packs())
 
     def test_cosmetiques_sur_demande(self, packs_avec_officiels):
+        """Le settings.xml de la fixture a deja DrawDistance actif : on le
+        coupe d'abord, sinon la commande n'a rien a ajouter et le test
+        verrait autre chose."""
         _pack_mod("DrawDistance")
+        ecrire(config.cemu_settings(), SETTINGS_ICU.replace(DRAW, ""))
+        assert not any("DrawDistance" in c for c in cemu.active_packs())
         ok, _msg, ajoutes = cemu.activer_graphismes(cosmetiques=True)
         assert ok
         assert "DrawDistance" in ajoutes
@@ -467,6 +475,45 @@ class _Gfx(object):
     def __init__(self, mods=False, off=False):
         self.mods = mods
         self.off = off
+
+
+class TestDeduplicationPacks(object):
+    """Le meme pack ecrit deux fois quand Cemu met le prefixe
+    "graphicPacks/" et que notre code ne le met pas. Sans normalisation, il
+    etait active deux fois - et Cemu le chargeait deux fois."""
+
+    def test_prefixe_ignore(self, fausse_machine):
+        assert cemu.cle("graphicPacks/a/b/rules.txt") == cemu.cle("a/b/rules.txt")
+
+    def test_casse_ignoree(self, fausse_machine):
+        assert cemu.cle("GRAPHICpacks/A/B/rules.txt") == cemu.cle("a/b/rules.txt")
+
+    def test_separateurs_ignores(self, fausse_machine):
+        assert cemu.cle("a\\b\\rules.txt") == cemu.cle("a/b/rules.txt")
+
+    def test_barre_obliche_debut_ignoree(self, fausse_machine):
+        assert cemu.cle("/a/b/rules.txt") == cemu.cle("a/b/rules.txt")
+
+    def test_packs_differents_restent_differents(self, fausse_machine):
+        assert cemu.cle("a/rules.txt") != cemu.cle("b/rules.txt")
+
+    def test_aucun_doublon_apres_reactivation(self, packs_deployees):
+        """Le scenario reel : settings.xml contient une entree avec le prefixe,
+        notre code en ajoute une sans. Le pack ne doit pas finir en double."""
+        _pack_officiel("Graphics")
+        ecrire(config.cemu_settings(), SETTINGS_ICU.replace(
+            '<Entry filename="graphicPacks/BreathOfTheWild_UKMM/rules.txt"/>',
+            '<Entry filename="graphicPacks/BreathOfTheWild_UKMM/rules.txt"/>\n'
+            '        <Entry filename="graphicPacks/downloadedGraphicPacks'
+            '/BreathOfTheWild/Graphics/rules.txt"/>'))
+        cemu.activer_graphismes()
+        cles = [cemu.cle(c) for c in cemu.active_packs()]
+        assert len(cles) == len(set(cles)), "doublon : %s" % cles
+
+    def test_ukmm_present_une_seule_fois(self, packs_deployees):
+        cemu.activer_graphismes()
+        ukmm = [c for c in cemu.active_packs() if "UKMM" in c]
+        assert len(ukmm) == 1
 
 
 class TestProfilDeLaSauvegarde(object):

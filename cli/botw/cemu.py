@@ -218,6 +218,22 @@ def _sur_le_disque(relatif):
                                        relatif))
 
 
+PREFIXE = "graphicPacks/"
+
+
+def cle(chemin):
+    """L'identite d'un pack, independante de la maniere dont il est ecrit.
+
+    Cemu ecrit "graphicPacks/a/b/rules.txt", notre code "a/b/rules.txt" :
+    meme pack, deux chaines. Sans normalisation, le meme pack peut etre
+    active deux fois - et il l'etait.
+    """
+    c = chemin.replace("\\", "/").lstrip("/")
+    if c.lower().startswith(PREFIXE.lower()):
+        c = c[len(PREFIXE):]
+    return c.lower()
+
+
 def racine_workarounds():
     """Le dossier des correctifs de compatibilite de Cemu.
 
@@ -283,7 +299,7 @@ def activer_graphismes(cosmetiques=False, cfg=None):
         if c not in ordre:
             ordre.append(c)
 
-    presents = set(avant)
+    presents = set(cle(c) for c in avant)
     ajoutes = []
     candidats = list(disponibles())
     for nom in (COSMETIQUES if cosmetiques else []):
@@ -292,12 +308,19 @@ def activer_graphismes(cosmetiques=False, cfg=None):
         if _sur_le_disque(relatif):
             candidats.append((relatif, nom, ""))
 
-    for relatif, nom, _cle in candidats:
-        if relatif in presents:
+    for relatif, nom, _texte in candidats:
+        if cle(relatif) in presents:
             continue
+        presents.add(cle(relatif))
         if relatif not in ordre:
             ordre.append(relatif)
             ajoutes.append(nom)
+
+    # Deduplication finale : la liste peut contenir deja deux ecritures du
+    # meme pack, introduites avant cette correction. On garde la premiere,
+    # qui est celle de Cemu.
+    vus = set()
+    ordre = [c for c in ordre if not (cle(c) in vus or vus.add(cle(c)))]
 
     ok, msg = ecrire_packs(ordre, cfg)
     # Si l'ecriture a echoue, rien n'a ete ajoute : renvoyer la liste quand
