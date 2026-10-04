@@ -472,9 +472,129 @@ class TestWorkarounds(object):
 
 
 class _Gfx(object):
-    def __init__(self, mods=False, off=False):
+    def __init__(self, mods=False, off=False, restore=None):
         self.mods = mods
         self.off = off
+        self.restore = restore
+
+
+class TestPresetsPreserves(object):
+    """Chaque entree de Cemu peut porter un <Preset> : c'est la que sont
+    ranges la resolution, le nombre d'images par seconde, la distance
+    d'affichage et les couleurs. Reecrire une entree nue les remet a zero -
+    c'est ce qui est arrive, et qui a rendu l'image 1280x720 au lieu de
+    1440p."""
+
+    AVEC_PRESET = (
+        '<Entry filename="graphicPacks/downloadedGraphicPacks/BreathOfTheWild'
+        '/Graphics/rules.txt">\n'
+        '            <Preset>\n'
+        '                <category>Resolution</category>\n'
+        '            </Preset>\n'
+        '        </Entry>\n')
+
+    def _settings_avec_preset(self):
+        ecrire(config.cemu_settings(), SETTINGS_ICU.replace(
+            '        <Entry filename="graphicPacks/downloadedGraphicPacks'
+            '/BreathOfTheWild/Mods/DrawDistance/rules.txt">',
+            '        <Entry filename="graphicPacks/downloadedGraphicPacks'
+            '/BreathOfTheWild/Graphics/rules.txt">\n'
+            '            <Preset>\n'
+            '                <category>Resolution</category>\n'
+            '            </Preset>\n'
+            '        </Entry>\n'
+            '        <Entry filename="graphicPacks/downloadedGraphicPacks'
+            '/BreathOfTheWild/Mods/DrawDistance/rules.txt">'))
+
+    def test_preset_survit_a_la_reecriture(self, packs_deployees):
+        self._settings_avec_preset()
+        cemu.activer_graphismes()
+        t = io.open(config.cemu_settings(), encoding="utf-8").read()
+        assert "Resolution" in t, "le preset a disparu"
+
+    def test_nouvelle_entree_reste_nue(self, packs_deployees):
+        """Un pack qui arrive pour la premiere fois n'a pas de preset : c'est
+        normal, et ce n'est pas une perte."""
+        ecrire(config.cemu_settings(), SETTINGS_ICU)
+        _pack_officiel("Enhancements")      # il n'est pas encore actif
+        assert not any("Enhancements" in c for c in cemu.active_packs())
+        cemu.activer_graphismes()
+        blocs = dict((cemu.cle(c), b) for c, b in cemu._entrees_brutes())
+        nouveau = blocs[cemu.cle(
+            "downloadedGraphicPacks/BreathOfTheWild/Enhancements/rules.txt")]
+        assert "/>" in nouveau
+
+
+class TestRestauration(object):
+    def test_commande_restore(self, packs):
+        from botw import cli
+        d = os.path.join(os.environ["LOCALAPPDATA"], "sauvegardes")
+        os.makedirs(d, exist_ok=True)
+        p = os.path.join(d, "vieux.xml")
+        ecrire(p, TestRestauration.ANCIEN)
+        assert cli.cmd_graphics(_Gfx(mods=False, off=False, restore=p),
+                                config.load()) == 0
+        assert "Resolution" in io.open(config.cemu_settings(),
+                                       encoding="utf-8").read()
+
+    def test_commande_restore_fichier_absent(self, packs):
+        from botw import cli
+        assert cli.cmd_graphics(_Gfx(mods=False, off=False, restore="nope.xml"),
+                                config.load()) == 1
+
+    def _sauvegarde(self, contenu):
+        d = os.path.join(os.environ["LOCALAPPDATA"], "sauvegardes")
+        os.makedirs(d, exist_ok=True)
+        p = os.path.join(d, "ancien-settings.xml")
+        io.open(p, "w", encoding="utf-8", newline="").write(contenu)
+        return p
+
+    ANCIEN = SETTINGS_ICU.replace(
+        '        <Entry filename="graphicPacks/downloadedGraphicPacks'
+        '/BreathOfTheWild/Mods/DrawDistance/rules.txt">',
+        '        <Entry filename="graphicPacks/downloadedGraphicPacks'
+        '/BreathOfTheWild/Graphics/rules.txt">\n'
+        '            <Preset>\n'
+        '                <category>Resolution</category>\n'
+        '            </Preset>\n'
+        '        </Entry>\n'
+        '        <Entry filename="graphicPacks/downloadedGraphicPacks'
+        '/BreathOfTheWild/Mods/DrawDistance/rules.txt">')
+
+    def test_restaure_les_presets(self, packs):
+        p = self._sauvegarde(self.ANCIEN)
+        ok, msg, noms = cemu.restaurer_depuis(p)
+        assert ok, msg
+        assert "Graphics" in noms
+        t = io.open(config.cemu_settings(), encoding="utf-8").read()
+        assert "Resolution" in t
+
+    def test_ne_restaure_jamais_un_pack_bloquant(self, packs):
+        """Un pack qui bloquait le chargement ne doit pas revenir, meme
+        s'il etait present dans la sauvegarde."""
+        p = self._sauvegarde(self.ANCIEN)
+        ok, _msg, _noms = cemu.restaurer_depuis(p)
+        assert ok
+        dangereux, _o, _a = cemu.classer()
+        assert dangereux == []
+
+    def test_fichier_absent(self, packs):
+        ok, msg, noms = cemu.restaurer_depuis("inexistant.xml")
+        assert not ok
+        assert noms == []
+
+    def test_refuse_si_cemu_ouvert(self, packs, monkeypatch):
+        p = self._sauvegarde(self.ANCIEN)
+        monkeypatch.setattr("botw.deploy.processes_named",
+                            lambda n: [1] if n == "Cemu" else [])
+        ok, msg, noms = cemu.restaurer_depuis(p)
+        assert not ok
+        assert "Cemu" in msg
+
+    def test_l_ukmm_reste_en_tete(self, packs):
+        p = self._sauvegarde(self.ANCIEN)
+        cemu.restaurer_depuis(p)
+        assert "UKMM" in cemu.active_packs()[0]
 
 
 class TestDeduplicationPacks(object):

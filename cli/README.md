@@ -13,7 +13,8 @@ botw check           :: will the game start? nothing is changed
 botw fix             :: repair the endless loading
 botw build           :: build a profile by answering questions
 botw art             :: the Triforce and Linkle, as text
-botw graphics         :: resolution + colour correction back on
+botw graphics --restore <fichier> :: take the pack settings back from an
+                                     older settings.xml
 botw doctor          :: full health check
 botw deploy sur      :: switch the game to the "sans echec" profile
 botw catalog         :: the mod combinations proven to work
@@ -410,3 +411,15 @@ Two guarantees, both covered by tests:
 The third-party packs stay off by default: `DrawDistance`, `FPS++` and
 `DivineLaserBeam` change the look far more than the official ones, and mods
 that touch the same files are the usual suspects for new problems.
+If a rewrite ever flattens them, your own settings are still in the backups
+Cemu-era tools leave next to `settings.xml`:
+
+```bat
+botw graphics --restore "%APPDATA%\Cemu\settings.xml.avant-fix-botw"
+```
+
+The file you pass must be an older `settings.xml`; the command copies its
+pack entries **with their presets**, so resolution, frame-rate limit, draw
+distance and colour presets come back as they were. Packs that break the
+loading are never restored, whatever the file contains. A copy of the current
+file is written next to it first, with `.avant-restauration`.

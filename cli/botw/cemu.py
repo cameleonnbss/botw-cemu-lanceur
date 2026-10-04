@@ -196,7 +196,24 @@ def ecrire_packs(chemins, cfg=None):
             shutil.copy2(chemin_fichier, sauvegarde)
         except OSError:
             pass
-    corps = "\n".join('        <Entry filename="%s"/>' % c for c in chemins)
+    # On reapplique le bloc XML d'origine de chaque pack qui reste actif :
+    # c'est lui qui porte les <Preset>, donc les reglages de l'utilisateur
+    # (resolution, images par seconde, distance, couleurs). Ecrire une entree
+    # nue les remettrait a zero - c'est ce qui est arrive une fois.
+    # Attention au nom des variables : `chemin_fichier` designe settings.xml
+    # et sert a l'ecriture finale plus bas.
+    connus = {}
+    for chemin_pack, bloc_xml in _entrees_brutes():
+        connus[cle(chemin_pack)] = bloc_xml
+    morceaux = []
+    vus = set()
+    for c in chemins:
+        k = cle(c)
+        if k in vus:
+            continue
+        vus.add(k)
+        morceaux.append(connus.get(k) or '<Entry filename="%s"/>' % c)
+    corps = "\n".join("        " + m for m in morceaux)
     nouveau = "<%s>\n%s\n    </%s>" % (BALISE, corps, BALISE)
     # On garde l'indentation d'origine du fichier : Cemu relit ce XML tel quel.
     t2 = re.sub(r"<%s>.*?</%s>" % (BALISE, BALISE), nouveau, t, count=1, flags=re.S)
@@ -272,6 +289,68 @@ def disponibles():
     return ([(relatif, nom, cle)
              for relatif, nom, cle in OFFICIELS if _sur_le_disque(relatif)]
             + workarounds())
+
+
+def restaurer_depuis(fichier, cfg=None):
+    """Reprend les entrees - et leurs <Preset> - d'un ancien settings.xml.
+
+    Le remede quand une reecriture a aplati les reglages : on relit une
+    sauvegarde, on garde tout ce qui n'est pas bloquant, et on ecrit les
+    blocs d'origine, presets compris. Les packs qui bloquent le chargement ne
+    reviennent jamais, meme s'ils etaient dans la sauvegarde.
+
+    Retourne (ok, message, [noms restaures]).
+    """
+    if not os.path.isfile(fichier):
+        return False, _("cemu.nosettings", p=fichier), []
+    try:
+        with io.open(fichier, encoding="utf-8", errors="replace") as f:
+            ancien = f.read()
+    except OSError as e:
+        return False, str(e), []
+
+    m = re.search(r"<%s>(.*?)</%s>" % (BALISE, BALISE), ancien, re.S)
+    if not m:
+        return False, _("cemu.nopacktag", p=fichier), []
+
+    ordre, blocs, noms, vus = [], {}, [], set()
+    for mm in ENTREE.finditer(m.group(0)):
+        chemin, bloc = mm.group(1), mm.group(0)
+        k = cle(chemin)
+        if k in vus or _bloque_chargement(chemin):
+            continue
+        vus.add(k)
+        ordre.append(chemin)
+        blocs[k] = bloc
+        noms.append(nom_lisible(chemin))
+    if not ordre:
+        return False, _("cemu.nopacks"), []
+
+    chemin_fichier = config.cemu_settings()
+    if deploy_ouvert(cfg):
+        return False, _("cemu.open"), []
+    try:
+        with io.open(chemin_fichier, encoding="utf-8", errors="replace") as f:
+            t = f.read()
+    except OSError:
+        return False, _("cemu.nosettings", p=chemin_fichier), []
+    if not re.search(r"<%s>" % BALISE, t):
+        return False, _("cemu.nopacktag", p=chemin_fichier), []
+
+    try:
+        shutil.copy2(chemin_fichier, chemin_fichier + ".avant-restauration")
+    except OSError:
+        pass
+    corps = "\n".join("        " + blocs[cle(c)] for c in ordre)
+    nouveau = "<%s>\n%s\n    </%s>" % (BALISE, corps, BALISE)
+    t2 = re.sub(r"<%s>.*?</%s>" % (BALISE, BALISE), nouveau, t,
+                count=1, flags=re.S)
+    try:
+        with io.open(chemin_fichier, "w", encoding="utf-8", newline="") as f:
+            f.write(t2)
+    except OSError as e:
+        return False, str(e), []
+    return True, _("cemu.written", n=len(ordre)), noms
 
 
 def activer_graphismes(cosmetiques=False, cfg=None):

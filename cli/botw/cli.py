@@ -307,6 +307,20 @@ def cmd_graphics(args, cfg):
     from . import cemu
     i18n.title(_("graphics.title"))
 
+    # La restauration passe en premier : relire une sauvegarde n'a pas besoin
+    # que les packs officiels soient installes, et c'est justement le moment
+    # ou on ne veut pas d'un garde-fou qui empeche de réparer.
+    if args.restore:
+        ok, msg, noms = cemu.restaurer_depuis(args.restore, cfg=cfg)
+        (i18n.ok if ok else i18n.ko)(msg)
+        if not ok:
+            return 1
+        i18n.ok(_("graphics.restored", n=len(noms)))
+        dangereux, _o, _a = cemu.classer()
+        for _chemin, nom in dangereux:
+            i18n.ko(_("cemu.blocker", n=nom, why=cemu.raison(_chemin)))
+        return 1 if dangereux else 0
+
     packs = cemu.disponibles()
     if not packs:
         i18n.ko(_("graphics.none"))
@@ -587,6 +601,8 @@ def build_parser():
                     help=_("cli.help.graphicsmods"))
     gr.add_argument("--off", action="store_true",
                     help=_("cli.help.graphicsoff"))
+    gr.add_argument("--restore", metavar="FILE", default=None,
+                    help=_("cli.help.graphicsrestore"))
 
     fx = s.add_parser("fix", help=_("cli.help.fix"))
     fx.add_argument("action", nargs="?", default="run",

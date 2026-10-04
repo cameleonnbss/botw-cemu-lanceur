@@ -13,7 +13,8 @@ botw check           :: le jeu va-t-il demarrer ? ne change rien
 botw fix             :: repare le chargement infini
 botw build           :: construit un profil en repondant a des questions
 botw art             :: la Triforce et Linkle, en texte
-botw graphics         :: resolution + correction des couleurs
+botw graphics --restore <fichier> :: reprend les reglages des packs depuis
+                                     un ancien settings.xml
 botw doctor          :: bilan de santé complet
 botw deploy sur      :: passe le jeu sur le profil « sans échec »
 botw catalog         :: les combinaisons de mods prouvées
@@ -409,3 +410,16 @@ Deux garanties, couvertes par les tests :
 
 Les packs tiers restent coupes par defaut : `DrawDistance`, `FPS++` et
 `DivineLaserBeam` changent l'image bien plus que les packs officiels.
+Si une réécriture les remettait un jour à zéro, tes réglages sont encore dans
+les sauvegardes que les outils laissent à côté de `settings.xml` :
+
+```bat
+botw graphics --restore "%APPDATA%\Cemu\settings.xml.avant-fix-botw"
+```
+
+Le fichier passé en argument est un ancien `settings.xml` : la commande
+recopie ses entrées de packs **avec leurs préréglages**, donc la résolution,
+la limite d'images, la distance d'affichage et les couleurs reviennent
+exactement. Les packs qui bloquent le chargement ne sont jamais restaurés,
+ quoi que contienne le fichier. Une copie de l'état courant est écrite à côté
+avant, avec le suffixe `.avant-restauration`.

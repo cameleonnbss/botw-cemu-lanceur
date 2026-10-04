@@ -306,7 +306,8 @@ def run(cfg):
                               no_deploy=False, yes=False), cfg)
         elif quoi == "graphics":
             from . import cli
-            cli.cmd_graphics(_Fake(mods=False, off=False), cfg)
+            cli.cmd_graphics(_Fake(mods=False, off=False, restore=None),
+                             cfg)
         elif quoi == "build":
             from . import cli
             cli.cmd_build(_Fake(name=None, yes=False, no_deploy=False), cfg)
