@@ -1,282 +1,399 @@
-# 🎮 Lanceur Zelda BOTW pour Cemu
+# BOTW on Cemu — launcher, mod profiles, saves
 
-Un lanceur Windows qui installe, combine, active et vérifie des mods pour
-**The Legend of Zelda: Breath of the Wild** sur **[Cemu](https://cemuulator.net/)**,
-sans passer par BCML ni par des dossiers à recopier à la main.
+[![Français](README.fr.md) ![English](README.md)
 
-> 🌐 English summary — A Windows launcher that deploys and verifies
-> Breath of the Wild mods on Cemu, using [UKMM](https://github.com/NiceneNerd/UKMM).
-> It includes a save manager, a mod picker, a graphics toggle, a self-diagnostic
-> and an automated combination test bench. French documentation.
+```
+                                 .:.
+                               __   ___    __    ___    __    ___
+                              / /  / __ \  / /__  / __ \  / /  / __ \
+                             / /  / /_/ /  / / _ \/ / / / / /  / /_/ /
+                            / /__/ /  __/  / /_/ / /_/ / / /__/ /  __/
+                            \____/_/   \_\/ ____/ \___/ \___/_____/  \_\
 
----
+                       _   _         __     ___                 __
+                      | | | |       / /    / __ \   __  __ ___  / /
+                      | |_| |      / /    / / / /  / / / //_/  / /
+                      |  _  |     / /___ / /_/ /  / /_/ / ,<   / /
+                      |_| |_|    /_____/\____/  /_/\__,_/_/|_| /_/
 
-## Le problème que ce lanceur résout
-
-Cemu ne sait pas charger les mods de BOTW tout seul : il faut un gestionnaire
-de mods ([UKMM](https://github.com/NiceneNerd/UKMM)), et UKMM n'explique nulle
-part ce qui se passe quand deux mods touchent le même fichier. Résultat
-habituel : le jeu démarre, puis **bloque indéfiniment sur l'écran de
-chargement**, sans le moindre message.
-
-Ce dépôt contient :
-
-* un **lanceur** qui installe et active un profil de mods en une touche,
-* un **banc d'essai** qui rejoue réellement chaque combinaison de mods
-  (fusion UKMM + déploiement vers Cemu + vérification fichier par fichier),
-* une **analyse de conflits** lue dans le code source d'UKMM, qui dit quels
-  mods s'écrasent mutuellement et lequel doit passer en dernier,
-* des **outils de réparation** pour les mods livrés avec un manifeste cassé.
-
----
-
-## Ce que fait le lanceur
-
-| Touche | Action |
-|---|---|
-| `1` | Second Wind + tes mods (profil `combo`) |
-| `2` | Tes mods seuls (profil `flo`) |
-| `3` | Second Wind seul (profil `secondwind`) |
-| `4` | **BOOST** — armes, téléportation, vol rapide (profil `boost`, le plus léger) |
-| `5` | **SANS ÉCHEC** — profil `sur` : Second Wind + tout le reste de vérifié |
-| `6` | **Choisis tes mods** — tu coches ce que tu veux |
-| `7` | Charger une partie — tes sauvegardes, avec nom et description |
-| `8` | Jeu à deux — deux manettes |
-| `9` | Panneau des profils — créer / dupliquer / supprimer |
-| `a` | Graphismes — mode *Léger* ou *Complet* |
-| `b` | **Vérifier et réparer** — dit exactement ce qui ne va pas |
-| `c` | **Tester les profils** — rejoue chaque profil et le vérifie |
-| `d` | Ouvrir UKMM |
-| `e` | Ouvrir Cemu |
-| `0` | Quitter |
-
-### Gestion des sauvegardes
-
-Les parties sont chiffrées par le jeu : impossible d'en lire le nom ou la date.
-Le lanceur les **renomme donc à la main** : chaque sauvegarde a un nom et une
-description que tu écris, conservés dans `Sauvegardes/parties.json`. La table
-liste tes parties, marque celle en cours (`<-- en cours`), et sait restaurer,
-renommer ou supprimer. Chaque restauration est suivie d'une **vérification MD5**
-— si la sauvegarde n'est pas rendue à l'identique, le script le dit.
-
-**Et surtout : chaque partie retient le profil UKMM qui était actif quand tu
-l'as enregistrée.** Charger une partie d'un autre profil affiche un avertissement
-encadré et redemande confirmation. C'est la façon la plus fiable d'éviter le
-blocage de l'écran de chargement, qui ne produit aucun message d'erreur.
-
----
-
-## ⚠️ La règle d'or : une partie par profil
-
-**Charger une partie créée avec un autre jeu de mods bloque l'écran de
-chargement, indéfiniment, sans message d'erreur.**
-
-Le jeu relit la partie à travers les fichiers de mods installés. Si le mod qui
-a créé la partie n'est plus là (ou si le set de mods a changé), la lecture
-plante en silence.
-
-Conséquence : **quand tu changes de profil, tu commences une nouvelle partie.**
-Le lanceur te le rappelle à l'écran après chaque déploiement.
-
----
-
-## Ce que le banc d'essai a trouvé
-
-### 1. Deux mods ne faisaient rien du tout
-
-Un mod UKMM n'applique que les fichiers listés dans son `manifest.yml`. Deux de
-nos mods annonçaient `Pack/TitleBG.pack` alors que leurszip ne contenait
-rien de ce genre :
-
-* `10x Speed Paraglider v2` — le zip ne contient que
-  `Actor/AIProgram/Player_Link.baiprog` ;
-* `Second Wind - Eventide Fix` — 21 fichiers (modèles, physique, sons), tous
-  ignorés.
-
-Résultat : **le vol à ×10 n'existait pas**, et le correctif Eventide n'était
-jamais appliqué. `reparer-manifests.py` reconstruit le manifeste — en ne
-touchant qu'aux mods totalement inertes, pour ne jamais modifier une liste
-d'origine vérifiée par l'auteur du mod.
-
-### 2. UKMM ne fusionne pas tous les fichiers
-
-Lu dans `crates/uk-mod/src/unpack.rs` (`build_file`) :
-
-```rust
-ResourceData::Mergeable(..) => versions.fold(base, |res, v| res.merge(v))  // additionne
-ResourceData::Sarc(..)      => versions.fold(base, |res, v| res.merge(v))  // additionne
-ResourceData::Binary(..)    => versions.pop_back()                          // LE DERNIER
+                        B R E A T H   O F   T H E   W I L D
+                        - - - - - - - - - - - - - - -
+                        mods, profiles, saves, Cemu
 ```
 
-Pour un `.sbyml`, un `.sbactorpack`, un `.smubin`… les ajouts de tous les mods
-**s'additionnent**. Pour tout le reste, le **dernier mod de la liste écrase**
-les autres. `conflits.py` classe chaque fichier avec cette règle exacte et
-produit la liste des paires de mods qui s'écrasent.
+A tool for running *The Legend of Zelda: Breath of the Wild* on **Cemu** with
+mods. It installs mod combinations that **actually work**, deploys them, keeps
+one save per mod set, and fixes the famous infinite loading screen.
 
-### 3. Un mod peut ne rien faire sans erreur
-
-`GameData/gamedata.sarc` est présent dans le zip de 7 mods, mais **aucun
-manifeste ne le déclare** : UKMM ne le déploie jamais. C'est le genre de
-détail qui donne l'impression que « les mods ne marchent pas ».
-
-### 4. Le mod le plus dangereux, c'est Relics of the Past
-
-`conflits.py` liste les paires de mods qui partagent un fichier qu'UKMM ne
-sait pas fusionner. Le classement est sans appel :
-
-| Paire | Fichiers en commun non fusionnables |
-|---|---|
-| Relics of the Past ↔ Second Wind | 134 |
-| Ancient Weaponry ↔ Relics of the Past | 16 |
-| Second Wind ↔ Linkle | 15 |
-| Relics of the Past ↔ Linkle | 7 |
-
-Relics of the Past écrase 157 fichiers que trois autres mods fournissent
-aussi. C'est pour ça que le profil **sans échec** ne le contient pas, alors
-que `combo` et `flo` le gardent.
+No hand-tuning. No save ever moved without telling you.
 
 ---
 
-## Méthode du banc d'essai
+## Contents
 
-Rien n'est simulé. Pour chaque combinaison :
-
-1. un profil UKMM jetable est créé avec les mods demandés ;
-2. l'ordre de fusion est écrit ;
-3. **le vrai script du lanceur** (`Set-ProfilUKMM.ps1`) est appelé : remerge,
-   déploiement, liens durs, pack de textes français, `rules.txt` ;
-4. chaque fichier déclaré par chaque mod est recherché tel quel dans
-   `merged/` **et** dans le pack graphique lu par Cemu ;
-5. le profil jetable est supprimé (le disque a une place comptée).
-
-Les résultats sont dans [`docs/combinaisons-testees.md`](docs/combinaisons-testees.md).
-
-### Résultat de la campagne
-
-| Suite | Ce qu'elle teste | Essais | Échecs |
-|---|---|---|---|
-| `solo` | chaque mod seul | 14 | 0 |
-| `paires` | tous les couples de mods | 78 | 0 |
-| `sw` | Second Wind + chaque autre mod | 11 | 0 |
-| `cumul` | Second Wind complet + chaque autre mod | 11 | 0 |
-| `presets` | les 5 profils du lanceur | 5 | 0 |
-| **Total** | | **123** | **0** |
-
-Aucune combinaison ne casse la fusion. Cela ne veut pas dire que le jeu
-*démarre* avec toutes : ça veut dire que **tout est bien installé et déployé**.
-Ce qui reste à vérifier, c'est le seul test que personne ne peut faire à ta
-place : **lancer Cemu et appuyer sur A → Nouvelle partie**.
+- [Installation](#installation)
+- [Playing](#playing)
+- [The command line tool](#the-command-line-tool)
+- [Shipped profiles](#shipped-profiles)
+- [One save per mod set](#-one-save-per-mod-set)
+- [The four causes of the infinite loading screen](#the-four-causes-of-the-infinite-loading-screen)
+- [The save manager](#the-save-manager)
+- [Building your own profile](#building-your-own-profile)
+- [Two players](#two-players)
+- [Graphics](#graphics)
+- [What the test bench found](#what-the-test-bench-found)
+- [Tests](#tests)
+- [Layout](#layout)
+- [Troubleshooting](#troubleshooting)
+- [Credits](#credits-and-licenses)
 
 ---
 
 ## Installation
 
-1. **Cemu 2.x** et un jeu BOTW déjà installé et fonctionnel dans Cemu.
-2. **UKMM** dans `%USERPROFILE%\Tools\UKMM\ukmm.exe`, avec son
-   `settings.yml` dans `%APPDATA%\ukmm\`. UKMM a besoin du *dump* du jeu.
-3. Copier le dossier `lanceur/` sur le Bureau et lancer **`Lanceur-BOTW.bat`**.
+You need [Python 3.8+](https://www.python.org/downloads/). That is all: UKMM
+and Cemu are **verified**, not silently installed.
 
-> ⚠️ Ce projet ne contient aucun fichier de jeu. Ni le jeu, ni les ROM, ni les
-> DLC. Le ray tracing est impossible sur Cemu : inutile de chercher.
-
----
-
-## Le CLI `botw` — tout, en ligne de commande
-
-Le dossier [`cli/`](cli/) contient un vrai programme, en Python, sans
-dépendance. Le lanceur `.bat` fait une chose par touche ; `botw` fait tout,
-y compris ce que le lanceur ne fait pas : télécharger des mods, installer
-UKMM et BCML, créer un profil depuis une combinaison déjà testée, jouer à
-deux, et repartir d'une partie neuve.
-
-```bat
-cd cli
-python botw.py              REM ouvre le menu
-python botw.py --help       REM liste les commandes
-python botw.py doctor       REM 15 contrôles, dit ce qui ne va pas
-python botw.py deploy sur --activate
-python botw.py catalog      REM les combinaisons de mods prouvées
-python botw.py newgame      REM garde l'ancienne partie, démarre à zéro
+```bash
+git clone https://github.com/cameleonnbss/botw-cemu-lanceur.git
+cd botw-cemu-lanceur
+python installer.py
 ```
 
-**Anglais par défaut, français en une commande :**
+The installer, step by step:
 
-```bat
-python botw.py lang fr          REM définitivement
-python botw.py --lang fr doctor REM une seule fois
-```
+1. **checks Python**;
+2. **copies** the launcher and the tool to `%USERPROFILE%\Desktop\BOTW`;
+3. **verifies every copied file by MD5** — a half-finished copy produces a
+   launcher that looks like it works while running three-week-old code. That is
+   the most invisible failure in the project;
+4. **checks the files Windows executes**: `.bat`, `.cmd` and `.ps1` must be
+   ASCII, BOM-less, with CRLF line endings. PowerShell 5.1 reads a BOM-less
+   `.ps1` as ANSI, and a `.bat` in LF can stop on a random line;
+5. **looks for UKMM and Cemu**, and says exactly what to install if missing.
 
-Le choix vaut pour tout : menu, messages d'erreur et même l'aide en ligne de
-commande. Deux boutons du menu font ce qu'on demande le plus : `N` pour
-préparer une nouvelle partie, `F` pour la documentation en français.
+Options:
 
-### Ce qu'il sait faire
-
-| Commande | Effet |
+| Option | Effect |
 |---|---|
-| `doctor` | bilan de santé complet, code de sortie non nul si un contrôle échoue |
-| `deploy <profil>` | fusionne, déploie, recrée les liens durs et le pack de textes |
-| `profile list\|show\|use\|create\|delete\|verify` | profils UKMM et leur ordre de chargement |
-| `mods list\|search\|download\|install\|uninstall` | bibliothèque, GameBanana, MD5 vérifié |
-| `tools list\|install-ukmm\|install-bcml\|ukmm` | installe UKMM (SHA-256 vérifié) et BCML dans WSL |
-| `catalog [<nom>] [--deploy]` | recrée une combinaison vérifiée en profil |
-| `coop status\|enable\|disable\|radmin` | deux manettes, et Radmin VPN pour le réseau |
-| `newgame [revert <n>\|status]` | met la sauvegarde de côté sans la supprimer |
-| `readme [en\|fr]` | la documentation |
-| `matrix` | le banc d'essai des combinaisons |
-| `config` | lit et écrit les réglages |
+| `--dest D:\BOTW` | install somewhere other than the desktop |
+| `--check` | verify without writing a single byte |
+| `--shortcut` | add the launcher to Windows startup |
 
-### Tests
+**Re-running `installer.py` destroys nothing.** No profile, no save, no mod is
+touched: it is a reinstall on top of an install.
 
-```bat
-cd cli
-python -m pytest tests -q
-```
+### What you also need
 
-140 tests, tous hors ligne : ils repointent `%APPDATA%`, `%LOCALAPPDATA%` et
-`%USERPROFILE%` vers un dossier temporaire, donc ils ne touchent jamais une
-vraie installation ni une vraie sauvegarde.
-
-Documentation : [`cli/README.md`](cli/README.md) (English) ·
-[`cli/README.fr.md`](cli/README.fr.md) (Français)
-
----
-
-## Arborescence
-
-```
-lanceur/     le lanceur et ses scripts (ASCII, sans BOM)
-cli/         le programme botw : CLI, menu, tests, documentation
-outils/      vérification de profil, analyse de conflits, banc d'essai
-docs/        combinaisons testées, inventaire des mods, conflits détaillés
-```
-
-Tous les scripts `.ps1` et `.bat` sont en **ASCII pur sans BOM** : PowerShell
-5.1 lit un `.ps1` en ANSI, et un BOM se retrouve dans le texte affiché.
-
----
-
-## Dépannage rapide
-
-| Symptôme | Cause la plus probable |
+| Program | Where to put it |
 |---|---|
-| Bloqué sur l'écran de chargement | partie créée avec un autre profil → nouvelle partie |
-| Cemu démarre en jeu normal | `rules.txt` absent du pack UKMM |
-| Noms d'objets vides | pack `Bootup_EUfr.pack` non déployé |
-| « ECHEC : le profil n'a PAS été déployé » | Cemu ou UKMM encore ouvert |
-| Le jeu ne démarre pas, le pack est vide | disque plein, UKMM n'a pas pu fusionner |
+| **[UKMM](https://github.com/SuperKEDITachi/ukmm)** | `ukmm.exe` in `%USERPROFILE%\Tools\UKMM\` |
+| **[Cemu 2.x](https://cemu.info/)** | leave it in your `Downloads` folder |
 
-La touche `b` du lanceur (**Vérifier et réparer**) liste tout ça en direct.
+The installer looks for both and tells you what is missing. It does not
+download them for you: they are third-party software with their own licences.
 
 ---
 
-## Credits et licences
+## Playing
 
-* **The Legend of Zelda: Breath of the Wild** — © Nintendo. Aucun fichier du
-  jeu n'est distribué ici.
-* **Cemu** — LGPL-3.0. Projet non affilié à Nintendo.
-* **UKMM** — MIT, © NiceneNerd.
-* **Mods** — © de leurs auteurs respectifs, distribués via GameBanana. Voir
-  [`Mods/`](Mods/) et les crédits dans le README d'origine.
+Double-click `Lanceur-BOTW.bat`.
 
-Code de ce dépôt : MIT — voir [`LICENSE`](LICENSE).
+| Key | Action |
+|---|---|
+| **`1`** | **My main save** — Second Wind + your cheats, *with its save* |
+| **`2`** | **My FULL MODS save** — the 13 mods, *with its save* |
+| `3` | Second Wind alone (profile `secondwind`) |
+| `4` | **BOOST** — weapons, teleport, fast glide (the lightest) |
+| `5` | Your mods alone — Linkle, islands, ancient weapons (profile `flo`) |
+| `6` | **Pick your mods** — tick what you want |
+| `7` | Load a save — with name and description |
+| `8` | Two players |
+| `9` | Profile panel |
+| `a` | Graphics — *Light* or *Full* mode |
+| `b` | **Check and repair** — says exactly what is wrong |
+| `c` | **Test the profiles** — replays and verifies each one |
+| `d` | Open UKMM |
+| `e` | Open Cemu |
+| `0` | Quit |
+
+### The two everyday keys
+
+One key is enough because it does all three things, in order:
+
+1. it puts the current save **aside**;
+2. it deploys the right mod set;
+3. it puts **the matching save** back.
+
+**The other save is never lost** — it is archived, and the other key picks it
+back up.
+
+> ⚠️ A save created with one mod set does not open with another. The game
+> hangs on the loading screen **with no error message at all**. Changing mods
+> without changing the save is exactly the bug that breaks your game — which is
+> why these two keys do both, together.
+
+If the requested profile is already active and the save belongs to it, nothing
+is re-deployed: the tool counts the files and checks the deployment matches the
+merge. Measured on the development machine, the same switch goes from
+**34.4 s to 0.33 s**.
+
+The two mod sets are **configurable** — this repository is universal, and
+Second Wind is only the right choice if you installed it:
+
+```bash
+botw config set raccourcis '{"jeu_1":"boost","jeu_2":"sur"}'
+```
+
+---
+
+## The command line tool
+
+`botw` does everything the launcher does. The language is **your system's**:
+French on a French machine, English anywhere else.
+
+```bash
+botw lang fr      # force French
+botw lang en      # force English
+botw lang auto    # back to automatic detection
+```
+
+| Command | What it does |
+|---|---|
+| `botw jeu <profile> --lancer` | switch mod set **and** save, then launch Cemu |
+| `botw check` | will the game start? three lines, nothing changes |
+| `botw fix -y` | remove the packs that block loading, redeploy |
+| `botw doctor` | full health report |
+| **`botw installmods <file\|url>`** | **install a mod from a `.zip` or a URL** |
+| `botw mods list` | the local library |
+| `botw mods search <word>` | search online |
+| `botw mods download <id>` | download a mod without installing it |
+| `botw catalog <name> --deploy` | rebuild a tested combination |
+| `botw catalog` | list the combinations |
+| `botw profile list` | profiles and their file counts |
+| `botw profile verify <name>` | check a profile is complete |
+| `botw newgame [revert]` | start clean without losing the save |
+| `botw graphics` | fast mode or full graphics |
+| `botw coop` | two controllers |
+| `botw tools install-ukmm` | install UKMM |
+| `botw ui` | the menu, with buttons |
+| `botw readme en` | this documentation |
+
+### `installmods` — the mod you already have
+
+The local library only knows mods it has already seen, and the online search
+no longer answers. So:
+
+```bash
+botw installmods "C:\Users\you\Downloads\MyMod.zip"   # a file on disk
+botw installmods "https://example.org/mymod.zip"      # a link
+botw installmods "MyMod.zip" -p sur                   # which profile
+botw installmods --list                               # the library
+```
+
+The file is **copied** into the library, or **downloaded** if it is a link. Two
+guard rails:
+
+- a zip without `meta.yml` is refused, **and removed again** — otherwise
+  `botw mods list` would offer it again every time;
+- a link to a web page (HTML) is refused the same way.
+
+The mod goes into `profile.yml`, so removing it later is trivial and fully
+reversible.
+
+---
+
+## Shipped profiles
+
+These are not lists of mods: they are combinations **really merged, deployed
+and played**.
+
+| Profile | Mods | Files | What it is |
+|---|---|---|---|
+| `sur` | 13 | 5 614 | Second Wind + everything else verified — **fail-safe** |
+| `boost` | 10 | 1 371 | Hyrule Warriors weapons, lots of koroks, islands, instant portals |
+| `flo` | 6 | 524 | the shortest one: koroks, weapons, islands, outfits |
+| `secondwind` | 3 | 4 283 | Second Wind only: shrines redesigned, no fail |
+
+`botw catalog` lists more, with their file counts.
+
+### What is deliberately left out
+
+Exactly one mod in the library is excluded: `Relics_of_the_Past`. It replaces
+**249 files** UKMM cannot merge, so it simply erases what another mod
+provided — and it breaks quests in progress. A mod that wins by erasing the
+others is not a combination, it is a gamble.
+
+The tool refuses it and explains why, rather than handing you a profile that
+crashes three hours later.
+
+---
+
+## ⚠️ One save per mod set
+
+**Loading a save created with a different mod set hangs the loading screen,
+forever, with no error message.**
+
+The game replays the save through the installed mod files. If the mod that
+created it is gone — or if the set has changed — the read crashes silently.
+
+So `botw jeu` does both, in this order:
+
+1. the current save is **archived first**, labelled with the profile that can
+   load it;
+2. the new profile is deployed;
+3. the save belonging to *that* profile is put back, if there is one.
+
+If step 2 fails, the save is already out of the way. **The archive is a copy**:
+the original is never moved.
+
+`botw newgame revert <n>` puts any archived save back in place.
+
+---
+
+## The four causes of the infinite loading screen
+
+All reported by `botw check`, all fixed by `botw fix`.
+
+| Cause | Symptom | Fix |
+|---|---|---|
+| `Extended Memory` | game never finishes loading | the pack is removed |
+| `HD Map and Icons` | **every** inventory icon invisible | `default = true` → `false` |
+| `Draw Distance` | the weapon Link holds is invisible | settings dropped to safe values |
+| a lone mod that overwrites nothing | the mod "works" but does nothing | reported by `botw profile verify` |
+
+`HD Map and Icons` is the nastiest: its `rules.txt` says `default = true`, so
+**Cemu re-enables it on every launch, even after you removed it from
+`settings.xml`**. Removing the entry did nothing — the pack came back, and the
+file looked perfectly clean. The tool now looks at what is **on disk**.
+
+---
+
+## The save manager
+
+`Sauvegardes-BOTW.bat` — your saves with a **name** and a **description**,
+because the game encrypts them: there is no way to read the date yourself.
+
+- it shows, for each save, **which mods can load it**;
+- if you load a save that was not created with the active profile, it
+  **offers to switch mod sets by itself**, in the safe order;
+- it archives before deploying, so a failure never costs you a save;
+- it refuses a half-copied archive: an interrupted folder does exist, and
+  putting it back would lose the save without a single message.
+
+---
+
+## Building your own profile
+
+Two ways, and both ask you questions:
+
+```bash
+botw build                 # a few questions, then it builds and deploys
+botw catalog combo --deploy
+```
+
+Launcher key **6** ("Pick your mods") goes further: a list of tick boxes with
+**all** your mods, read from the `Mods\` folder. Type the numbers to tick or
+untick, and UKMM merges, redeploys, and you play.
+
+```bash
+botw profile verify <profile>   # reports mods that overwrite nothing
+```
+
+---
+
+## Two players
+
+```bash
+botw coop status     # how many controllers are configured
+botw coop enable     # switch to two controllers
+botw coop disable
+```
+
+Over a local connection, a VPN such as Radmin VPN keeps the session off the
+public network. `botw coop radmin` prints the walkthrough.
+
+---
+
+## Graphics
+
+```bash
+botw graphics         # fast mode or full graphics
+```
+
+Two modes, because not everything can run at once: Cemu cannot execute shaders
+at the same time as everything else. Fast mode keeps the game smooth; full mode
+keeps shadows and draw distance.
+
+---
+
+## What the test bench found
+
+`outils/matrice.py` replays each combination through the real chain — merge,
+deploy, file-by-file verification. The reports are in [`docs/`](docs/).
+
+In plain terms, it found that:
+
+- two mods did **absolutely nothing**;
+- UKMM did not merge **every** file;
+- a mod could do nothing, **without raising a single error**;
+- the most dangerous mod was one we would have kept.
+
+---
+
+## Tests
+
+```bash
+cd cli && python -m pytest tests -q               # 334 tests: the botw tool
+python -m pytest outils/tests_installeur.py -q   # 18 tests: the installer
+```
+
+The installer is tested by installing it, in a temporary folder: a destination
+typed with `/`, a `--check` that must not write, a copy tampered with after the
+fact, and a second run that must rewrite nothing. `outils/verifier-doc-cli.py`
+runs every command quoted in both READMEs through the real argument parser —
+documentation that quotes a command which does not exist is worse than no
+documentation.
+
+The project takes Windows files very seriously: `.bat`, `.cmd` and `.ps1` must
+be ASCII, BOM-less, CRLF. `outils/verifier-lanceur-menu.py` additionally checks
+that **every menu key reaches a label that exists** — a `goto` to a missing
+label raises no error: the window closes and the user sees nothing.
+
+---
+
+## Layout
+
+```
+installer.py         the installer, run it first
+lanceur/             the .bat and .ps1 files
+cli/                 the botw tool, its tests and its languages
+outils/              verification and test-bench scripts
+docs/                test campaign reports
+```
+
+---
+
+## Troubleshooting
+
+| Symptom | Cause | Solution |
+|---|---|---|
+| infinite loading | profile ≠ the save's profile | key `1` or `2`, or `botw jeu <profile>` |
+| infinite loading | blocking pack | `botw check` then `botw fix` |
+| invisible icons | `HD Map and Icons` | `botw fix` (reversible) |
+| "unknown profile" | the profile was deleted | `botw catalog <name> --deploy` |
+| empty names in game | language pack not deployed | `botw fix` |
+| nothing opens on double-click | PowerShell 5.1 and encoding | `python installer.py` repairs everything |
+
+---
+
+## Credits and licenses
+
+- *The Legend of Zelda: Breath of the Wild* — Nintendo. This repository
+  **ships no game files**.
+- [Cemu](https://cemu.info/) — Wii U emulator, GPLv3.
+- [UKMM](https://github.com/SuperKEDITachi/ukmm) — mod manager.
+- [BCML](https://github.com/RoadKill64/Bcml) — mod loader.
+- Mods are distributed on GameBanana and belong to their authors.
+
+See [LICENSE](LICENSE).

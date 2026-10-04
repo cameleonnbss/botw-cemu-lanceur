@@ -1,8 +1,9 @@
 """Localisation.
 
-L'outil parle anglais par defaut. Le francais est une langue optionnelle :
-elle se choisit une fois (`botw lang fr`) et tout suit - y compris les
-messages d'erreur et l'aide.
+L outil parle la langue du poste, sans reglage a faire : `langue_systeme()`
+lit l'interface de Windows, et le francais s installe tout seul. `botw lang
+<code>` fige un choix si l utilisateur prefere l contraire - ce choix reste
+alors prioritaire sur la detection.
 
 Les chaines sont dans locales/<langue>.json. Plutot que de disperser des
 `if lang == 'fr'` partout, chaque module demande une cle et l'i18n
@@ -85,6 +86,102 @@ class Translator(object):
 # Instance utilisee par les modules. cli.py la met a jour apres avoir lu la
 # configuration, et --lang force une langue pour une seule invocation.
 t = Translator(DEFAULT)
+
+
+def langue_windows():
+    """La langue de l'interface de Windows, lue via l'API du systeme.
+
+    Indispensable : Windows ne definit ni LANG ni LC_ALL. Un poste
+    francophone ne laisse donc aucune trace dans l'environnement, et une
+    detection par variables echouerait toujours - elle ne fonctionnerait que
+    sous Git Bash et WSL, pas sur le cas reel.
+
+    `GetUserDefaultUILanguage` renvoie un LANGID, pas un nom de langue.
+    On en garde le sous-langage principal (les 10 bits de poids faible) et on
+    le reporte sur les codes ISO 639-1 que l'outil sait servir. Une langue
+    qu'on ne traduit pas rend la main vide : l'appelant garde alors son
+    defaut, l'anglais.
+    """
+    if os.name != "nt":
+        return ""
+    try:
+        import ctypes
+        lid = ctypes.windll.kernel32.GetUserDefaultUILanguage()
+    except Exception:
+        return ""
+    # LANGID primaire -> ISO 639-1. Liste volontairement courte : seules les
+    # langues que l'outil traduit. Le reste rend la main vide.
+    table = {
+        0x09: "en", 0x0C: "fr", 0x07: "de", 0x0A: "es",
+        0x10: "it", 0x13: "nl", 0x11: "ja", 0x12: "ko",
+        0x16: "pt", 0x1F: "tr", 0x22: "uk", 0x08: "el",
+    }
+    return table.get(int(lid) & 0x3FF, "")
+
+
+def langue_systeme():
+    """La langue du systeme, lue sans dependance externe.
+
+    Un Windows francophone donne 'fr-FR', un Windows anglais 'en-US'. On ne
+    lit que le prefixe avant le tiret : 'fr-CA' et 'fr-FR' doivent tous deux
+    donner le francais, sinon un utilisateur canada ne verrait qu'une
+    interface anglaise.
+
+    Trois sources, dans cet ordre : la variable d'environnement (utile en
+    test et dans un script), le nom de la session utilisateur
+    ('NOM_UTILISATEUR' n'existe pas, mais PowerShell expose le Culture via
+    'Get-Culture', inaccessible d'ici), et enfin les variables 'LANG' /
+    'LC_ALL' / 'LC_MESSAGES' presentes sous cette forme sous Git Bash et
+    WSL.
+    """
+    connues = set(available())
+    # Windows d'abord : c'est le seul signal present sur un poste normal.
+    if os.name == "nt":
+        w = langue_windows()
+        if w in connues:
+            return w
+    for nom in ("BOTW_LANG", "LANG", "LC_ALL", "LC_MESSAGES"):
+        val = os.environ.get(nom, "")
+        if not val:
+            continue
+        val = val.split(".")[0]          # 'fr_FR.UTF-8' -> 'fr_FR'
+        val = val.split("@")[0]           # 'sr_RS@latin' -> 'sr_RS'
+        code = val.split("_")[0].split("-")[0].lower()
+        if code in connues:
+            return code
+    return ""
+
+
+def set_lang_auto():
+    """Applique la langue du systeme si elle existe.
+
+    Retourne True si une langue a ete choisie, False si le systeme n'en
+    donne aucune - auquel cas l'appelant garde son defaut, l'anglais.
+    """
+    code = langue_systeme()
+    if not code:
+        return False
+    set_lang(code)
+    return True
+
+
+def appliquer(cfg):
+    """Applique la langue voulue par la configuration, sinon celle du poste.
+
+    Point d'entree unique, appele avant meme de construire l'aide en ligne de
+    commande : 'botw --help' doit etre dans la bonne langue.
+
+    Un choix explicite de l'utilisateur prime toujours - c'est lui qui permet
+    de revenir en anglais sur un poste francophone. En son absence, on prend la
+    langue de Windows, puis celle du shell. La configuration ne porte donc
+    aucune langue par defaut (c'est une chaine vide) : sinon la detection ne
+    se declencherait jamais sur une installation neuve.
+    """
+    choix = (cfg or {}).get("lang") or ""
+    if choix:
+        set_lang(choix)
+        return True
+    return set_lang_auto()
 
 
 def set_lang(code):

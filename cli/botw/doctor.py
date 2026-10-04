@@ -114,22 +114,41 @@ def run(cfg=None):
         if merged and os.path.isdir(merged):
             a = deploy.count_files(gp) - 1
             b = deploy.count_files(merged)
-            if a != b:
-                i18n.ko(_("doctor.deploy.mismatch", a=a, b=b))
+            if a < b:
+                # Des fichiers fusionnes manquent chez Cemu : la, c'est un
+                # vrai probleme, le jeu tourne avec un jeu de mods incomplet.
+                i18n.ko(_("doctor.deploy.missing", a=a, b=b))
                 rep.checks.append(False)
+            elif a > b:
+                # Le cas inverse n'est pas un defaut. UKMM peut livrer des
+                # fichiers d'une fusion anterieure : le pack est alors un
+                # SUR-ENSEMBLE, le jeu y trouve tout ce qu'il attend, au lieu
+                # de fichiers qui manqueraient. Signaler une erreur ici
+                # empechait de jouer pour rien, et le message « relancez le
+                # lanceur » ne réparait rien : la re-fusion reproduisait le
+                # meme ecart. On le dit, sans le compter comme une erreur.
+                i18n.warn(_("doctor.deploy.extra", a=a, b=b))
+                rep.checks.append(True)
             else:
                 i18n.ok(_("doctor.deploy.same", n=b))
 
     # --- 5. sauvegardes ----------------------------------------------------
     i18n.section(_("doctor.section.saves"))
     root = config.save_root()
+    index = os.path.isfile(os.path.join(config.shots_dir(), "parties.json"))
     if os.path.isdir(root):
         n = deploy.count_files(root)
         rep.add(True, _("doctor.saves.count", n=n), _("doctor.saves.none"))
     else:
         i18n.info(_("doctor.saves.none"))
-    rep.add(os.path.isfile(os.path.join(config.shots_dir(), "parties.json")),
-            _("doctor.saves.index"))
+    # L'index ne compte QUE s'il y a une partie a nommer. Sans partie, un
+    # fichier absent n'est pas un defaut : le gestionnaire l'ecrit a la
+    # premiere sauvegarde, et le signaler ferait rater le verdict d'un poste
+    # qui n'a jamais joue.
+    if index or os.path.isdir(root):
+        rep.add(index, _("doctor.saves.index"), _("doctor.saves.noindex"))
+    else:
+        i18n.info(_("doctor.saves.noindex"))
 
     # --- 6. outils ---------------------------------------------------------
     i18n.section(_("doctor.section.tools"))
@@ -168,5 +187,5 @@ def run(cfg=None):
 
 if __name__ == "__main__":
     cfg = config.load()
-    i18n.set_lang(cfg.get("lang", "en"))
+    i18n.appliquer(cfg)
     sys.exit(0 if run(cfg).failures == 0 else 1)

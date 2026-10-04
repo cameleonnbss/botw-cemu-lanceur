@@ -4,8 +4,10 @@ Tout ce qui entoure *The Legend of Zelda: Breath of the Wild* lancé sous Cemu
 sur Windows : les mods, les profils, les sauvegardes, le jeu à deux, et un
 bilan de santé qui dit ce qui ne va pas au lieu de vous laisser deviner.
 
-**L'anglais est la langue par défaut.** Le français est à une commande :
-`botw lang fr`. La même commande avec `en` revient en anglais.
+**L'interface parle la langue de votre poste** — la langue de Windows est lue
+via l'API du système, celle du shell aussi sous Git Bash et WSL : sur une
+machine francophone, il n'y a rien à faire. `botw lang fr` impose le français,
+`en` impose l'anglais, et `botw lang auto` rend la décision au système.
 
 ```bat
 botw                 :: ouvre le menu
@@ -298,9 +300,10 @@ sauvegarde qui ne correspond pas au profil**. Voir §7.
 | `botw catalog [<nom>] [--as <profil>] [--deploy]` | combinaisons vérifiées |
 | `botw coop status\|enable\|disable\|radmin` | deux joueurs |
 | `botw newgame [revert <n>\|status]` | partie neuve, on garde l'ancienne |
+| `botw jeu <profil> [-y] [--lancer]` | change de jeu de mods **et** de partie, archive d'abord |
 | `botw readme [en\|fr] [-o]` | ce document |
 | `botw matrix [suite]` | le banc d'essai |
-| `botw lang [en\|fr]` | langue |
+| `botw lang [en\|fr\|auto]` | langue |
 | `botw --lang fr <commande>` | une exécution en français |
 
 ---

@@ -122,6 +122,25 @@ def _stamp():
     return DATE
 
 
+def _dest_archive():
+    """Un dossier d'archive libre, et son nom.
+
+    `_stamp()` est fige au moment ou le module est importe : deux parties
+    mises de cote dans la meme seconde donnaient donc le meme nom, et la
+    seconde se faisait refuser ('an archive with this name already exists').
+    C'etait invisible en usage normal - on n'archive pas deux fois dans la
+    meme seconde - mais reachable des qu'on bascule entre deux jeux de mods,
+    qui archive puis restaure puis rearchive.
+    """
+    base = os.path.join(_archives(), "partie_%s" % _stamp())
+    dest = base
+    suffixe = 2
+    while os.path.exists(dest):
+        dest = "%s_%d" % (base, suffixe)
+        suffixe += 1
+    return dest
+
+
 def _index_path():
     return os.path.join(_archives(), INDEX)
 
@@ -162,7 +181,7 @@ def _size_of(root):
     return total
 
 
-def prepare(profile=None, keep_backup=True):
+def prepare(profile=None, keep_backup=True, nom=None):
     """Deplace la partie actuelle sur le cote. Retourne le chemin de l'archive.
 
     Le dossier de sauvegarde est copie, pas deplace : si Cemu tourne ou si le
@@ -173,7 +192,7 @@ def prepare(profile=None, keep_backup=True):
     if not has_game():
         i18n.info(_("newgame.nothing"))
         return None
-    dest = os.path.join(_archives(), "partie_%s" % _stamp())
+    dest = _dest_archive()
     if os.path.exists(dest):
         i18n.ko(_("newgame.exists", path=dest))
         return None
@@ -187,7 +206,7 @@ def prepare(profile=None, keep_backup=True):
         os.makedirs(_slot(), exist_ok=True)
     rows = read_index()
     rows.append({"date": _stamp(), "profil": profile or "", "path": dest,
-                 "octets": _size_of(dest)})
+                 "nom": nom or "", "octets": _size_of(dest)})
     write_index(rows)
     noter_profil(profile or "")
     i18n.ok(_("newgame.backup", path=dest))
@@ -269,6 +288,176 @@ def status():
     else:
         i18n.info(_("newgame.no_archive"))
     i18n.info(_("newgame.explain"))
+
+
+def _contient_une_partie(chemin):
+    """Vrai si le dossier d'archive contient vraiment le fichier de partie.
+
+    Un dossier a moitie copie - une coupure, un disque plein, un arret du
+    systeme - existe bel et bien. Le traiter comme une archive valide ferait
+    la remettre en place, Cemu y trouverait un emplacement sans partie et
+    proposerait d'en creer une nouvelle : une partie perdue, sans un seul
+    message. On verifie donc la presence du fichier, pas seulement du dossier.
+    """
+    try:
+        rel = os.path.relpath(config.main_save_file(), config.save_root())
+    except ValueError:
+        return False
+    if rel.startswith(os.pardir):
+        return False
+    return os.path.isfile(os.path.join(chemin, rel))
+
+
+def parties():
+    """Les parties ecartees, les plus recentes d'abord.
+
+    Une ligne par partie archivée, avec le profil qui peut la charger. Une
+    partie dont le fichier n'est plus la est quand meme listee, avec `existe`
+    a faux : la cacher ferait croire qu'elle n'a jamais existe, alors que
+    l'index, lui, sait qu'elle a ete perdue.
+    """
+    out = []
+    for r in sorted(read_index(), key=lambda x: x.get("date", ""), reverse=True):
+        chemin = r.get("path", "")
+        out.append({"profil": r.get("profil") or "",
+                    "date": r.get("date", ""),
+                    "nom": r.get("nom") or "",
+                    "path": chemin,
+                    "existe": _contient_une_partie(chemin)})
+    return out
+
+
+def _partie_du_profil(profil):
+    """La partie archivée la plus recente de ce profil, ou None.
+
+    On ignore les archives dont le dossier n'existe plus : les remettre en
+    place echouerait, et mieux vaut proposer une nouvelle partie que
+    bloquer sur une archive fantome.
+    """
+    for p in parties():
+        if p["existe"] and p["profil"] == profil:
+            return p
+    return None
+
+
+def _deploiement_complet(profil):
+    """Vrai si le profil demande est deja entierement deploye chez Cemu.
+
+    C'est exactement la verification que fait `doctor` : le pack graphique
+    moins `rules.txt` doit contenir autant de fichiers que la fusion. Compter
+    coute un parcours de repertoire, pas une re-fusion ; sans cela, « je veux
+    rejouer ma partie principale » coute deux minutes de remerge a chaque fois
+    alors que rien n'a change sur le disque.
+
+    On compare le pack ENTIER, pas seulement son sous-dossier `content` : la
+    fusion contient aussi `aoc`, et comparer `content` a l'ensemble donnait
+    un compte faux des que le profil avait un seul fichier AOC - donc jamais.
+    """
+    from . import deploy
+    gp = config.graphic_pack()
+    if not os.path.isdir(gp):
+        return False
+    n_deployes = deploy.count_files(gp) - 1      # -1 : rules.txt
+    fusion = deploy.merged_dir(profil)
+    n_fusionnes = deploy.count_files(fusion)
+    if n_deployes < n_fusionnes:
+        return False                             # il manque des fichiers
+    # Le pack peut en contenir PLUS que la fusion : c'est normal apres une
+    # re-fusion, UKMM laisse deriver des fichiers d'une fusion anterieure.
+    # Le jeu y trouve tout ce qu'il attend, donc redeployer serait inutile.
+    # Mais un compte egal ne prouve rien : un fichier fusionne peut manquer
+    # pendant qu'un fichier etranger occupe sa place. On verifie donc toujours
+    # le contenu, ce qui coute un parcours de repertoire et non une
+    # re-fusion.
+    return _contient(fusion, gp)
+
+
+def _contient(source, destination):
+    """Vrai si tout fichier de `source` existe dans `destination`."""
+    for base, _d, fichiers in os.walk(source):
+        for nom in fichiers:
+            rel = os.path.relpath(os.path.join(base, nom), source)
+            if not os.path.exists(os.path.join(destination, rel)):
+                return False
+    return True
+
+
+def basculer(profil, cfg=None, force=False):
+    """Passe a un autre jeu de mods, sans perdre la partie d'ici.
+
+    C'est l'operation que le joueur fait sans y penser - « je veux jouer avec
+    les 13 mods » - et c'est celle qui cassait tout : changer de profil tout
+    en gardant l'emplacement de sauvegarde donne une partie que rien ne peut
+    charger. L'ordre est donc impose :
+
+        1. on met la partie de cote, avec le profil qui peut la charger ;
+        2. on deploie le nouveau profil ;
+        3. on remet la partie de ce profil-la, si elle existe.
+
+    Si le deploiement echoue a l'etape 2, la partie est deja|archivee et
+    l'emplacement est vide : rien n'est perdu, et 'botw newgame revert' la
+    ramene. L'ordre inverse - deploiement puis copie - laisserait le deploiement
+    echouer apres avoir touche a la partie.
+
+    Le cas le plus frequent est aussi le plus simple : le profil demande est
+    deja actif, la partie lui appartient, et le deploiement est complet. Les
+    trois etapes ne feraient alors rien changer, et le joueur attendrait deux
+    minutes pour demarrer le jeu exactement comme avant. On le detecte et on
+    sort tout de suite. Le court-circuit ne dispense d'aucune verification : si
+    le deploiement est incomplet, on repasse par la voie normale.
+
+    Retourne True si le profil est en place et pret a jouer.
+    """
+    from . import deploy, profiles
+
+    if profil not in profiles.existing():
+        i18n.ko(_("newgame.unknown_profile", p=profil))
+        i18n.info(_("catalog.available",
+                    list=", ".join(sorted(profiles.existing()))))
+        return False
+    if deploy.processes_named("Cemu"):
+        i18n.ko(_("cemu.open"))
+        return False
+
+    if profiles.active() == profil and _deploiement_complet(profil) \
+            and (not has_game() or profil_de_la_partie() in ("", profil)):
+        i18n.ok(_("newgame.switch_ready", p=profil))
+        return True
+
+    if not force and not i18n.confirm(_("newgame.switch_confirm", p=profil),
+                                      False):
+        return False
+
+    # Le profil de la partie doit etre lu AVANT prepare() : apres, il n'y a
+    # plus de partie, et donc plus rien a quoi comparer l'historique.
+    if has_game():
+        proprietaire = profil_de_la_partie() or profiles.active() or ""
+        if proprietaire and proprietaire != profil:
+            i18n.info(_("newgame.switch_archive", p=proprietaire))
+        if prepare(proprietaire) is None:
+            return False
+
+    try:
+        deploy.deploy(profil, cfg, quiet=True)
+    except deploy.GuardError as e:
+        i18n.ko(str(e))
+        return False
+
+    if os.path.isdir(os.path.join(config.graphic_pack(), "content")):
+        i18n.ok(_("newgame.switch_deployed", p=profil))
+    else:
+        i18n.ko(_("deploy.nothing", p=profil))
+        return False
+
+    existante = _partie_du_profil(profil)
+    if existante is not None:
+        if revert(existante["path"], force=True):
+            i18n.ok(_("newgame.switch_restored", p=profil))
+        else:
+            return False
+    else:
+        i18n.info(_("newgame.switch_new", p=profil))
+    return True
 
 
 def execute(args=None):

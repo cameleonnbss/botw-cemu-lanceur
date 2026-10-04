@@ -43,6 +43,14 @@ def fausse_machine(tmp_path, monkeypatch):
     # On neutralise donc la detection pour tout le monde ; les tests qui
     # exercent cette detection la reintroduisent explicitement.
     monkeypatch.setattr("botw.deploy.processes_named", lambda n: [])
+    # La fausse machine est un poste anglais. Sans ca, un developpeur sur un
+    # poste francophone verrait ses tests échouer sur la seule langue, et un
+    # developpeur sur un poste anglais ne verifierait jamais la detection.
+    # On neutralise les deux sources : l'API Windows (prioritaire) et la
+    # variable d'environnement. Les tests qui exercent la detection
+    # reintroduisent l'une des deux explicitement.
+    monkeypatch.setattr("botw.i18n.langue_windows", lambda: "")
+    monkeypatch.setenv("BOTW_LANG", "en")
     i18n.set_lang("en")
     yield {
         "appdata": appdata,

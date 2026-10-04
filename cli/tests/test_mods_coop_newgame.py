@@ -7,7 +7,8 @@ import zipfile
 
 import pytest
 
-from botw import catalog, config, coop, i18n, mods, newgame, readme, tools
+from botw import (catalog, cli, config, coop, deploy, i18n, mods, newgame,
+                   readme, tools, ui)
 from conftest import ecrire
 
 
@@ -160,6 +161,217 @@ class TestCoop(object):
         coop.write_pad_channels(2)
         assert coop.disable()
         assert coop.read_pad_channels() == 1
+
+
+class TestInstallerMods(object):
+    """`botw installmods <fichier ou lien>` : ce que le joueur a sous la main.
+
+    La bibliotheque locale ne connait que les mods deja vus, et la recherche
+    GameBanana ne repond plus. Le raccourci qui manquait est donc : un .zip
+    dans ses telechargements, ou le lien qu'il a trouve.
+    """
+
+    def _zip(self, dossier, nom="Test.zip", meta="meta.yml"):
+        """Un zip de mod minimal mais plausible."""
+        import zipfile
+        chemin = os.path.join(dossier, nom)
+        with zipfile.ZipFile(chemin, "w") as z:
+            if meta:
+                z.writestr(meta, "name: Test Mod\nversion: 1.0\n")
+            else:
+                z.writestr("lisezmoi.txt", "pas un mod")
+        return chemin
+
+    def test_installe_depuis_un_fichier_local(self, installation, tmp_path,
+                                              monkeypatch):
+        src = self._zip(str(tmp_path), "MonMod.zip")
+        vus = []
+        monkeypatch.setattr("botw.mods.install",
+                            lambda p, q, cfg=None: vus.append((p, q)) or True)
+        assert mods.installer_fichier("boost", src, None)
+        assert vus == [("boost", "MonMod.zip")]
+        assert os.path.isfile(
+            os.path.join(installation["bureau"], "Mods", "MonMod.zip"))
+
+    def test_copie_dans_la_bibliotheque(self, installation, tmp_path,
+                                        monkeypatch):
+        """Le fichier est recopie : UKMM sait le lire, et l'utilisateur garde
+        le sien ou il est."""
+        src = self._zip(str(tmp_path), "MonMod.zip")
+        import shutil
+        dest = os.path.join(installation["bureau"], "Mods", "MonMod.zip")
+        shutil.copy2(src, dest)
+        # On remet l'original : la copie doit suffire.
+        os.remove(src)
+        monkeypatch.setattr("botw.mods.install", lambda p, q, cfg=None: True)
+        assert mods.installer_fichier("boost", dest, None)
+
+    def test_n_ecrase_pas_un_mod_de_meme_nom(self, installation, tmp_path,
+                                              monkeypatch):
+        src = self._zip(str(tmp_path), "Mod.zip")
+        deja = self._zip(str(installation["bureau"] / "Mods"), "Mod.zip")
+        import shutil
+        shutil.copy2(src, deja)
+        vus = []
+        monkeypatch.setattr("botw.mods.install",
+                            lambda p, q, cfg=None: vus.append(q) or True)
+        assert mods.installer_fichier("boost", src, None)
+        assert vus and vus[0] != "Mod.zip", "le mod deja present a ete ecrase"
+        assert os.path.isfile(deja)
+
+    def test_un_zip_sans_meta_est_refuse(self, installation, tmp_path):
+        src = self._zip(str(tmp_path), "PasUnMod.zip", meta=None)
+        with pytest.raises(ValueError):
+            mods.installer_fichier("boost", src, None)
+
+    def test_le_faux_mod_n_est_pas_laisse_dans_la_bibliotheque(self, installation,
+                                                              tmp_path):
+        """Sinon 'botw mods list' repropose a chaque fois un fichier qui ne
+        peut pas etre installe."""
+        src = self._zip(str(tmp_path), "PasUnMod.zip", meta=None)
+        with pytest.raises(ValueError):
+            mods.installer_fichier("boost", src, None)
+        assert not os.path.exists(
+            os.path.join(installation["bureau"], "Mods", "PasUnMod.zip"))
+
+    def test_meta_dans_un_sous_dossier_est_accepte(self, installation,
+                                                   tmp_path, monkeypatch):
+        """La plupart des zip de GameBanana ont un dossier racine."""
+        import zipfile
+        src = os.path.join(str(tmp_path), "Emballage.zip")
+        with zipfile.ZipFile(src, "w") as z:
+            z.writestr("MonMod/meta.yml", "name: Test Mod\n")
+        dest = os.path.join(installation["bureau"], "Mods", "Emballage.zip")
+        import shutil
+        shutil.copy2(src, dest)
+        monkeypatch.setattr("botw.mods.install", lambda p, q, cfg=None: True)
+        assert mods.installer_fichier("boost", dest, None)
+
+    def test_un_zip_corrompu_est_refuse(self, installation, tmp_path):
+        src = os.path.join(str(tmp_path), "Corrompu.zip")
+        with io.open(src, "wb") as f:
+            f.write(b"ce n'est pas un zip")
+        import shutil
+        shutil.copy2(src, os.path.join(installation["bureau"], "Mods",
+                                       "Corrompu.zip"))
+        with pytest.raises(ValueError):
+            mods.installer_fichier("boost", src, None)
+
+    def test_source_inconnue_donne_un_message_clair(self, installation):
+        with pytest.raises(ValueError) as e:
+            mods.installer_fichier("boost", "C:/nulle/partie/x.zip", None)
+        assert "x.zip" in str(e.value)
+
+    def test_le_telechargement_eteleve_une_page_web(self, installation,
+                                                   monkeypatch):
+        """Un lien vers une page web donne du HTML. Le refuser evite de le
+        coincer dans la bibliotheque."""
+        import io as _io
+
+        class _Faux(object):
+            def __init__(self, data):
+                self.data = data
+
+            def read(self):
+                return self.data
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+        import urllib.request
+        monkeypatch.setattr(urllib.request, "urlopen",
+                            lambda *a, **k: _Faux(b"<html>page</html>"))
+        with pytest.raises(ValueError):
+            mods.installer_fichier("boost", "https://exemple/page", None)
+        assert not os.path.exists(
+            os.path.join(installation["bureau"], "Mods", "page.zip"))
+
+    def test_le_telechargement_pose_un_vrai_zip(self, installation,
+                                                monkeypatch):
+        src = self._zip(str(installation["racine"]), "Telecharge.zip")
+
+        class _Faux(object):
+            def read(self):
+                with io.open(src, "rb") as f:
+                    return f.read()
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+        import urllib.request
+        monkeypatch.setattr(urllib.request, "urlopen",
+                            lambda *a, **k: _Faux())
+        vus = []
+        monkeypatch.setattr("botw.mods.install",
+                            lambda p, q, cfg=None: vus.append(q) or True)
+        assert mods.installer_fichier("boost", "https://exemple/Telecharge.zip",
+                                      None)
+        assert vus == ["Telecharge.zip"]
+
+    def test_un_lien_mort_donne_un_message_lisible(self, installation,
+                                                    monkeypatch):
+        import urllib.error
+        import urllib.request
+
+        def _explode(*a, **k):
+            raise urllib.error.URLError("dns")
+        monkeypatch.setattr(urllib.request, "urlopen", _explode)
+        with pytest.raises(ValueError) as e:
+            mods.installer_fichier("boost", "https://exemple/x.zip", None)
+        assert "exemple" in str(e.value)
+
+
+class TestCommandeInstallMods(object):
+    """La commande exposee : options, profil cible, code de sortie."""
+
+    def _args(self, argv):
+        return cli.build_parser().parse_args(argv)
+
+    def test_un_argument_source(self):
+        assert self._args(["installmods", "x.zip"]).source == "x.zip"
+
+    def test_par_defaut_le_profil_actif(self, fausse_machine, monkeypatch):
+        vus = {}
+        monkeypatch.setattr("botw.mods.installer_fichier",
+                            lambda p, s, cfg=None: vus.update(p=p, s=s))
+        monkeypatch.setattr("botw.profiles.active", lambda: "sur")
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["sur"])
+        args = self._args(["installmods", "x.zip"])
+        assert cli.cmd_installmods(args, {}) == 0
+        assert vus == {"p": "sur", "s": "x.zip"}
+
+    def test_un_profil_choisi_prime(self, fausse_machine, monkeypatch):
+        vus = {}
+        monkeypatch.setattr("botw.mods.installer_fichier",
+                            lambda p, s, cfg=None: vus.update(p=p))
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["sur", "boost"])
+        args = self._args(["installmods", "x.zip", "-p", "boost"])
+        assert cli.cmd_installmods(args, {}) == 0
+        assert vus["p"] == "boost"
+
+    def test_profil_inconnu_sort_en_erreur(self, fausse_machine, monkeypatch,
+                                           capsys):
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["sur"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "sur")
+        args = self._args(["installmods", "x.zip", "-p", "inexistant"])
+        assert cli.cmd_installmods(args, {}) == 1
+
+    def test_echec_de_copie_sort_en_erreur(self, fausse_machine, monkeypatch,
+                                           capsys):
+        def _boom(p, s, cfg=None):
+            raise ValueError("pas un mod")
+        monkeypatch.setattr("botw.mods.installer_fichier", _boom)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["sur"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "sur")
+        args = self._args(["installmods", "x.zip"])
+        assert cli.cmd_installmods(args, {}) == 1
+        assert "pas un mod" in capsys.readouterr().out
 
 
 class TestNouvellePartie(object):
@@ -437,3 +649,425 @@ class TestRaccourcisDeLangue(object):
             fr = json.load(f)
         for cle in ("doctor.title", "deploy.done", "ui.welcome", "coop.title"):
             assert fr[cle] != cle
+
+
+# --- une partie par jeu de mods --------------------------------------------
+#
+# Le joueur veut souvent deux jeux de mods et deux parties : une partie tres
+# avancee avec peu de mods, et une partie neuve avec tous les mods. Ce qui
+# rendait ca impossible, c'est que changer de profil ne touchait pas a
+# l'emplacement de sauvegarde : le profil change, la partie restait, et plus
+# rien ne pouvait la charger.
+#
+# `basculer` fait les deux ensemble, et l'ordre est la securite entiere :
+# la partie part a l'archive AVANT le deploiement. Si le deploiement echoue,
+# elle est deja de cote.
+
+class _Deploie(object):
+    """Faux deploiement : on note l'ordre des etapes, sans toucher UKMM."""
+
+    def __init__(self, echoue=False):
+        self.echoue = echoue
+        self.appele = False
+        self.avant = None      # la partie etait-elle encore la ? au deploiement
+
+    def __call__(self, profil, cfg=None, quiet=False):
+        from botw import deploy as vrai
+        self.appele = True
+        self.avant = newgame.has_game()
+        if self.echoue:
+            raise vrai.GuardError("deploiement refuse", 2)
+        os.makedirs(os.path.join(config.graphic_pack(), "content"),
+                    exist_ok=True)
+        return {"profile": profil, "deployed": 0, "merged": 0}
+
+
+class _Actif(object):
+    """Le profil actif, variable comme dans la vraie vie.
+
+    Un `lambda: "boost"` fige ment `basculer` : apres une bascule reussie, le
+    profil actif change, et c'est meme ce que UKMM fait. Les tests qui
+    enchainent deux bascules doivent donc le bouger.
+    """
+
+    def __init__(self, nom):
+        self.nom = nom
+
+    def __call__(self):
+        return self.nom
+
+
+class TestBasculeDePartie(object):
+
+    def test_profil_inconnu_ne_touche_a_rien(self, fausse_machine):
+        ecrire(config.main_save_file(), "MA PARTIE")
+        assert not newgame.basculer("inconnu", force=True)
+        assert newgame.has_game(), "la partie a disparu"
+
+    def test_refuse_pendant_que_cemu_tourne(self, fausse_machine,
+                                            monkeypatch):
+        from botw import deploy
+        monkeypatch.setattr(deploy, "processes_named", lambda n: ["Cemu.exe"])
+        ecrire(config.main_save_file(), "MA PARTIE")
+        assert not newgame.basculer("boost", force=True)
+        assert newgame.has_game(), "la partie a disparu"
+
+    def test_archives_avant_de_deployer(self, fausse_machine, monkeypatch):
+        """L'ordre est la securite : le deploiement ne doit jamais voir la
+        partie d'origine, et celle-ci doit deja etre archivee quand il
+        s'execute."""
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost", "sur"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        ecrire(config.main_save_file(), "MA PARTIE")
+        assert newgame.basculer("sur", force=True)
+        assert faux.appele
+        assert faux.avant is False, "le deploiement a vu une partie"
+        archives = [p for p in newgame.parties() if p["existe"]]
+        assert len(archives) == 1
+        assert io.open(os.path.join(archives[0]["path"], "user", "80000001",
+                                    "0", "game_data.sav"),
+                       encoding="utf-8").read() == "MA PARTIE"
+
+    def test_la_partie_archives_est_taguee_du_profil_courant(
+            self, fausse_machine, monkeypatch):
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost", "sur"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        ecrire(config.main_save_file(), "MA PARTIE")
+        newgame.basculer("sur", force=True)
+        assert newgame.parties()[0]["profil"] == "boost"
+
+    def test_deploiement_echoue_ne_perd_pas_la_partie(
+            self, fausse_machine, monkeypatch):
+        faux = _Deploie(echoue=True)
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost", "sur"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        ecrire(config.main_save_file(), "MA PARTIE")
+        assert not newgame.basculer("sur", force=True)
+        # la partie est de cote, et encore lisible
+        archives = [p for p in newgame.parties() if p["existe"]]
+        assert len(archives) == 1
+        assert io.open(os.path.join(archives[0]["path"], "user", "80000001",
+                                    "0", "game_data.sav"),
+                       encoding="utf-8").read() == "MA PARTIE"
+        assert newgame.revert(force=True)
+        assert io.open(config.main_save_file(),
+                       encoding="utf-8").read() == "MA PARTIE"
+
+    def test_profil_sans_partie_propose_une_nouvelle(
+            self, fausse_machine, monkeypatch):
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost", "sur"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        ecrire(config.main_save_file(), "MA PARTIE")
+        assert newgame.basculer("sur", force=True)
+        assert not newgame.has_game(), "Cemu doit trouver un emplacement vide"
+        assert os.path.isdir(config.save_root())
+
+    def test_revenir_en_arriere_retrouve_la_partie(self, fausse_machine,
+                                                   monkeypatch):
+        """Le test qui compte : A -> B -> A doit rendre la partie de A, intacte."""
+        faux = _Deploie()
+        actif = _Actif("boost")
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost", "sur"])
+        monkeypatch.setattr("botw.profiles.active", actif)
+        ecrire(config.main_save_file(), "PARTIE DE A")
+        assert newgame.basculer("sur", force=True)
+        actif.nom = "sur"          # UKMM bascule vraiment, lui aussi
+        ecrire(config.main_save_file(), "PARTIE DE B")
+        actif.nom = "sur"
+        assert newgame.basculer("boost", force=True)
+        assert io.open(config.main_save_file(),
+                       encoding="utf-8").read() == "PARTIE DE A"
+        # B n'a pas disparu pour autant : sa partie est reste de cote, et
+        # elle aussi est retrouvable. ('revert' consomme l'archive qu'il
+        # remet en place : la partie revient dans l'emplacement de Cemu,
+        # elle n'est pas supprimee.)
+        b = [p for p in newgame.parties() if p["existe"]]
+        assert len(b) == 1
+        assert io.open(os.path.join(b[0]["path"], "user", "80000001", "0",
+                                    "game_data.sav"),
+                       encoding="utf-8").read() == "PARTIE DE B"
+
+    def test_partie_du_profil_retrouvee(self, fausse_machine):
+        ecrire(config.main_save_file(), "A")
+        newgame.prepare("boost")
+        ecrire(config.main_save_file(), "B")
+        newgame.prepare("sur")
+        assert newgame._partie_du_profil("sur")["profil"] == "sur"
+        assert newgame._partie_du_profil("boost")["profil"] == "boost"
+        assert newgame._partie_du_profil("combo") is None
+
+    def test_archive_manquante_ignoree(self, fausse_machine):
+        """Une archive fantome ne doit pas bloquer : on propose du neuf."""
+        import shutil
+        ecrire(config.main_save_file(), "A")
+        dest = newgame.prepare("boost")
+        shutil.rmtree(os.path.join(dest, "user"))
+        assert newgame._partie_du_profil("boost") is None
+        assert [p for p in newgame.parties() if not p["existe"]]
+
+    def test_nombre_de_parties(self, fausse_machine):
+        ecrire(config.main_save_file(), "A")
+        newgame.prepare("boost")
+        ecrire(config.main_save_file(), "B")
+        newgame.prepare("sur")
+        assert len(newgame.parties()) == 2
+
+
+class TestDejaPret(object):
+    """Rejouer sa partie du jour ne doit pas couter une re-fusion.
+
+    Le cas le plus frequent n'est pas « je change de jeu de mods », c'est
+    « je veux rejouer ma partie principale » : le profil est deja actif, la
+    partie lui appartient, le deploiement est complet. Sans court-circuit,
+    chaque relance coute deux minutes de remerge pour un jeu identique.
+    """
+
+    def _deployed(self, monkeypatch, profil, n=7, aoc=True):
+        """Simule un profil entierement deploye (n fichiers des deux cotes).
+
+        `aoc` reproduit le cas reel du profil 'sur' : la fusion contient un
+        dossier `aoc` a cote de `content`. Comparer `content` a la fusion
+        entiere donnerait alors un compte faux, et le court-circuit ne prendrait
+        jamais - c'est exactement le bug que ce parametre empeche de revenir.
+        """
+        gp = config.graphic_pack()
+        os.makedirs(gp, exist_ok=True)
+        ecrire(os.path.join(gp, "rules.txt"), "rules")
+        for sous in ("content",) + (("aoc",) if aoc else ()):
+            for racine in (os.path.join(gp, sous),
+                           deploy.merged_dir(profil) + os.sep + sous):
+                os.makedirs(racine, exist_ok=True)
+                # Le nom porte le sous-dossier : sinon `content/f0` et
+                # `aoc/f0` sont deux fois le meme nom, et supprimer l'un
+                # laisse l'autre : on croit avoir retire un fichier de la
+                # fusion alors qu'il est toujours la.
+                for i in range(n):
+                    ecrire(os.path.join(racine, "%s-f%d" % (sous, i)), "x")
+
+    def test_le_pack_entier_compte_son_rules_txt(self, fausse_machine,
+                                                 monkeypatch):
+        """Le pack chez Cemu contient rules.txt en plus ; la fusion, non."""
+        self._deployed(monkeypatch, "boost", n=7)
+        assert newgame._deploiement_complet("boost")
+
+    def test_profil_deja_actif_ne_remerge_pas(self, fausse_machine,
+                                              monkeypatch):
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        self._deployed(monkeypatch, "boost")
+        assert newgame.basculer("boost", force=True)
+        assert not faux.appele, "un remerge a ete refait pour rien"
+
+    def test_profil_deja_actif_avec_sa_partie(self, fausse_machine,
+                                              monkeypatch):
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        self._deployed(monkeypatch, "boost")
+        ecrire(config.main_save_file(), "MA PARTIE")
+        assert newgame.basculer("boost", force=True)
+        assert not faux.appele
+        assert io.open(config.main_save_file(),
+                       encoding="utf-8").read() == "MA PARTIE", "partie touchee"
+
+    def test_deploiement_incomplet_remerge_quand_meme(self, fausse_machine,
+                                                      monkeypatch):
+        """Le court-circuit ne dispense d'aucune verification : si le profil
+        n'est pas entierement deploye, on repasse par la voie normale."""
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        gp = config.graphic_pack()
+        os.makedirs(os.path.join(gp, "content"), exist_ok=True)
+        ecrire(os.path.join(gp, "rules.txt"), "rules")
+        ecrire(os.path.join(gp, "content", "seulement-un"), "x")   # 1 sur 14
+        # La fusion, elle, a bien ses 14 fichiers.
+        for sous in ("content", "aoc"):
+            for i in range(7):
+                ecrire(os.path.join(deploy.merged_dir("boost"), sous,
+                                    "f%d" % i), "x")
+        assert not newgame._deploiement_complet("boost")
+        assert newgame.basculer("boost", force=True)
+        assert faux.appele, "un deploiement incomplet doit etre refait"
+
+    def test_partie_d_un_autre_profil_bascule_quand_meme(self, fausse_machine,
+                                                          monkeypatch):
+        """Le profil actif est le bon, mais la partie chargee vient d'ailleurs :
+        c'est exactement le plantage a l'ecran de chargement. Ca doit basculer."""
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost", "sur"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        self._deployed(monkeypatch, "boost")
+        # La partie appartient a 'sur' : on le note dans l'historique.
+        newgame.noter_profil("sur")
+        ecrire(config.main_save_file(), "PARTIE DE SUR")
+        assert newgame.profil_de_la_partie() == "sur"
+        assert newgame.basculer("boost", force=True)
+        assert faux.appele, "il fallait basculer, pas court-circuiter"
+        assert not newgame.has_game(), "la partie de sur doit etre mise de cote"
+
+    def test_compte_les_fichiers_du_bon_repertoire(self, fausse_machine,
+                                                   monkeypatch):
+        self._deployed(monkeypatch, "boost", n=7)
+        assert newgame._deploiement_complet("boost")
+        # Un fichier de trop : le deploiement est un SUR-ENSEMBLE, donc il
+        # reste complet. Le jeu y trouve tout ce qu'il attend.
+        ecrire(os.path.join(config.graphic_pack(), "content", "en trop"), "x")
+        assert newgame._deploiement_complet("boost")
+        # ... mais un fichier fusionne MANQUANT, la, c'est incomplet.
+        os.remove(os.path.join(config.graphic_pack(), "content", "content-f0"))
+        assert not newgame._deploiement_complet("boost")
+
+    def test_un_surplus_ne_redemande_pas_de_remerge(self, fausse_machine,
+                                                     monkeypatch):
+        """UKMM laisse deriver des fichiers d'une fusion anterieure.
+
+        Le cas reel : 5614 fichiers deployes pour 5477 fusionnes. Un compte
+        strict jugeait ca incomplet, donc CHAQUE `botw jeu sur` refaisait une
+        re-fusion de plusieurs dizaines de secondes - pour un jeu deja en
+        place. Le surplus ne manque a rien : il ne doit pas non plus faire
+        redonder le deploiement.
+        """
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        self._deployed(monkeypatch, "boost", n=7)
+        for i in range(3):      # trois fichiers d'une fusion anterieure
+            ecrire(os.path.join(config.graphic_pack(), "content",
+                                "ancien%d" % i), "x")
+        assert newgame._deploiement_complet("boost")
+        assert newgame.basculer("boost", force=True)
+        assert not faux.appele, "un surplus a provoke une re-fusion"
+
+    def test_un_surplus_ne_cache_pas_un_manquant(self, fausse_machine,
+                                                  monkeypatch):
+        """Le surplus ne pardonne pas un fichier fusionne manquant."""
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        self._deployed(monkeypatch, "boost", n=7)
+        for i in range(5):
+            ecrire(os.path.join(config.graphic_pack(), "content",
+                                "ancien%d" % i), "x")
+        # ... mais un fichier de la fusion disparait du pack.
+        os.remove(os.path.join(config.graphic_pack(), "content", "content-f0"))
+        assert not newgame._deploiement_complet("boost")
+
+    def test_aoc_manquant_ne_passe_pas(self, fausse_machine, monkeypatch):
+        """Un dossier `aoc` non depose est un deploiement incomplet."""
+        import shutil
+        self._deployed(monkeypatch, "boost", n=7)
+        assert newgame._deploiement_complet("boost")
+        shutil.rmtree(os.path.join(config.graphic_pack(), "aoc"))
+        assert not newgame._deploiement_complet("boost")
+
+
+class TestLancementSansDoubleDeploiement(object):
+    """`botw jeu X --lancer` ne doit pas re-fusionner deux fois.
+
+    `newgame.basculer` finit par un deploiement ; repasser ensuite par
+    `ui.launch` en refaisait un deuxième, deux minutes perdues.
+    """
+
+    def test_le_cli_passe_le_drapeau(self, fausse_machine, monkeypatch):
+        vu = {}
+
+        def faux_launch(profil, cfg, deja_deploye=False):
+            vu["profil"] = profil
+            vu["deja"] = deja_deploye
+            return 0
+
+        monkeypatch.setattr("botw.ui.launch", faux_launch)
+        monkeypatch.setattr("botw.newgame.basculer",
+                            lambda p, cfg=None, force=False: True)
+        monkeypatch.setattr("botw.config.save", lambda cfg: None)
+        args = cli.build_parser().parse_args(["jeu", "sur", "--lancer", "-y"])
+        assert cli.cmd_jeu(args, {"game_profile": "boost"}) == 0
+        assert vu == {"profil": "sur", "deja": True}
+
+    def _jouer(self, monkeypatch, actif, choisi):
+        """Joue le sous-menu 'jeu' en choisissant `choisi` dans la liste.
+
+        Renvoie la liste des (profil, deja_deploye) vus par `ui.launch`.
+        """
+        vu = []
+
+        def faux_launch(profil, cfg, deja_deploye=False):
+            vu.append((profil, deja_deploye))
+            return 1          # valeur non nulle : le sous-menu s'arrete
+
+        disponibles = [actif] + [p for p in ("boost", "sur") if p != actif]
+        index = disponibles.index(choisi)
+        monkeypatch.setattr("botw.ui.launch", faux_launch)
+        monkeypatch.setattr("botw.newgame.basculer",
+                            lambda p, cfg=None, force=False: True)
+        monkeypatch.setattr("botw.config.save", lambda cfg: None)
+        monkeypatch.setattr("botw.profiles.existing", lambda: disponibles)
+        monkeypatch.setattr("botw.profiles.active", lambda: actif)
+        monkeypatch.setattr("botw.profiles.load", lambda p: _FauxProfil(1))
+        monkeypatch.setattr("botw.i18n.menu",
+                            lambda options, question=None: index)
+        ui.sub_play({"game_profile": actif})
+        return vu
+
+    def test_menu_profil_actif_redemande_un_deploiement(self, fausse_machine,
+                                                        monkeypatch):
+        """Rien a basculer : `launch` doit deployer comme d'habitude."""
+        assert self._jouer(monkeypatch, "sur", "sur") == [("sur", False)]
+
+    def test_menu_apres_bascule_ne_redeploye_pas(self, fausse_machine,
+                                                  monkeypatch):
+        assert self._jouer(monkeypatch, "sur", "boost") == [("boost", True)]
+
+
+class _FauxProfil(object):
+    def __init__(self, n):
+        self.hashes = list(range(n))
+
+    def files_count(self):
+        return len(self.hashes)
+
+
+class TestNomDePartie(object):
+    """Une partie archivee doit garder son nom lisible.
+
+    Le dossier d'archive s'appelle partie_<date> : sans nom, l'utilisateur
+    voit une suite de chiffres et ne sait plus laquelle est sa vraie partie.
+    """
+
+    def test_nom_enregistre(self, fausse_machine):
+        ecrire(config.main_save_file(), "MA PARTIE")
+        newgame.prepare("secondwind", nom="Principale Second Wind")
+        assert newgame.parties()[0]["nom"] == "Principale Second Wind"
+
+    def test_sans_nom_la_chaine_vide(self, fausse_machine):
+        ecrire(config.main_save_file(), "MA PARTIE")
+        newgame.prepare("boost")
+        assert newgame.parties()[0]["nom"] == ""
+
+    def test_nom_conserve_apres_bascule(self, fausse_machine, monkeypatch):
+        faux = _Deploie()
+        monkeypatch.setattr("botw.deploy.deploy", faux)
+        monkeypatch.setattr("botw.profiles.existing", lambda: ["boost", "sur"])
+        monkeypatch.setattr("botw.profiles.active", lambda: "boost")
+        ecrire(config.main_save_file(), "PARTIE DE A")
+        newgame.basculer("sur", force=True)
+        noms = [p["nom"] for p in newgame.parties() if p["existe"]]
+        assert noms == [""], "une bascule ne doit pas inventer de nom"
+        # le nom survit a une relecture complete de l'index
+        assert newgame.read_index()[0]["nom"] == ""

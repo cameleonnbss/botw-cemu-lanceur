@@ -12,21 +12,21 @@ Tout ce qu'il faut pour jouer en modded. Deux double-clics suffisent.
 Double-clic. Menu :
 
   === JOUER ===
-   1. Second Wind + TES MODS      tout en meme temps        (9 mods)
-   2. TES MODS seuls               Linkle, iles, armes anciennes
-   3. Second Wind seul            extension complete
-   4. BOOST ...................... armes, teleport, vol rapide  (LEGER)
-   5. SANS ECHEC ................ le plus complet, tous teste
-   6. CHOISIR TES MODS ........... tu coches ce que tu veux
+   1. MA PARTIE PRINCIPALE ..... Second Wind + cheats
+   2. MA PARTIE FULL MODS ...... les 13 mods, le plus complet
+   3. Second Wind seul ........ extension complete
+   4. BOOST ................... armes, teleport, vol rapide  (LEGER)
+   5. TES MODS seuls .......... Linkle, iles, armes anciennes
+   6. CHOISIR TES MODS ........ tu coches ce que tu veux
 
   === OUTILS ===
-   7. Charger une partie          tes parties, nom + description
-   8. Jeu a deux                  2 manettes
-   9. Panneau des profils         creer / dupliquer / supprimer
-   a. Graphismes                  mode rapide / mode belle image
-   b. VERIFIER ET REPARER ........ dit exactement ce qui ne va pas
-   c. TESTER LES PROFILS .......... rejoue chaque profil et le verifie
-   d. Ouvrir UKMM                 gestion graphique des mods
+   7. Charger une partie ........ tes parties, nom + description
+   8. Jeu a deux ................ 2 manettes
+   9. Panneau des profils ....... creer / dupliquer / supprimer
+   a. Graphismes ................ mode rapide / mode belle image
+   b. VERIFIER ET REPARER ....... dit exactement ce qui ne va pas
+   c. TESTER LES PROFILS ........ rejoue chaque profil et le verifie
+   d. Ouvrir UKMM ............... gestion graphique des mods
    e. Ouvrir Cemu
 
    botw  (la CLI, en anglais ; "botw lang fr" pour le francais)
@@ -38,6 +38,46 @@ Double-clic. Menu :
 
 Le menu affiche en permanence le PROFIL ACTIF et son nombre de mods.
 Si tu ne vois pas Linkle en jeu, regarde cette ligne.
+
+
+
+  >> TES DEUX PARTIES : LES TOUCHES 1 ET 2.  <- la OU tu joues le plus
+
+     Tu as deux parties, et chacune ne peut etre ouverte qu'avec SES mods :
+
+       touche 1   MA PARTIE PRINCIPALE   Second Wind + tes cheats
+       touche 2   MA PARTIE FULL MODS    les 13 mods
+
+     Tu tapes 1, tu joues. Tu veux l'autre, tu tapes 2, tu joues. C'est tout.
+
+     Si tu n'as pas encore cree ta partie full mods, la touche 2 demarre
+     une NOUVELLE partie avec les 13 mods. C'est normal, ce n'est pas une
+     panne. Sauvegarde-la dans le jeu : desormais la touche 2 te la rendra,
+     et la touche 1 gardera ta partie principale.
+
+     Une touche suffit parce qu'elle fait les trois choses dans l'ordre :
+     elle met ta partie de cote, elle installe le bon jeu de mods, et elle
+     remet la partie qui va avec. L'autre partie n'est jamais perdue : elle
+     est de cote, et la touche suivante la reprend.
+
+     Si tu presses 2 alors que tu jouais deja en touche 2, ca dure une
+     seconde : rien n'a change, le lanceur le dit et passe.
+
+     >> C'est important : une partie enregistree avec un jeu de mods ne
+        s'ouvre PAS avec un autre. Le jeu reste bloque sur l'ecran de
+        chargement, sans un seul message d'erreur. C'est pour ca que les
+        touches 1 et 2 ne changent PAS seulement les mods : elles changent
+        aussi la partie. Une touche qui change les mods sans changer la
+        partie, c'est exactement le bug qui bloque ton jeu.
+
+     Pour une partie qui n'est ni la 1 ni la 2 : touche 7, "Charger une
+     partie". Si elle a ete creee avec un autre jeu de mods, le gestionnaire
+     te le dit et propose de basculer tout seul.
+
+     En ligne de commande, c'est la meme chose :
+         botw jeu secondwind --lancer     equivalente a la touche 1
+         botw jeu sur --lancer             equivalente a la touche 2
+
 
 
   >> L'OPTION 6, "CHOISIR TES MODS", c'est la piece maitresse.
@@ -241,7 +281,7 @@ Ce que tu peux faire :
   1. Basculer sur un profil   fusionne et redeploie vers Cemu
   2. Creer un profil VIDE     start from zero, tu lui ajoutes les mods
                               que tu veux
-  3. DUPLIQUER un profil      copie exacte de ses mods. Coût : 0 Mo,
+  3. DUPLIQUER un profil      copie exacte de ses mods. Cout : 0 Mo,
                               parce que les .zip sont partages entre tous
                               les profils.
   4. Renommer un profil
@@ -626,7 +666,7 @@ Un mod UKMM n'applique que les fichiers listes dans son manifest.yml.
 UKMM n'a aucun moyen de signaler un fichier ignore : le mod s'installe, la
 fusion reussit, rien ne signale.
 
-  - 10x Speed Paraglider v2 : son manifeste annonçait "Pack/TitleBG.pack",
+  - 10x Speed Paraglider v2 : son manifeste annoncait "Pack/TitleBG.pack",
     absent de son zip. Son seul vrai fichier, Player_Link.baiprog, n'etait
     donc jamais applique -> le vol a x10 n'existait pas.
 
@@ -696,7 +736,7 @@ Elle regarde tout d'un coup et dit ce qui ne va pas :
   - le pack de textes francais est-il deploye ? (sans lui, les noms ajoutes
     par les mods sont vides)
   - le nombre de fichiers deployes correspond-il au nombre de fichiers
-    fusionnes ? (sinon, des fichiers d'un autre profil traînent)
+    fusionnes ? (sinon, des fichiers d'un autre profil trainent)
   - les sauvegardes sont-elles la ?
   - reste-t-il de la place sur le disque ? en dessous de 2 Go, UKMM ne peut
     plus fusionner
@@ -829,42 +869,42 @@ IMPORTANT : NE PAS MELANGER LES DEUX SYSTEMES
   Ca met l'emplacement de sauvegarde de cote, SANS le supprimer, et part sur
   une partie neuve. L'ancienne est toujours la : `botw newgame revert` la
   remet en place.
-
-
-19. LES GRAPHISMES ET LA CORRECTION DES COULEURS
-================================================
-
-  Le correctif du chargement infini (touche j) coupe aussi les packs
-  graphiques, parce qu'un jeu bloque vaut moins qu'une image terne. Mais ca
-  ne va pas : apres, l'image reste plate et il n'y avait aucun moyen de la
-  remettre. Voila la commande inverse :
-
-      python botw\botw.py graphics
-
-  Ca reactive :
-
-      Graphics      resolution, anticrenelage, resolution des ombres
-      Enhancements  CORRECTION DES COULEURS (prereglages Clarity), reflets
-      Workarounds   correctifs Cemu : crash AMD/NVIDIA, cloudes, herbe
-
-  Le pack Enhancements contient deja le prereglage Clarity de Serfrost, celui
-  que Cemu recommande : la correction des couleurs est donc active
-  immediatement. Pour un autre prereglage, choisis-le dans la fenetre des
-  packs graphiques de Cemu.
-
-  Deux garanties :
-
-    - les packs qui bloquent le chargement (ExtendedMemory, HD Map and
-      Icons) sont retires DANS LA MEME OPERATION. Reactiver l'image ne peut
-      donc jamais remettre le jeu dans l'etat qui le faisait boucler.
-
-    - le pack UKMM reste en premier dans la liste : c'est lui qui porte tes
-      mods.
-
-  Variantes :
-
-      python botw\botw.py graphics --mods   remet aussi DrawDistance, FPS++,
-                                           DivineLaserBeam
-      python botw\botw.py graphics --off    retour a l'image d'origine
-
-  Depuis le menu botw, la touche G fait la meme chose.
+
+
+19. LES GRAPHISMES ET LA CORRECTION DES COULEURS
+================================================
+
+  Le correctif du chargement infini (touche j) coupe aussi les packs
+  graphiques, parce qu'un jeu bloque vaut moins qu'une image terne. Mais ca
+  ne va pas : apres, l'image reste plate et il n'y avait aucun moyen de la
+  remettre. Voila la commande inverse :
+
+      python botw\botw.py graphics
+
+  Ca reactive :
+
+      Graphics      resolution, anticrenelage, resolution des ombres
+      Enhancements  CORRECTION DES COULEURS (prereglages Clarity), reflets
+      Workarounds   correctifs Cemu : crash AMD/NVIDIA, cloudes, herbe
+
+  Le pack Enhancements contient deja le prereglage Clarity de Serfrost, celui
+  que Cemu recommande : la correction des couleurs est donc active
+  immediatement. Pour un autre prereglage, choisis-le dans la fenetre des
+  packs graphiques de Cemu.
+
+  Deux garanties :
+
+    - les packs qui bloquent le chargement (ExtendedMemory, HD Map and
+      Icons) sont retires DANS LA MEME OPERATION. Reactiver l'image ne peut
+      donc jamais remettre le jeu dans l'etat qui le faisait boucler.
+
+    - le pack UKMM reste en premier dans la liste : c'est lui qui porte tes
+      mods.
+
+  Variantes :
+
+      python botw\botw.py graphics --mods   remet aussi DrawDistance, FPS++,
+                                           DivineLaserBeam
+      python botw\botw.py graphics --off    retour a l'image d'origine
+
+  Depuis le menu botw, la touche G fait la meme chose.

@@ -273,7 +273,7 @@ def merged_dir(profile):
 
 
 if __name__ == "__main__":          # usage direct : python -m botw.deploy <profil>
-    i18n.set_lang(config.load().get("lang", "en"))
+    i18n.appliquer(config.load())
     name = sys.argv[1] if len(sys.argv) > 1 else ""
     if not name:
         i18n.title(_("app.name"))

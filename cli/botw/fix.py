@@ -60,6 +60,25 @@ def rapport(cfg=None):
     else:
         out.append((2, _("cemu.ukmm.missing")))
 
+    # --- 1b. reglages de packs qui dependent d'un pack absent -----------
+    # Severite 1, pas 2 : le jeu demarre et tourne. Ce qui manque a l'ecran,
+    # c'est ce qui est selectionne (armes, acteurs attaches). Bloquer le
+    # lancement ici serait disproportionne ; ne rien dire serait pire.
+    incomp = cemu.presets_incompatibles()
+    if incomp:
+        for _c, categorie, avant, apres in incomp:
+            out.append((1, _("cemu.preset.bad", c=categorie,
+                             a=avant, b=apres)))
+    else:
+        out.append((0, _("cemu.preset.ok")))
+
+    # --- 1b. packs actives malgre l'absence de settings.xml --------------
+    # Gravite 2 : ces packs ecrassent des fichiers du jeu alors qu'on croyait
+    # les avoir retires. "HD Map and Icons" remplace toutes les icones
+    # d'inventaire, et rien dans settings.xml ne permet de le voir.
+    for _chemin, nom in cemu.packs_par_defaut():
+        out.append((2, _("cemu.default.pack", n=nom)))
+
     # --- 2. sauvegarde et profil -----------------------------------------
     actif = profiles.active()
     if newgame.has_game():
@@ -79,8 +98,16 @@ def rapport(cfg=None):
     if merged and os.path.isdir(merged):
         n = deploy.count_files(merged)
         dp = deposes(cfg)
-        if dp != n:
-            out.append((2, _("cemu.deploy.mismatch", a=dp, b=n)))
+        if dp < n:
+            # Des fichiers fusionnes manquent : la, ca bloque vraiment.
+            out.append((2, _("cemu.deploy.missing_files", a=dp, b=n)))
+        elif dp > n:
+            # Un SUR-ENSEMBLE n'a jamais bloque Cemu : le jeu lit le pack et y
+            # trouve tout ce qu'il attend. Le compter comme bloquant faisait
+            # dire « le jeu ne demarrera pas » pour un profil qui demarre, et
+            # `botw fix` partait alors dans un redeploiement qui reproduisait
+            # le meme ecart.
+            out.append((0, _("cemu.deploy.extra_files", a=dp, b=n)))
         else:
             out.append((0, _("cemu.deploy.ok", n=n)))
     else:
@@ -95,8 +122,25 @@ def bloque():
 
 
 def corriger(cfg=None, keep_options=False, keep_cheats=True, deploy_apres=True):
-    """Fait tout ce qui peut etre fait sans toucher a la sauvegarde."""
+    """Fait tout ce qui peut etre fait sans toucher a la sauvegarde.
+
+    Un seul cas n'est pas reparable automatiquement : la partie chargee
+    n'appartient pas au jeu de mods actif. Aucun pack graphique n'y est pour
+    rien - le jeu plante parce qu'il relit la partie a travers des fichiers de
+    mods qui ne sont pas la. Refaire un deploiement coute deux minutes pour
+    rien, et le dire « corrige » serait faux. On dit donc la verite, avec les
+    deux seules commandes qui reglent le probleme.
+    """
     cfg = cfg or config.load()
+    actif = profiles.active()
+    if newgame.has_game():
+        provenance = newgame.profil_de_la_partie()
+        if provenance and actif and provenance != actif:
+            i18n.ko(_("cemu.save.mismatch", a=provenance, b=actif))
+            i18n.info(_("fix.save.mismatch.1", b=actif))
+            i18n.info(_("fix.save.mismatch.2", a=provenance))
+            return 2
+
     retires, pack_ukmm = cemu.nettoyer(keep_cheats=keep_cheats,
                                       keep_options=keep_options, cfg=cfg)
     if retires:
@@ -106,6 +150,16 @@ def corriger(cfg=None, keep_options=False, keep_cheats=True, deploy_apres=True):
             i18n.info(_("cemu.backup", p=sauvegarde))
     else:
         i18n.ok(_("cemu.fixed.none"))
+
+    presets = cemu.corriger_presets()
+    if presets:
+        i18n.ok(_("cemu.preset.fixed", n=len(presets),
+                  list=", ".join("%s -> %s" % (a, p) for _c, a, p in presets)))
+
+    desactives = cemu.desactiver_par_defaut()
+    if desactives:
+        i18n.ok(_("cemu.default.fixed", n=len(desactives),
+                  list=", ".join(desactives)))
 
     if deploy_apres:
         actif = profiles.active()

@@ -35,7 +35,11 @@ LANCEUR = ["Lanceur-BOTW.bat", "Set-ProfilUKMM.ps1", "Sauvegardes-BOTW.ps1",
 
 OUTILS = ["verifier-profil.py", "conflits.py", "analyse-mods.py", "matrice.py",
           "reparer-manifests.py", "creer-profil.py", "editer-profil.py",
-          "tester-lanceur.py", "construire-projet.py", "maj-bureau.py"]
+          "tester-lanceur.py", "construire-projet.py", "maj-bureau.py",
+           "verif-sauvegardes.ps1", "demarrage-auto.py",
+           "Cemu-BOTW-au-demarrage.cmd", "tests_demarrage_auto.py",
+           "verifier-lanceur-menu.py", "verifier-doc-cli.py",
+           "tests_installeur.py"]
 
 # Outils qui vivent avec le programme plutot qu'a la racine du chantier.
 OUTIFS_DU_CLI = ["maj-bureau.py"]

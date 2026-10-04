@@ -42,19 +42,43 @@ def _pos_int(value):
 # --- commandes ---------------------------------------------------------------
 
 def cmd_lang(args, cfg):
+    """`botw lang` sans argument montre, `botw lang <code>` fige un choix,
+    `botw lang auto` rend la main au poste. Le cas 'auto' existe parce que la
+    langue suit normalement le systeme : il faut pouvoir y revenir apres avoir
+    choisi une langue a la main, sans editer le fichier de configuration."""
     i18n.title(_("lang.title"))
-    if not args.code:
-        i18n.ok(_("lang.current", lang=i18n.lang()))
+    code = (args.code or "").lower()
+    if code == "auto":
+        cfg["lang"] = ""
+        config.save(cfg)
+        if i18n.appliquer(cfg):
+            i18n.ok(_("lang.auto"))
+            i18n.ok(_("lang.detected", lang=i18n.lang()))
+        else:
+            i18n.ok(_("lang.auto"))
+            i18n.warn(_("lang.no_auto"))
+    elif not code:
+        # On affiche la langue *detectee*, pas seulement la langue active :
+        # avec '--lang fr lang', les deux peuvent differer, et c'est la
+        # detection qui est interesting a connaitre.
+        trouvee = i18n.langue_systeme()
+        if cfg.get("lang"):
+            i18n.ok(_("lang.current", lang=i18n.lang()))
+            i18n.info(_("lang.chosen", lang=cfg["lang"]))
+        elif trouvee:
+            i18n.ok(_("lang.detected", lang=trouvee))
+        else:
+            i18n.warn(_("lang.no_auto"))
         i18n.info(_("lang.available", list=", ".join(i18n.available())))
-        return 0
-    if args.code not in i18n.available():
-        i18n.ko(_("lang.unknown", lang=args.code, list=", ".join(i18n.available())))
+    elif code not in i18n.available():
+        i18n.ko(_("lang.unknown", lang=code, list=", ".join(i18n.available())))
         return 1
-    i18n.set_lang(args.code)
-    cfg["lang"] = args.code
-    config.save(cfg)
-    i18n.ok(_("lang.chosen", lang=args.code))
-    i18n.info(_("lang.current", lang=i18n.lang()))
+    else:
+        i18n.set_lang(code)
+        cfg["lang"] = code
+        config.save(cfg)
+        i18n.ok(_("lang.chosen", lang=code))
+        i18n.info(_("lang.current", lang=i18n.lang()))
     return 0
 
 
@@ -79,6 +103,25 @@ def cmd_deploy(args, cfg):
         cfg["game_profile"] = nom
         config.save(cfg)
         i18n.info(_("deploy.activate", p=nom))
+    return 0
+
+
+def cmd_jeu(args, cfg):
+    """`botw jeu [profil]` : passe a un autre jeu de mods sans rien perdre."""
+    from . import newgame
+    profil = args.profile or cfg.get("game_profile") or ""
+    if not profil:
+        newgame.status()
+        return 0
+    if not newgame.basculer(profil, cfg, force=getattr(args, "yes", False)):
+        return 1
+    cfg["game_profile"] = profil
+    config.save(cfg)
+    if args.launch:
+        from . import ui
+        # `basculer` vient de deployer ce profil : le repasser dans
+        # `launch` ferait un deuxieme remerge complet pour rien.
+        return ui.launch(profil, cfg, deja_deploye=True)
     return 0
 
 
@@ -154,6 +197,43 @@ def cmd_profile(args, cfg):
         return 0 if ko == 0 else 1
     i18n.ko(_("err.unknown_command", c="profile " + str(action)))
     return 1
+
+
+def cmd_installmods(args, cfg):
+    """`botw installmods <fichier|lien> [-p profil]`.
+
+    Le raccourcis qui manquait : la bibliotheque locale ne connait que les
+    mods deja vus, et GameBanana ne repond plus a la recherche. On accepte
+    donc directement ce que le joueur a sous la main - un .zip dans ses
+    telechargements, ou le lien qu'il a trouve - et on fait le reste.
+    """
+    from . import mods, profiles
+    if getattr(args, "list", False):
+        i18n.title(_("installmods.title"))
+        mods.listing(cfg)
+        return 0
+    source = args.source
+    if not source:
+        i18n.ko(_("installmods.how"))
+        return 1
+    profil = args.profile or profiles.active() or cfg.get("game_profile")
+    if not profil:
+        i18n.ko(_("mods.unknown", n=source))
+        return 1
+    if profil not in profiles.existing():
+        i18n.ko(_("guard.profile", p=profil, list=", ".join(profiles.existing())))
+        return 1
+    i18n.title(_("installmods.title"))
+    i18n.info(_("installmods.how"))
+    try:
+        mods.installer_fichier(profil, source, cfg)
+    except (ValueError, OSError) as e:
+        i18n.ko(str(e))
+        return 1
+    except KeyboardInterrupt:
+        i18n.warn(_("err.interrupted"))
+        return 1
+    return 0
 
 
 def cmd_mods(args, cfg):
@@ -386,7 +466,11 @@ def cmd_fix(args, cfg):
     if code == 0:
         i18n.ok(_("fix.done"))
     reste = fix.rapport(cfg)
-    return 0 if not fix.bloque() else code or 1
+    if not fix.bloque():
+        return 0
+    # Un code 2 signifie « pas reparable tout seul » (partie d'un autre jeu de
+    # mods) : le message l'a deja explique, on sort juste en echec simple.
+    return 1
 
 
 def cmd_check(args, cfg):
@@ -551,6 +635,13 @@ def build_parser():
                    help=_("cli.help.activate"))
     d.add_argument("-q", "--quiet", action="store_true")
 
+    j = s.add_parser("jeu", help=_("cli.help.jeu"),
+                     description=_("cli.help.jeulong"))
+    j.add_argument("profile", nargs="?", default=None)
+    j.add_argument("--lancer", dest="launch", action="store_true",
+                   help=_("cli.help.jeulancer"))
+    j.add_argument("-y", "--yes", action="store_true", help=_("cli.help.yes"))
+
     pr = s.add_parser("profile", help=_("cli.help.profile"))
     pr.add_argument("action", nargs="?",
                     choices=["list", "show", "use", "create", "delete", "verify"],
@@ -560,6 +651,15 @@ def build_parser():
     pr.add_argument("-v", "--verbose", action="store_true")
     pr.add_argument("-y", "--yes", action="store_true",
                     help=_("cli.help.yes"))
+
+    im = s.add_parser("installmods",
+                       help=_("cli.help.installmods"))
+    im.add_argument("source", nargs="?", default=None,
+                    help=_("cli.help.installmods.source"))
+    im.add_argument("-p", "--profile", default=None,
+                    help=_("cli.help.installmods.profile"))
+    im.add_argument("-l", "--list", action="store_true",
+                    help=_("cli.help.installmods.list"))
 
     m = s.add_parser("mods", help=_("cli.help.mods"))
     m.add_argument("action", nargs="?",
@@ -642,8 +742,10 @@ HANDLERS = {
     "lang": cmd_lang,
     "doctor": cmd_doctor,
     "deploy": cmd_deploy,
+    "jeu": cmd_jeu,
     "profile": cmd_profile,
     "mods": cmd_mods,
+    "installmods": cmd_installmods,
     "tools": cmd_tools,
     "catalog": cmd_catalog,
     "coop": cmd_coop,
@@ -665,8 +767,9 @@ def main(argv=None):
     i18n.use_utf8()
     cfg = config.load()
     # La langue est choisie avant meme de construire l'aide : 'botw --help'
-    # doit etre en francais si la configuration est en francais.
-    i18n.set_lang(cfg.get("lang", "en"))
+    # doit etre dans la bonne langue. i18n.appliquer() fait les deux dans
+    # l'ordre : choix explicite enregistre, sinon langue du poste.
+    i18n.appliquer(cfg)
     if "--lang" in argv:
         i = argv.index("--lang")
         if i + 1 < len(argv):

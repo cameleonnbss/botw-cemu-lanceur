@@ -230,9 +230,23 @@ def deploy_ouvert(cfg=None):
     return bool(deploy.processes_named("Cemu"))
 
 
+def _sans_prefixe(chemin):
+    """Le chemin sans son eventuel prefixe 'graphicPacks/'.
+
+    Cemu ecrit les chemins avec ce prefixe dans settings.xml ; le reste du
+    code les stocke sans. Comme `_sur_le_disque` ajoute lui-meme
+    'graphicPacks', lui passer un chemin deja prefixe Cherchait
+    graphicPacks/graphicPacks/... et rendait tout introuvable, en silence.
+    """
+    c = chemin.replace("\\", "/").lstrip("/")
+    if c.lower().startswith(PREFIXE.lower()):
+        c = c[len(PREFIXE):]
+    return c
+
+
 def _sur_le_disque(relatif):
     return os.path.isfile(os.path.join(config.cemu_appdata(), "graphicPacks",
-                                       relatif))
+                                       _sans_prefixe(relatif)))
 
 
 PREFIXE = "graphicPacks/"
@@ -407,6 +421,304 @@ def activer_graphismes(cosmetiques=False, cfg=None):
     # settings.xml est intact. C'est exactement le genre de mensonge que ce
     # projet evite partout ailleurs.
     return ok, msg, (ajoutes if ok else [])
+
+# --- reglages de presets incompatibles ------------------------------------
+#
+# LES ARMES INVISIBLES
+#
+# Le pack "Draw Distance" de BOTW augmente la distance a laquelle le moteur
+# dessine les acteurs et les objets. Deux de ses options portent la mention
+# "requires Extended Memory pack!" : sans le pack Extended Memory, qui
+# augmente de 2 Go la carte memoire de l'emulateur, le moteur va chercher
+# plus loin que ce qu'il peut reellement lire.
+#
+# L'arme que Link tient en main n'est pas un objet : c'est un acteur attache
+# a Link, gere par la meme liste que les NPC. Elle disparait donc avec eux -
+# silencieusement, sans erreur, sans crash. C'est ce que le joueur voit, et
+# c'est pour cela que ce n'est pas dans BLOCAGE_CHARGEMENT : le jeu demarre
+# et tourne. Le joueur perd simplement ses armes a l'ecran.
+#
+# Extended Memory reste interdit a cote d'UKMM (cf. plus haut) : on ne peut
+# donc pas activer le pack pour satisfaire l'option. Il faut redescendre
+# l'option a la valeur la plus haute qui n'exige rien.
+
+MARQUE_EXTENDED = "requires Extended Memory"
+
+# Packs dont les presets peuvent dependre d'un autre pack.
+PACKS_A_PRESETS = ("/Mods/DrawDistance",)
+
+BLOC_PRESET = re.compile(r"(<Preset(?:\s[^>]*)?>)(.*?)(</Preset>)", re.S)
+
+
+def _champ(nom):
+    return re.compile(r"(<%s\s*>)(.*?)(</%s>)" % (nom, nom), re.S)
+
+
+def CHAMP_INI(nom):
+    """Une cle de rules.txt : 'category = ...' jusqu'a la fin de la ligne."""
+    return re.compile(r"^[ \t]*%s[ \t]*=(.*)$" % re.escape(nom), re.M)
+
+
+def exige_extended_memory(nom_option):
+    """Vrai si cette option du pack ne marche qu'avec Extended Memory.
+
+    On ne separe pas la liste des options interdites en dur : le pack ecrit
+    lui-meme la mention dans le nom de l'option. Une version ulterieure du
+    pack qui qualifie une nouvelle option de la meme facon reste donc
+    couverte sans toucher au code.
+    """
+    return MARQUE_EXTENDED.lower() in (nom_option or "").lower()
+
+
+def options_du_pack(chemin):
+    """{categorie: [noms d'options]} lu dans le rules.txt du pack.
+
+    Attention au format : le rules.txt d'un pack graphique est un fichier de
+    configurationIni ("category = ...", "name = ..."), alors que le meme
+    choix de l'utilisateur est stocke dans settings.xml en XML
+    (<category>...</category>). Ce ne sont pas les deux memes parseurs.
+    """
+    if not _sur_le_disque(chemin):
+        return {}
+    fichier = os.path.join(config.cemu_appdata(), "graphicPacks",
+                           _sans_prefixe(chemin))
+    try:
+        with io.open(fichier, encoding="utf-8", errors="replace") as f:
+            texte = f.read()
+    except OSError:
+        return {}
+    out = {}
+    for bloc in texte.split("[Preset]")[1:]:
+        cat = CHAMP_INI("category").search(bloc)
+        nom = CHAMP_INI("name").search(bloc)
+        if not cat or not nom:
+            continue
+        out.setdefault(cat.group(1).strip(), []).append(nom.group(1).strip())
+    return out
+
+
+def _bloc_de(chemin):
+    """Le bloc <Entry> d'un pack dans settings.xml, ou '' s'il n'y est pas."""
+    for c, bloc in _entrees_brutes():
+        if cle(c) == cle(chemin):
+            return bloc
+    return ""
+
+
+def presets_du_bloc(bloc):
+    """{categorie: valeur choisie} d'un bloc <Entry> de settings.xml."""
+    out = {}
+    for m in BLOC_PRESET.finditer(bloc or ""):
+        cat = _champ("category").search(m.group(2))
+        if not cat:
+            continue
+        val = _champ("preset").search(m.group(2))
+        out[cat.group(2).strip()] = val.group(2).strip() if val else ""
+    return out
+
+
+def _meilleure_sure(options):
+    """La derniere option du pack qui n'exige pas Extended Memory.
+
+    Les packs de Cemu listent leurs options de la plus faible a la plus
+    forte : la derniere option sure est donc la meilleure possible.
+    """
+    sures = [o for o in options if not exige_extended_memory(o)]
+    return sures[-1] if sures else ""
+
+
+def _extended_memory_actif():
+    return any("ExtendedMemory" in c for c in active_packs())
+
+
+def presets_incompatibles():
+    """[(pack, categorie, valeur, valeur_sur)] a corriger.
+
+    Vide quand rien ne cloche, ou quand Extended Memory est actif - auquel
+    cas l'option choisie est legitimate (et il faudra, ailleurs, verifier
+    que ce pack n'est pas actif en meme temps qu'UKMM).
+    """
+    if _extended_memory_actif():
+        return []
+    out = []
+    for chemin in active_packs():
+        c = chemin.replace("\\", "/")
+        if not any(m in c for m in PACKS_A_PRESETS):
+            continue
+        bloc = _bloc_de(c)
+        if not bloc:
+            continue
+        options = options_du_pack(c)
+        for categorie, valeur in sorted(presets_du_bloc(bloc).items()):
+            if not exige_extended_memory(valeur):
+                continue
+            sure = _meilleure_sure(options.get(categorie, []))
+            if sure and sure != valeur:
+                out.append((c, categorie, valeur, sure))
+    return out
+
+
+def _remplace_valeur(bloc, categorie, valeur):
+    """Dans un bloc <Entry>, met `valeur` sur la categorie demandee."""
+    def repl(m):
+        inner = m.group(2)
+        cat = _champ("category").search(inner)
+        if not cat or cat.group(2).strip() != categorie:
+            return m.group(0)
+        neuf = _champ("preset").sub(
+            lambda g: g.group(1) + valeur + g.group(3), inner, count=1)
+        return m.group(1) + neuf + m.group(3)
+    return BLOC_PRESET.sub(repl, bloc)
+
+
+def corriger_presets():
+    """Remet les reglages incompatibles a une valeur qui marche.
+
+    Retourne [(categorie, avant, apres)] reellement ecrits. Ecrire le fichier
+    de configuration de Cemu pendant qu'il tourne perdrait tout : on refuse
+    donc, comme le fait deja ecrire_packs.
+    """
+    a_corriger = presets_incompatibles()
+    if not a_corriger or deploy_ouvert():
+        return []
+    chemin_fichier = config.cemu_settings()
+    try:
+        with io.open(chemin_fichier, encoding="utf-8", errors="replace") as f:
+            t = f.read()
+    except OSError:
+        return []
+
+    par_pack = {}
+    for chemin, categorie, avant, apres in a_corriger:
+        par_pack.setdefault(chemin, []).append((categorie, avant, apres))
+
+    ecrits = []
+    for chemin, adjustments in par_pack.items():
+        bloc_avant = _bloc_de(chemin)
+        if not bloc_avant:
+            continue
+        bloc_apres = bloc_avant
+        for categorie, _avant, apres in adjustments:
+            bloc_apres = _remplace_valeur(bloc_apres, categorie, apres)
+        if bloc_apres == bloc_avant:
+            continue
+        t = t.replace(bloc_avant, bloc_apres, 1)
+        ecrits += [(c, a, p) for c, a, p in adjustments]
+
+    if not ecrits:
+        return []
+    sauvegarde = chemin_fichier + ".botw-presets.bak"
+    try:
+        if not os.path.isfile(sauvegarde):
+            shutil.copy2(chemin_fichier, sauvegarde)
+        with io.open(chemin_fichier, "w", encoding="utf-8", newline="") as f:
+            f.write(t)
+    except OSError:
+        return []
+    return ecrits
+
+
+# --- les packs que Cemu active tout seuls ----------------------------------
+#
+# UN PACK ACTIVE SANS ETRE DANS settings.xml
+#
+# Retirer une entree de la section <GraphicPack> ne suffit pas. Un pack dont
+# le rules.txt porte `default = true` est active par Cemu meme absent de la
+# liste : c'est le cas de "HD Map and Icons", qui remplace 1558 icones
+# d'inventaire. Le Symptome ne ressemble en rien a ce qu'on cherche quand on
+# inspecte settings.xml - les 49 entrees sont propres - alors que le jeu, lui,
+# perd toutes ses icones. Et comme le pack n'est pas dans la liste, le retirer
+# de la liste ne change rien : il revient a chaque lancement.
+#
+# La detection doit donc regarder ce qu'il y a SUR LE DISQUE, pas seulement
+# ce que settings.xml declare.
+#
+# `default = true` dans un rules.txt ne veut pas dire "necessaire", il veut
+# dire "coche par defaut". On le met a false : le pack reste installe, donc
+# reversible, mais Cemu ne l'active plus tout seul.
+
+DEFAUT = re.compile(r"^\s*default\s*=\s*true\s*$", re.M | re.I)
+
+
+def racine_packs():
+    """Tous les packs installes, [(chemin relatif a graphicPacks, nom)]."""
+    base = os.path.join(config.cemu_appdata(), "graphicPacks")
+    if not os.path.isdir(base):
+        return []
+    trouves = []
+    for racine, repertoires, _fichiers in os.walk(base):
+        if "rules.txt" not in _fichiers:
+            continue
+        relatif = os.path.relpath(os.path.join(racine, "rules.txt"), base)
+        trouves.append((relatif.replace(os.sep, "/"),
+                        os.path.basename(racine)))
+    return sorted(trouves)
+
+
+def _defaut_du_pack(chemin):
+    """Le rules.txt d'un pack, ou '' s'il est introuvable."""
+    fichier = os.path.join(config.cemu_appdata(), "graphicPacks",
+                           _sans_prefixe(chemin))
+    try:
+        with io.open(fichier, encoding="utf-8", errors="replace") as f:
+            return f.read()
+    except OSError:
+        return ""
+
+
+def packs_par_defaut():
+    """Les packs actifs malgre tout, parce que leur rules.txt le demande.
+
+    On ne garde que ceux qui ecrasent des fichiers du jeu : ce sont les seuls
+    qui peuvent casser le chargement ou l'affichage. Les packs purely
+    graphiques (resolution, anticrenelage) n'ecrasent rien, et les laisser
+    s'activer tout seuls est sans risque - c'est meme leur usage normal.
+    """
+    out = []
+    for chemin, nom in racine_packs():
+        # Notre propre pack est actif par defaut, et c'est voulu : c'est lui
+        # qui porte les mods. Le signaler comme un intrus et le desactiver
+        # supprimerait les mods du jeu - exactement l'inverse du but.
+        if "UKMM" in chemin.upper():
+            continue
+        texte = _defaut_du_pack(chemin)
+        if not DEFAUT.search(texte or ""):
+            continue
+        # chemin est .../<dossier>/rules.txt : le dossier de contenu du pack
+        # est bien a cote, pas a l'interieur du fichier.
+        dossier = os.path.dirname(_sans_prefixe(chemin))
+        if os.path.isdir(os.path.join(config.cemu_appdata(), "graphicPacks",
+                                      dossier, "content")):
+            out.append((PREFIXE + chemin, nom))
+    return out
+
+
+def desactiver_par_defaut():
+    """Passe `default = true` a false. Retourne [noms touches].
+
+    Ecrit dans le rules.txt du pack, pas dans settings.xml : c'est la seule
+    facon, puisque c'est ce fichier que Cemu lit quand le pack n'est pas
+    dans la liste. Le pack reste en place, donc la manoeuvre est reversible
+    en remettant le mot true.
+    """
+    touches = []
+    for chemin, nom in packs_par_defaut():
+        fichier = os.path.join(config.cemu_appdata(), "graphicPacks",
+                               _sans_prefixe(chemin))
+        texte = _defaut_du_pack(chemin)
+        if not texte:
+            continue
+        nouveau = DEFAUT.sub("default = false", texte, count=1)
+        if nouveau == texte:
+            continue
+        try:
+            with io.open(fichier, "w", encoding="utf-8", newline="") as f:
+                f.write(nouveau)
+        except OSError:
+            continue
+        touches.append(nom)
+    return touches
+
 
 # --- le correctif -----------------------------------------------------------
 

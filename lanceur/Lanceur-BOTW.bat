@@ -51,14 +51,14 @@ echo ================================================================
 echo.
 echo     Profil actif : %PROFIL%   (%NBMODS% mods)
 echo.
-echo   JOUER
-echo     1. Second Wind +^ TES MODS    tout en meme temps ^(9 mods^)
-echo     2. TES MODS seuls             Linkle, iles, armes anciennes
-echo     3. Second Wind seul          extension complete
+echo   JOUER  -  les touches 1 et 2 changent de jeu de mods ET de partie
+echo     1. MA PARTIE PRINCIPALE ...... Second Wind + cheats
+echo     2. MA PARTIE FULL MODS ....... les 13 mods, le plus complet
+echo     3. Second Wind seul .......... extension complete
 echo     4. BOOST ..................... Armes, teleport, vol rapide. Leger
-echo     5. SANS ECHEC ................ le plus complet, tous testes
+echo     5. TES MODS seuls ........... Linkle, iles, armes anciennes
 echo     6. CHOISIR TES MODS .......... tu coches ce que tu veux
-echo.
+
 echo   OUTILS
 echo     7. Charger une partie        tes sauvegardes, nom + description
 echo     8. Jeu a deux                2 manettes
@@ -96,22 +96,23 @@ if errorlevel 9 goto panneau
 if errorlevel 8 goto coop
 if errorlevel 7 goto sauvegardes
 if errorlevel 6 goto choix
-if errorlevel 5 goto sur
+if errorlevel 5 goto flo
 if errorlevel 4 goto boost
 if errorlevel 3 goto sw
-if errorlevel 2 goto flo
-if errorlevel 1 goto combo
+if errorlevel 2 goto fullmods
+if errorlevel 1 goto principale
 goto menu
 
-:combo
-call :jouer combo
+:principale
+call :jouer_avec_partie secondwind
 if errorlevel 1 goto menu
-goto fin
+goto fin_avec_partie
 
-:sur
-call :jouer sur
+:fullmods
+call :jouer_avec_partie sur
 if errorlevel 1 goto menu
-goto fin
+goto fin_avec_partie
+
 
 :boost
 call :jouer boost
@@ -127,6 +128,37 @@ goto fin
 call :jouer flo
 if errorlevel 1 goto menu
 goto fin
+
+rem ---------------------------------------------------------------------
+rem :jouer_avec_partie <profil>
+rem C'est la touche 1 et la touche 2 du menu, et c'est la seule chose que
+rem ce lanceur fait qui n'existait pas avant : changer de jeu de mods ET
+rem remettre la partie qui va avec, dans le bon ordre.
+rem
+rem Une partie enregistree avec un jeu de mods ne peut pas etre lue par
+rem un autre : le jeu reste bloque sur l'ecran de chargement, sans un seul
+rem message d'erreur. Changer de jeu de mods en gardant la partie en place
+rem produit donc exactement ce blocage. `botw jeu` met la partie de cote,
+rem deploie, puis remet celle du profil demande.
+rem
+rem On repasse par Set-ProfilUKMM.ps1 si le dossier botw est absent : le
+rem lanceur reste utilisable meme avec une copie incomplete, mais dans ce
+rem cas il ne touche pas a la partie et le dit.
+rem ---------------------------------------------------------------------
+:jouer_avec_partie
+if not exist "%BOTW%" goto :jouer_avec_partie_sans_botw
+python "%BOTW%" jeu %1 --lancer -y
+if errorlevel 1 goto :echec
+goto :eof
+:jouer_avec_partie_sans_botw
+echo.
+echo   Le dossier botw est introuvable : je peux changer le jeu de mods,
+echo   mais PAS la partie. Une partie deja enregistree avec un autre jeu
+echo   de mods ne se charge pas : dans Cemu, fais A -^> Nouvelle partie.
+echo.
+call :jouer %1
+if errorlevel 1 goto :echec
+goto :eof
 
 rem ---------------------------------------------------------------------
 rem :jouer <profil>
@@ -295,6 +327,22 @@ rem Bannie affichee apres un deploiement reussi. C'est l'ecran de
 rem chargement qui bloque, pas le jeu : une partie enregistree avec un
 rem autre jeu de mods ne peut pas ete lue par celui-la.
 rem ---------------------------------------------------------------------
+rem ---------------------------------------------------------------------
+rem Ecran de fin des touches 1 et 2. Distinct de :fin, qui annonce une
+rem partie neuve : ici la partie du profil vient d'etre remise en place,
+rem et c'est la seule nuance qui compte.
+rem ---------------------------------------------------------------------
+:fin_avec_partie
+echo.
+echo   C'est pret : le jeu de mods ET ta partie sont en place.
+echo   Lance Cemu (ou touche e) et continue ta partie.
+echo.
+echo   Pour revenir sur l'autre partie, utilise l'autre touche :
+echo   l'autre partie est de cote, jamais perdue.
+echo.
+pause
+exit /b 0
+
 :fin
 echo.
 echo   Profil deploye. Tu peux lancer Cemu.

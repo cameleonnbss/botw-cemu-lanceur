@@ -12,7 +12,7 @@ import time
 import pytest
 
 from botw import builder, cemu, config, deploy, fix, newgame
-from conftest import ecrire
+from conftest import PROFIL_YML, SETTINGS_YML, ecrire
 
 # Reproduit la section telle que Cemu 2.6 l'ecrit, y compris les entrees
 # imbriquees avec <Preset>.
@@ -210,6 +210,77 @@ class TestDiagnostic(object):
         # merged vide -> le profil n'a jamais ete fusionne
         assert any("merged" in t or "fusionne" in t
                    for _g, t in fix.rapport())
+
+
+class TestDeploiementEnTropOuPas(object):
+    """Un surplus de fichiers n'a jamais bloque Cemu ; un manque, si.
+
+    Le compte compare le pack chez Cemu a la fusion. Les deux sens ne se
+    valent pas : un SUR-ENSEMBLE donne au jeu tout ce qu'il attend, alors
+    qu'un manque le fait tourner avec un jeu de mods incomplet. Les
+    confondre annoncait « le jeu ne demarrera pas » sur un profil qui
+    demarre, et `botw fix` partait alors dans un redeploiement qui
+    reproduisait exactement le meme ecart.
+
+    Le cas reel qui a ouvert ce test : UKMM livre 5614 fichiers alors que sa
+    propre fusion en compte 5477. Le jeu demarre ; seul le diagnostic
+    criait au gravy.
+    """
+
+    def _sans_packs_bloquants(self):
+        """Retire les packs qui bloquent, pour n'observer que le decompte.
+
+        Sans ca, `bloque()` verrait `ExtendedMemory` et `HD_Map_and_Icons` et
+        le test echouerait pour une raison sans rapport avec le deploiement.
+        """
+        cemu.nettoyer()
+
+    def _manque(self):
+        """Retire chez Cemu un fichier que la fusion contient."""
+        merged = deploy.merged_dir("boost")
+        for base, _d, files in os.walk(merged):
+            for nom in files:
+                rel = os.path.relpath(os.path.join(base, nom), merged)
+                os.remove(os.path.join(config.graphic_pack(), rel))
+                return rel
+        raise AssertionError("la fixture ne contient aucun fichier fusionne")
+
+    def _surplus(self):
+        """Ajoute chez Cemu un fichier qu'aucune fusion ne contient."""
+        ecrire(os.path.join(config.graphic_pack(), "content", "EnTrop.sbfres"),
+               "x")
+
+    def test_fichiers_manquants_bloquent(self, packs_deployees):
+        self._sans_packs_bloquants()
+        self._manque()
+        rapport = fix.rapport()
+        assert fix.bloque(), "des fichiers fusionnes manquent : c'est grave"
+        assert any(g == 2 and ("manquent" in t or "missing" in t)
+                   for g, t in rapport), rapport
+
+    def test_deploiement_complet_ne_bloque_pas(self, packs_deployees):
+        self._sans_packs_bloquants()
+        assert not fix.bloque(), fix.rapport()
+
+    def test_fichiers_en_trop_ne_bloquent_pas(self, packs_deployees):
+        self._sans_packs_bloquants()
+        self._surplus()
+        rapport = fix.rapport()
+        sur = [(g, t) for g, t in rapport
+               if "en trop" in t or "left over" in t]
+        assert sur, ("le surplus doit etre signale, meme s'il ne bloque "
+                     "pas : %r" % (rapport,))
+        assert all(g == 0 for g, _t in sur), sur
+        assert not fix.bloque(), rapport
+
+    def test_le_message_du_surplus_donne_les_deux_comptes(self,
+                                                          packs_deployees):
+        self._sans_packs_bloquants()
+        n = deploy.count_files(deploy.merged_dir("boost"))
+        self._surplus()
+        texte = " ".join(t for _g, t in fix.rapport())
+        assert str(n) in texte and str(n + 1) in texte, texte
+        assert "bloquant" in texte or "blocking" in texte, texte
 
 
 def profiles_liste():
@@ -866,3 +937,370 @@ class TestConstructeur(object):
         assert "sw" in builder.noms(dict(builder.DEFAUTS, secondwind=True))
         assert builder.noms(dict(builder.DEFAUTS, secondwind=False)) \
             .startswith("linkle")
+
+# --- les armes invisibles : reglages qui dependent d'un pack absent ---------
+#
+# Le pack "Draw Distance" propose des options qui ne fonctionnent qu'avec le
+# pack Extended Memory. Or ce pack ne peut pas tourner avec UKMM : les
+# options choisies font donc disparaitre les acteurs attaches a Link, donc
+# l'arme qu'il tient en main. Le jeu demarre, tourne, et n'affiche rien.
+
+# Extrait fidele du rules.txt livre avec le pack : c'est un fichier de
+# configuration Ini, pas du XML comme settings.xml.
+RULES_DRAWDISTANCE = """[Definition]
+titleIds = 00050000101C9500
+name = Draw Distance
+version = 6
+
+[Preset]
+name = Medium (1x)
+category = NPC, Enemies And Other Entities
+default = 1
+$actor = 1.0
+
+[Preset]
+name = High (1.25x)
+category = NPC, Enemies And Other Entities
+$actor = 1.25
+
+[Preset]
+name = Ultra (1.5x)
+category = NPC, Enemies And Other Entities
+$actor = 1.5
+
+[Preset]
+name = Extreme (2x, requires Extended Memory pack!)
+category = NPC, Enemies And Other Entities
+$actor = 2
+
+[Preset]
+name = High (1.25x)
+category = Terrain, Buildings, Bushes And Other Objects
+$object = 1.25
+
+[Preset]
+name = Ultra (1.5x, requires Extended Memory pack!)
+category = Terrain, Buildings, Bushes And Other Objects
+$object = 1.5
+
+[Preset]
+name = Medium (Default)
+category = Trees (2D Billboards)
+default = 1
+$tree = 0.5*1.0
+"""
+
+DD = ("graphicPacks/downloadedGraphicPacks/BreathOfTheWild/Mods/"
+      "DrawDistance/rules.txt")
+
+SETTINGS_ARMES_INVISIBLES = """<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+  <content>
+    <GraphicPack>
+        <Entry filename="graphicPacks/BreathOfTheWild_UKMM/rules.txt"/>
+        <Entry filename="graphicPacks/downloadedGraphicPacks/BreathOfTheWild/Mods/DrawDistance/rules.txt">
+            <Preset>
+                <category>NPC, Enemies And Other Entities</category>
+                <preset>Extreme (2x, requires Extended Memory pack!)</preset>
+            </Preset>
+            <Preset>
+                <category>Terrain, Buildings, Bushes And Other Objects</category>
+                <preset>Ultra (1.5x, requires Extended Memory pack!)</preset>
+            </Preset>
+            <Preset>
+                <category>Trees (2D Billboards)</category>
+                <preset>Medium (Default)</preset>
+            </Preset>
+        </Entry>
+        <Entry filename="graphicPacks/downloadedGraphicPacks/BreathOfTheWild/Graphics/rules.txt">
+            <Preset>
+                <category>Resolution</category>
+                <preset>2560x1440 (2K)</preset>
+            </Preset>
+        </Entry>
+    </GraphicPack>
+    <Input>
+      <PadChannels>1</PadChannels>
+    </Input>
+  </content>
+</Config>
+"""
+
+
+def _installer_draw_distance():
+    """Ecrit le rules.txt du pack sous graphicPacks/.
+
+    DD porte deja le prefixe 'graphicPacks/', comme Cemu l'ecrit dans
+    settings.xml ; le repertoire du pack, lui, s'appelle graphicPacks une
+    seule fois. On retire donc le prefixe avant de joindre.
+    """
+    relatif = cemu._sans_prefixe(DD).replace("/", os.sep)
+    ecrire(os.path.join(config.cemu_appdata(), "graphicPacks", relatif),
+           RULES_DRAWDISTANCE)
+
+
+@pytest.fixture
+def draw_distance(fausse_machine):
+    """Le pack Draw Distance installe, avec son rules.txt reel."""
+    _installer_draw_distance()
+    ecrire(config.cemu_settings(), SETTINGS_ARMES_INVISIBLES)
+    return draw_distance
+
+
+class TestArmesInvisibles(object):
+
+    def test_options_lues_avec_ou_sans_prefixe(self, draw_distance):
+        """Le meme pack, ecrit comme Cemu l'ecrit ou comme le code le stocke."""
+        avec = cemu.options_du_pack(DD)
+        sans = cemu.options_du_pack(DD.replace("graphicPacks/", "", 1))
+        assert avec == sans
+        assert avec, "aucune option lue : le rules.txt n'a pas ete trouve"
+
+    def test_les_deux_categories_sont_signalees(self, draw_distance):
+        trouves = cemu.presets_incompatibles()
+        assert len(trouves) == 2
+        categories = sorted(c for _p, c, _a, _s in trouves)
+        assert categories == ["NPC, Enemies And Other Entities",
+                              "Terrain, Buildings, Bushes And Other Objects"]
+
+    def test_propose_la_meilleure_option_sure(self, draw_distance):
+        """Acteurs : Ultra (1.5x) ne demande rien. Objets : il faut redescendre."""
+        par_cat = {c: s for _p, c, _a, s in cemu.presets_incompatibles()}
+        assert par_cat["NPC, Enemies And Other Entities"] == "Ultra (1.5x)"
+        assert par_cat["Terrain, Buildings, Bushes And Other Objects"] \
+            == "High (1.25x)"
+
+    def test_rien_a_signaler_si_extended_memory_est_actif(self, draw_distance):
+        """Avec le pack present, l'option choisie est legitime."""
+        t = io.open(config.cemu_settings(), encoding="utf-8").read()
+        t = t.replace(
+            '<Entry filename="graphicPacks/BreathOfTheWild_UKMM/rules.txt"/>',
+            '<Entry filename="graphicPacks/BreathOfTheWild_UKMM/rules.txt"/>\n'
+            '        <Entry filename="graphicPacks/downloadedGraphicPacks/'
+            'BreathOfTheWild/Mods/ExtendedMemory/rules.txt"/>')
+        ecrire(config.cemu_settings(), t)
+        assert cemu.presets_incompatibles() == []
+
+    def test_corriger_ecret_la_valeur_sure(self, draw_distance):
+        ecrits = cemu.corriger_presets()
+        assert len(ecrits) == 2
+        reste = cemu.presets_du_bloc(cemu._bloc_de(DD))
+        assert reste["NPC, Enemies And Other Entities"] == "Ultra (1.5x)"
+        assert reste["Terrain, Buildings, Bushes And Other Objects"] \
+            == "High (1.25x)"
+
+    def test_corriger_est_idempotent(self, draw_distance):
+        cemu.corriger_presets()
+        assert cemu.corriger_presets() == []
+        assert cemu.presets_incompatibles() == []
+
+    def test_corriger_preserve_la_resolution(self, draw_distance):
+        """On ne touche qu'a la valeur visee : 1440p doit survivre."""
+        cemu.corriger_presets()
+        t = io.open(config.cemu_settings(), encoding="utf-8").read()
+        assert "2560x1440 (2K)" in t
+        assert "PadChannels" in t
+        assert "UKMM" in t
+
+    def test_corriger_garantit_une_sauvegarde(self, draw_distance):
+        cemu.corriger_presets()
+        assert os.path.isfile(config.cemu_settings() + ".botw-presets.bak")
+
+    def test_corriger_refuse_pendant_que_cemu_tourne(self, draw_distance,
+                                                     monkeypatch):
+        monkeypatch.setattr("botw.deploy.processes_named",
+                            lambda n: ["Cemu.exe"])
+        assert cemu.corriger_presets() == []
+        assert "Extreme (2x" in io.open(config.cemu_settings(),
+                                        encoding="utf-8").read()
+
+    def test_le_diagnostic_signale_sans_bloquer(self, draw_distance):
+        """Gravite 1 : le jeu demarre, il ne manque que des choses a l'ecran.
+
+        On verifie la gravite des lignes qui parlent de presets, pas
+        `bloque()` dans son ensemble : sur cette fausse machine il n'y a ni
+        sauvegarde ni deploiement, donc le rapport signale aussi ces absences
+        la, et ce n'est pas ce que ce test veut mesurer.
+        """
+        graves = [(g, t) for g, t in fix.rapport() if "INCOMPATIBLE" in t]
+        assert len(graves) == 2
+        for g, t in graves:
+            assert g == 1, "un reglage incompatible ne doit pas etre bloquant"
+            assert "Extended Memory" in t
+
+    def test_fix_repare_les_armes(self, draw_distance):
+        fix.corriger(deploy_apres=False)
+        assert cemu.presets_incompatibles() == []
+
+    def test_un_reglage_normal_ne_declenche_rien(self, fausse_machine):
+        """Des valeurs qui n'exigent rien ne doivent rien declencher."""
+        _installer_draw_distance()
+        t = SETTINGS_ARMES_INVISIBLES.replace(
+            "Extreme (2x, requires Extended Memory pack!)", "Ultra (1.5x)")
+        t = t.replace(
+            "Ultra (1.5x, requires Extended Memory pack!)", "High (1.25x)")
+        ecrire(config.cemu_settings(), t)
+        assert cemu.presets_incompatibles() == []
+        assert cemu.corriger_presets() == []
+
+
+# --- un pack actif sans etre dans settings.xml ------------------------------
+#
+# "HD Map and Icons" porte `default = true` dans son rules.txt : Cemu l'active
+# meme apres l'avoir retire de settings.xml. Il remplace 1558 icones
+# d'inventaire, et le jeu perd toutes ses icones - alors que les 49 entrees
+# de settings.xml sont parfaitement propres. C'est ce que regarde cette
+# famille de tests : ce qu'il y a SUR LE DISQUE, pas ce que le fichier dit.
+
+RULES_PAR_DEFAUT = """[Definition]
+titleIds = 00050000101C9500
+name = HD Map and Icons
+version = 4
+default = true
+"""
+
+RULES_SANS_DEFAUT = """[Definition]
+titleIds = 00050000101C9500
+name = Un Pack Neutre
+version = 1
+default = false
+"""
+
+
+def _installer(nom, rules, avec_contenu=True):
+    base = os.path.join(config.cemu_appdata(), "graphicPacks", nom)
+    ecrire(os.path.join(base, "rules.txt"), rules)
+    if avec_contenu:
+        ecrire(os.path.join(base, "content", "UI", "StockItem",
+                            "Weapon_Sword_001.sbitemico"), "Yaz0")
+    return nom
+
+
+class TestPackActifParDefaut(object):
+
+    def test_detecte_un_pack_actif_sans_settings(self, fausse_machine):
+        _installer("HD_Map_and_Icons", RULES_PAR_DEFAUT)
+        trouves = [n for _c, n in cemu.packs_par_defaut()]
+        assert trouves == ["HD_Map_and_Icons"]
+
+    def test_ignore_un_pack_sans_contenu(self, fausse_machine):
+        """Un pack purely graphique (resolution, anticrenelage) n'ecrase rien :
+        le laisser s'activer est son usage normal."""
+        _installer("UnPackGraphique", RULES_PAR_DEFAUT, avec_contenu=False)
+        assert cemu.packs_par_defaut() == []
+
+    def test_ignore_default_false(self, fausse_machine):
+        _installer("PackNeutre", RULES_SANS_DEFAUT)
+        assert cemu.packs_par_defaut() == []
+
+    def test_ignore_notre_propre_pack(self, fausse_machine):
+        """Le pack UKMM est actif par defaut, et c'est voulu : il porte les
+        mods. Le signaler ferait disparaitre les mods du jeu."""
+        _installer("BreathOfTheWild_UKMM", RULES_PAR_DEFAUT)
+        assert cemu.packs_par_defaut() == []
+
+    def test_desactiver_arrete_le_signalement(self, fausse_machine):
+        _installer("HD_Map_and_Icons", RULES_PAR_DEFAUT)
+        assert cemu.desactiver_par_defaut() == ["HD_Map_and_Icons"]
+        assert cemu.packs_par_defaut() == []
+        texte = io.open(os.path.join(config.cemu_appdata(), "graphicPacks",
+                                     "HD_Map_and_Icons", "rules.txt"),
+                        encoding="utf-8").read()
+        assert "default = false" in texte
+
+    def test_desactiver_garde_le_pack_installe(self, fausse_machine):
+        """La manoeuvre doit etre reversible : on ne supprime rien."""
+        _installer("HD_Map_and_Icons", RULES_PAR_DEFAUT)
+        cemu.desactiver_par_defaut()
+        base = os.path.join(config.cemu_appdata(), "graphicPacks",
+                            "HD_Map_and_Icons")
+        assert os.path.isfile(os.path.join(base, "rules.txt"))
+        assert os.path.isfile(os.path.join(base, "content", "UI", "StockItem",
+                                           "Weapon_Sword_001.sbitemico"))
+
+    def test_desactiver_est_idempotent(self, fausse_machine):
+        _installer("HD_Map_and_Icons", RULES_PAR_DEFAUT)
+        cemu.desactiver_par_defaut()
+        assert cemu.desactiver_par_defaut() == []
+
+    def test_le_diagnostic_bloque_le_lancement(self, fausse_machine):
+        _installer("HD_Map_and_Icons", RULES_PAR_DEFAUT)
+        ecrire(config.cemu_settings(), SETTINGS_ICU)
+        lignes = [(g, t) for g, t in fix.rapport() if "HD_Map_and_Icons" in t]
+        assert lignes, "le pack actif par defaut doit etre signale"
+        assert lignes[0][0] == 2, "un pack qui ecrase le jeu est bloquant"
+
+    def test_fix_le_desactive(self, fausse_machine):
+        _installer("HD_Map_and_Icons", RULES_PAR_DEFAUT)
+        ecrire(config.cemu_settings(), SETTINGS_ICU)
+        fix.corriger(deploy_apres=False)
+        assert cemu.packs_par_defaut() == []
+
+
+class TestPartieDUnAutreJeuDeMods(object):
+    """La partie d'un autre jeu de mods ne se repare pas toute seule.
+
+    Aucun pack graphique n'y est pour rien : le jeu plante parce qu'il relit
+    la sauvegarde a travers des fichiers de mods absents. Avant, `botw fix`
+    annoncait quand meme « Lancez : botw fix », puis refaisait un deploiement
+    de deux minutes qui ne changeait rien a la cause reelle.
+    """
+
+    def _machine_avec_une_partie(self, fausse_machine, profil_partie,
+                                 profil_actif):
+        """Une sauvegarde ecrite au moment du deploiement `profil_partie`."""
+        from botw import deploy
+        ecrire(os.path.join(fausse_machine["appdata"], "ukmm", "settings.yml"),
+               SETTINGS_YML.replace("profile: boost", "profile: " + profil_actif))
+        os.makedirs(config.save_root(), exist_ok=True)
+        ecrire(config.main_save_file(), "SAV")
+        # slot.json dit quel etait le profil au moment de l'ecriture ; le
+        # fichier doit donc porter cette date-la, c'est ainsi que l'outil
+        # retrouve le jeu de mods d'origine.
+        quand = os.path.getmtime(config.main_save_file()) - 60
+        slot = os.path.join(fausse_machine["bureau"], "Sauvegardes",
+                            "NouvellePartie")
+        os.makedirs(slot, exist_ok=True)
+        with io.open(os.path.join(slot, "slot.json"), "w",
+                     encoding="utf-8") as f:
+            json.dump([{"profil": profil_partie, "quand": quand}], f)
+        # Un profil actif doit exister sur le disque, sinon deploy.merged_dir
+        # ne trouve rien et le rapport tombe sur un autre cas.
+        prof = os.path.join(fausse_machine["local"], "ukmm", "wiiu",
+                            "profiles", profil_actif)
+        os.makedirs(os.path.join(prof, "merged", "content"), exist_ok=True)
+        ecrire(os.path.join(prof, "profile.yml"), PROFIL_YML)
+        assert deploy.count_files(config.save_root()) > 0
+
+    def test_signale_et_ne_declenche_aucun_deploiement(self, fausse_machine,
+                                                        monkeypatch, capsys):
+        from botw import newgame, profiles
+        self._machine_avec_une_partie(fausse_machine, "secondwind", "sur")
+        assert profiles.active() == "sur"
+        assert newgame.profil_de_la_partie() == "secondwind"
+
+        appele = []
+        monkeypatch.setattr(deploy, "deploy",
+                            lambda *a, **k: appele.append(a) or {})
+        code = fix.corriger(deploy_apres=True)
+        assert code == 2, "un cas non reparable doit le dire"
+        assert not appele, "il ne faut surtout pas redployer : deux minutes pour rien"
+        out = capsys.readouterr().out
+        assert "botw jeu" in out, "la sortie doit proposer la vraie commande"
+
+    def test_ne_declenche_rien_si_ca_vaut(self, fausse_machine, monkeypatch,
+                                          capsys):
+        from botw import newgame, profiles
+        self._machine_avec_une_partie(fausse_machine, "sur", "sur")
+        assert newgame.profil_de_la_partie() == "sur"
+        assert profiles.active() == "sur"
+        appele = []
+        monkeypatch.setattr(deploy, "deploy",
+                            lambda *a, **k: appele.append(a) or {})
+        assert fix.corriger(deploy_apres=True) == 0
+        assert appele, "quand tout va bien, le redploiement a bien lieu"
+
+    def test_la_commande_sort_en_echec_simple(self, fausse_machine, capsys):
+        from botw import cli
+        self._machine_avec_une_partie(fausse_machine, "secondwind", "sur")
+        assert cli.main(["fix", "-y"]) == 1

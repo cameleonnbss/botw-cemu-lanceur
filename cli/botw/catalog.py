@@ -38,7 +38,8 @@ CATALOG = {
     "sur": (
         "sur",
         "SANS ECHEC : tout ce qui raccourcit le jeu, et pas de Relics of the "
-        "Past (ses 686 fichiers cassent des quêtes). 13 mods.",
+        "Past (249 fichiers non fusionnables : il efface ce que les autres "
+        "mods fournissent et casse des quêtes). 13 mods.",
         ["Second_Wind_(core).zip",
          "Second_Wind_-_Shrine_Overhaul.zip",
          "Second_Wind_-_Eventide_Fix.zip",

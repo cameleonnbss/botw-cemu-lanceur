@@ -159,6 +159,114 @@ def listing(cfg=None):
 
 # --- installation dans un profil --------------------------------------------
 
+def _resout_un_zip(chemin):
+    """Le dossier racine du zip, celui qui contient meta.yml.
+
+    Un zip de mod commence parfois par un dossier, parfois non : UKMM
+    refuse un zip sans meta.yml, et on ne le signalait pas avant de le lui donner.
+    On regarde donc d'abord a la racine, puis sur UN niveau de sous-dossier -
+    c'est la forme que presque tous les zip de GameBanana ont.
+    """
+    try:
+        with zipfile.ZipFile(chemin) as z:
+            noms = z.namelist()
+    except (zipfile.BadZipFile, OSError):
+        return False
+    if any(n.rstrip("/").split("/")[-1] == "meta.yml" for n in noms):
+        return True
+    racines = set(n.split("/")[0] for n in noms if "/" in n)
+    for r in racines:
+        if any(n.startswith(r + "/") and n.split("/")[-1] == "meta.yml"
+               for n in noms):
+            return True
+    return False
+
+
+def _telecharger(url, cfg=None):
+    """Telecharge un zip dans la bibliotheque locale. Retourne son chemin.
+
+    On refuse d'ecrire n'importe quoi dans la bibliotheque : le fichier doit
+    finir en .zip et contenir un meta.yml. Un lien vers une page web donne un
+    fichier HTML ; le refuser ici evite de le coincer dans la bibliotheque ou
+    il rejouerait le meme echec a chaque recherche.
+    """
+    if not url.lower().startswith(("http://", "https://")):
+        return None
+    i18n.info(_("mods.fetching", url=url))
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=120) as r:
+        data = r.read()
+    nom = os.path.basename(urllib.parse.urlparse(url).path) or "mod.zip"
+    if not nom.lower().endswith(".zip"):
+        nom += ".zip"
+    # Deux liens peuvent porter le meme nom : on ne doit jamais ecraser un
+    # mod deja installe.
+    cible = os.path.join(library(cfg), nom)
+    i = 2
+    while os.path.exists(cible):
+        base, ext = os.path.splitext(nom)
+        cible = os.path.join(library(cfg), "%s-%d%s" % (base, i, ext))
+        i += 1
+    os.makedirs(library(cfg), exist_ok=True)
+    with open(cible, "wb") as f:
+        f.write(data)
+    i18n.ok(_("mods.fetched", path=cible, size=human(len(data))))
+    if not _resout_un_zip(cible):
+        os.remove(cible)
+        raise ValueError(_("mods.not_a_mod", path=cible))
+    return cible
+
+
+def installer_fichier(profile, source, cfg=None):
+    """Installe un mod depuis un fichier local ou un lien. Chemin complet.
+
+    C'est la porte d'entree de `botw installmods` : elle amene le zip la ou
+    UKMM sait le lire (la bibliotheque locale), puis appelle `install`, qui
+    ecrit dans profile.yml - donc reversible, et sans toucher au stockage
+    d'UKMM comme le fait `ukmm uninstall`.
+    """
+    zip_path = None
+    copie = None          # le fichier que NOUS avons pose dans la bibliotheque
+    if os.path.isfile(source):
+        zip_path = os.path.abspath(source)
+        i18n.info(_("mods.from_file", path=zip_path))
+        dest = os.path.join(library(cfg), os.path.basename(zip_path))
+        if os.path.abspath(dest) != zip_path:
+            os.makedirs(library(cfg), exist_ok=True)
+            i = 2
+            base, ext = os.path.splitext(os.path.basename(zip_path))
+            while os.path.exists(dest):
+                dest = os.path.join(library(cfg), "%s-%d%s" % (base, i, ext))
+                i += 1
+            import shutil
+            shutil.copy2(zip_path, dest)
+            zip_path = dest
+            copie = dest
+    elif source.lower().startswith(("http://", "https://")):
+        try:
+            zip_path = _telecharger(source, cfg)
+        except urllib.error.URLError as e:
+            raise ValueError(_("mods.download_failed", url=source,
+                               why=getattr(e, "reason", str(e))))
+    else:
+        raise ValueError(_("mods.unknown", n=source))
+
+    if not zip_path or not os.path.isfile(zip_path):
+        raise ValueError(_("mods.unknown", n=source))
+    if not zip_path.lower().endswith(".zip"):
+        if copie:
+            os.remove(copie)
+        raise ValueError(_("mods.not_a_zip", path=zip_path))
+    if not _resout_un_zip(zip_path):
+        # On vient de poser ce fichier dans la bibliotheque : on le retire.
+        # La bibliotheque est ce que 'botw mods list' propose, et un zip qui
+        # n'est pas un mod y reviendrait a chaque proposition.
+        if copie:
+            os.remove(copie)
+        raise ValueError(_("mods.not_a_mod", path=copie or zip_path))
+    return install(profile, os.path.basename(zip_path), cfg)
+
+
 def install(profile, query, cfg=None):
     name = find(query, cfg)
     if not name:

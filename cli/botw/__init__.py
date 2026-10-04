@@ -16,4 +16,4 @@ The package is deliberately split so each piece can be tested on its own:
     ui        a menu for people who would rather click
     cli       the dispatcher
 """
-__version__ = "1.0.0"
+__version__ = "1.2.0"

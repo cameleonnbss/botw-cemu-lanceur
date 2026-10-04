@@ -41,19 +41,26 @@ def _status_line(cfg):
         return _("ui.status", p=act, n=0)
 
 
-def launch(profile, cfg):
+def launch(profile, cfg, deja_deploye=False):
     """Deploie puis lance Cemu. Retourne le code de sortie.
+
+    `deja_deploye` : le appelant vient de deployer ce profil (c'est le cas de
+    `botw jeu X --lancer`, dont `newgame.basculer` finit par un deploiement).
+    Sans ce drapeau, on refait un remerge complet de deux minutes pour un
+    deploiement deja pose. On ne saute que le deploiement, jamais les
+    verifications : ce sont elles qui evitent l'ecran de chargement infini.
 
     Avant de lancer, on verifie qu'aucun pack graphique ne peut bloquer le
     chargement. Un joueur qui voit un chargement infini en pense a son
     profil ; or la cause est presque toujours un pack, pas le profil.
     """
     from . import deploy, fix
-    try:
-        deploy.deploy(profile, cfg, quiet=True)
-    except deploy.GuardError as e:
-        i18n.ko(str(e))
-        return e.code
+    if not deja_deploye:
+        try:
+            deploy.deploy(profile, cfg, quiet=True)
+        except deploy.GuardError as e:
+            i18n.ko(str(e))
+            return e.code
     if not fix.avant_de_lancer(cfg):
         return 1
     cemu = config.cemu_exe(cfg)
@@ -72,14 +79,15 @@ def launch(profile, cfg):
 # --- sous-menus --------------------------------------------------------------
 
 def sub_play(cfg):
-    from . import deploy, profiles
+    from . import newgame, profiles
     while True:
         i18n.title(_("ui.play.title"))
         act = profiles.active()
         options = []
         for p in profiles.existing():
             mark = i18n.paint("*", "green") if p == act else " "
-            options.append((p, "%s %-14s %s" % (mark, p, _describe(p, cfg))))
+            options.append((p, "%s %-14s %-9s %s"
+                            % (mark, p, _partie_de(p), _describe(p, cfg))))
         options.append(("__open_ukmm", _("ui.play.ukmm")))
         options.append(("__back", _("ui.back")))
         choix = i18n.menu(options, _("ui.play.pick"))
@@ -90,9 +98,56 @@ def sub_play(cfg):
             from . import tools
             tools.open_ukmm()
             continue
-        if launch(key, cfg) != 0:
+        bascule = False
+        if key != act:
+            # Changer de jeu de mods sans changer de partie est precisement
+            # ce qui rend une sauvegarde inchargable. On bascule les deux
+            # ensemble, et l'archive se fait avant le deploiement.
+            if not newgame.basculer(key, cfg):
+                return
+            cfg["game_profile"] = key
+            config.save(cfg)
+            bascule = True
+        # `basculer` a deja deploie : sans ce drapeau, `launch` referait un
+        # remerge complet de deux minutes avant de demarrer Cemu.
+        if launch(key, cfg, deja_deploye=bascule) != 0:
             return
         return
+
+
+def sub_jeu_direct(cfg, numero):
+    """Touche 1 ou 2 : bascule vers ce profil, avec SA partie, puis Cemu.
+
+    Meme chemin que `botw jeu <profil> --lancer`, sans repasser par la CLI :
+    le menu appelle directement `basculer`, puis `launch` en lui disant que le
+    deploiement vient d'etre fait. Sans ce drapeau, on referait une re-fusion
+    de deux minutes pour un jeu deja en place.
+    """
+    from . import newgame
+    for _touche, _cle, profil, libelle in _deux_parties():
+        if _cle == "jeu_" + numero:
+            i18n.info(libelle)
+            break
+    else:
+        return
+    if not newgame.basculer(profil, cfg):
+        return
+    cfg["game_profile"] = profil
+    config.save(cfg)
+    launch(profil, cfg, deja_deploye=True)
+
+
+def _partie_de(profil):
+    """'partie' si une sauvegarde existe pour ce profil, sinon 'nouvelle'.
+
+    C'est l'information qui manquait le plus : sans elle, deux profils
+    identiques en apparence Sambaient interchangeable, alors que l'un a une
+    partie de dix heures et l'autre rien du tout.
+    """
+    from . import newgame
+    if newgame._partie_du_profil(profil) is not None:
+        return _("ui.partie.oui")
+    return _("ui.partie.non")
 
 
 def _describe(p, cfg):
@@ -102,6 +157,23 @@ def _describe(p, cfg):
         return _("ui.play.files", n=prof.files_count())
     except OSError:
         return "?"
+
+
+def sub_installmods(cfg):
+    """`botw installmods` : un .zip du disque, ou un lien. Pose une question."""
+    from . import cli, profiles
+    i18n.title(_("installmods.title"))
+    i18n.info(_("installmods.how"))
+    source = i18n.ask(_("installmods.ask_source"), "")
+    if not source or source.strip().lower() in ("0", "q"):
+        return
+    profil = i18n.ask(_("installmods.ask_profile"),
+                       profiles.active() or cfg.get("game_profile") or "")
+    if not profil:
+        return
+    cli.cmd_installmods(_Fake(source=source.strip(),
+                              profile=profil.strip() or None,
+                              list=False), cfg)
 
 
 def sub_mods(cfg):
@@ -231,13 +303,65 @@ def sub_tools(cfg):
 
 # --- ecran principal ---------------------------------------------------------
 
+def _deux_parties():
+    """Les raccourcis 1 et 2 du menu, et le profil derriere chacun.
+
+    Le menu doit repondre a LA question de tous les jours - « je veux rejouer
+    ma partie d'hier », « je veux tous les mods » - avant de proposer les
+    outils. Les deux touches changent le jeu de mods ET la partie ensemble,
+    parce que changer les mods sans changer la partie produit exactement le
+    chargement infini : c'est la seule facon de ne pas le provoquer.
+
+    Les deux jeux de mods sont choisis par le lecteur, pas codes en dur dans
+    le programme : ce depot est universel, et « secondwind » n'est le bon choix
+    que chez la personne qui a installe Second Wind. La ligne affiche le nom
+    du profil et l'etat de SA partie, ce qui se lit sans rien connaitre.
+    """
+    from . import newgame, profiles
+    existants = profiles.existing()
+    out = []
+    for touche, cle in (("1", "jeu_1"), ("2", "jeu_2")):
+        profil = raccourcis_de(cfg_global()).get(cle, cle[4:])
+        if profil not in existants:
+            continue
+        cle_etat = ("ui.party.got" if newgame._partie_du_profil(profil)
+                    else "ui.party.none")
+        out.append((touche, cle, profil, _(cle_etat, p=profil)))
+    return out
+
+
+# Les raccourcis sont lus dans la configuration pour rester universels. Le
+# defaut reprend les deux jeux de mods livres avec le projet.
+RACCOURCIS_DEFAUT = {"jeu_1": "secondwind", "jeu_2": "sur"}
+
+
+def cfg_global():
+    return config.load()
+
+
+def raccourcis_de(cfg):
+    choix = (cfg or {}).get("raccourcis") or {}
+    return dict(RACCOURCIS_DEFAUT, **choix)
+
+
 def main_screen(cfg):
     from . import art, newgame, readme
     i18n.info(_status_line(cfg))
+
+    # Les deux parties d'abord : c'est ce qu'on presse 95 % du temps.
+    raccourcis = _deux_parties()
+    if raccourcis:
+        print("  " + i18n.paint(_("ui.play_party"), "bold"))
+        for touche, _cle, profil, libelle in raccourcis:
+            print("  " + i18n.paint("    %s) " % touche, "bold+green")
+                  + i18n.paint(libelle, "white"))
+        print("")
+
     options = [("play", _("ui.play")),
                ("check", _("ui.check")),
                ("build", _("ui.build")),
                ("mods", _("ui.mods")),
+               ("installmods", _("ui.installmods")),
                ("profiles", _("ui.profiles")),
                ("coop", _("ui.coop")),
                ("tools", _("ui.tools")),
@@ -252,7 +376,7 @@ def main_screen(cfg):
                             ("G", _("ui.graphics.short")),
                             ("N", _("ui.newgame")),
                             ("D", _("ui.readme_fr"))):
-        print("  " + i18n.paint("  %s) " % touche, "bold+green") + libelle)
+        print("  " + i18n.paint("  %s) " % touche, "bold+dim") + libelle)
     print("  " + i18n.paint("  Q) ", "bold+dim") + _("ui.quit"))
     while True:
         raw = i18n.ask(_("ui.welcome"), "1")
@@ -261,6 +385,9 @@ def main_screen(cfg):
         low = raw.lower()
         if low in ("q", "0"):
             return None
+        for touche, cle, _p, _lib in raccourcis:
+            if low == touche:
+                return cle
         if low == "n":
             return "newgame"
         if low == "d":
@@ -297,6 +424,8 @@ def run(cfg):
             return 0
         if quoi == "play":
             sub_play(cfg)
+        elif quoi in ("jeu_1", "jeu_2"):
+            sub_jeu_direct(cfg, quoi[-1])
         elif quoi == "check":
             from . import cli
             cli.cmd_check(_Fake(), cfg)
@@ -313,6 +442,8 @@ def run(cfg):
             cli.cmd_build(_Fake(name=None, yes=False, no_deploy=False), cfg)
         elif quoi == "mods":
             sub_mods(cfg)
+        elif quoi == "installmods":
+            sub_installmods(cfg)
         elif quoi == "profiles":
             sub_profiles(cfg)
         elif quoi == "coop":
@@ -329,8 +460,14 @@ def run(cfg):
             readme.show("fr")
         elif quoi == "lang":
             code = i18n.ask(_("ui.lang_ask"), i18n.lang())
-            if code is None:
+            code = (code or "").lower()
+            if not code:
                 pass
+            elif code == "auto":
+                cfg["lang"] = ""
+                config.save(cfg)
+                i18n.appliquer(cfg)
+                i18n.ok(_("lang.auto"))
             elif code in i18n.available():
                 i18n.set_lang(code)
                 cfg["lang"] = code

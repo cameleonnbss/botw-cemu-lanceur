@@ -18,7 +18,12 @@ APP_DIR_NAME = "botwcli"
 CONFIG_NAME = "config.json"
 
 DEFAULTS = {
-    "lang": "en",
+    # Langue vide = detection automatique (voir i18n.appliquer). Une langue
+    # par defaut ici empecherait la detection de jamais se declencher sur une
+    # installation neuve : load() renvoie toujours les defauts, donc le
+    # premier lancement serait fige en anglais. Elle n'apparait dans le
+    # fichier que si l'utilisateur la choisit lui-meme avec `botw lang <code>`.
+    "lang": "",
     "cemu_exe": "",
     "ukmm_exe": "",
     "library_dir": "",          # ou sont ranges les mods telecharges

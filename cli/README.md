@@ -4,8 +4,10 @@ Everything around *The Legend of Zelda: Breath of the Wild* running under
 Cemu on Windows: mods, profiles, saves, two-player, and a health check that
 tells you what is actually wrong instead of leaving you guessing.
 
-**English is the default language.** French is one command away:
-`botw lang fr`. The same command with `en` switches back.
+**The interface speaks your system's language** — the Windows UI language is
+read through the system API, the shell locale as well under Git Bash and WSL,
+so a French machine needs nothing. `botw lang fr` forces French, `en` forces
+English, and `botw lang auto` gives the decision back to the system.
 
 ```bat
 botw                 :: opens the menu
@@ -296,9 +298,10 @@ that does not match the profile**. Check §7.
 | `botw catalog [<name>] [--as <profile>] [--deploy]` | verified combinations |
 | `botw coop status\|enable\|disable\|radmin` | two players |
 | `botw newgame [revert <n>\|status]` | fresh game, keep the old one |
+| `botw jeu <profile> [-y] [--lancer]` | switch mod set **and** save, archive first |
 | `botw readme [en\|fr] [-o]` | this document |
 | `botw matrix [suite]` | the combination test bench |
-| `botw lang [en\|fr]` | language |
+| `botw lang [en\|fr\|auto]` | language |
 | `botw --lang fr <command>` | one run in French |
 
 ---
