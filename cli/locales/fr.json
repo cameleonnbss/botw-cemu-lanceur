@@ -276,6 +276,7 @@
   "newgame.nothing": "Aucune partie actuelle à mettre de côté.",
   "newgame.replaced": "partie precedente conservee dans {path}",
   "newgame.revert": "Partie précédente restaurée : {path}",
+  "newgame.revert_failed": "la partie restauree n'est pas la ou Cemu la cherche ({p}) : l'emplacement reste bloque, ne lance pas le jeu",
   "newgame.revert_hint": "Remettez-en une avec : botw newgame revert <numero>",
   "newgame.switch_archive": "La partie en cours est mise de cote pour le profil '{p}'.",
   "newgame.switch_confirm": "Passer au jeu de mods '{p}' ? La partie en cours sera mise de cote et pourra toujours etre remise.",

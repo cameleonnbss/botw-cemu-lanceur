@@ -276,6 +276,7 @@
   "newgame.nothing": "No current game to move aside.",
   "newgame.replaced": "previous game kept at {path}",
   "newgame.revert": "Previous game restored: {path}",
+  "newgame.revert_failed": "the restored save is not where Cemu looks for it ({p}): the slot is still blocked, do not launch the game",
   "newgame.revert_hint": "Put one back with: botw newgame revert <number>",
   "newgame.switch_archive": "The current save is being put aside for profile '{p}'.",
   "newgame.switch_confirm": "Switch to mod set '{p}'? The current save will be put aside and can always be restored.",

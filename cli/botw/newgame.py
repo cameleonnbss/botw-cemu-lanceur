@@ -181,6 +181,32 @@ def _size_of(root):
     return total
 
 
+def _emplacement_vide(source):
+    """Reconstruit un emplacement que Cemu sait lire, mais sans partie.
+
+    Effacer le dossier et laisser un repertoire nu ne suffit pas : au
+    lancement suivant, Cemu ouvre le compte, ne trouve pas
+    `user/80000001/0`, et le jeu plante d'une violation d'acces (0xc0000005)
+    au moment ou il lit sa sauvegarde. Le vide doit donc etre structure : les
+    memes dossiers qu'une vraie partie, sans les fichiers de partie.
+
+    `meta/` (icone et identite du jeu) appartient au titre, pas au joueur :
+    on le recopie depuis l'archive, ce qui rend l'emplacement identique a celui
+    d'une partie neuve, et non a un trou.
+    """
+    slot = _slot()
+    shutil.rmtree(slot, ignore_errors=True)
+    for rel in ("meta", os.path.join("user", "80000001", "0"),
+                os.path.join("user", "common")):
+        os.makedirs(os.path.join(slot, rel), exist_ok=True)
+    meta = os.path.join(source, "meta")
+    if os.path.isdir(meta):
+        for nom in os.listdir(meta):
+            shutil.copy2(os.path.join(meta, nom),
+                         os.path.join(slot, "meta", nom))
+    return slot
+
+
 def prepare(profile=None, keep_backup=True, nom=None):
     """Deplace la partie actuelle sur le cote. Retourne le chemin de l'archive.
 
@@ -201,9 +227,8 @@ def prepare(profile=None, keep_backup=True, nom=None):
     if not keep_backup:
         shutil.rmtree(_slot(), ignore_errors=True)
     else:
-        # On ne laisse qu'un emplacement vide et valide pour Cemu.
-        shutil.rmtree(_slot(), ignore_errors=True)
-        os.makedirs(_slot(), exist_ok=True)
+        # Un emplacement vide ET structure : voir _emplacement_vide.
+        _emplacement_vide(dest)
     rows = read_index()
     rows.append({"date": _stamp(), "profil": profile or "", "path": dest,
                  "nom": nom or "", "octets": _size_of(dest)})
@@ -252,9 +277,13 @@ def revert(path=None, force=False):
     # 'partie_...' a l'interieur, et Cemu n'y voyait plus aucune partie -
     # alors que la commande annoncait la restauration. C'est exactement ce
     # qui se passe apres `newgame`, qui laisse un emplacement vide valide.
-    os.makedirs(_slot(), exist_ok=True)
-    for nom in os.listdir(src):
-        shutil.move(os.path.join(src, nom), os.path.join(_slot(), nom))
+    _restaurer(src)
+    if not _contient_une_partie(_slot()):
+        # Sans ce controle, la commande annoncait une restauration que
+        # Cemu ne voyait pas : l'utilisateur croyait sa partie sauve, et
+        # le jeu plantait en lisant le compte.
+        i18n.ko(_("newgame.revert_failed", path=_slot()))
+        return None
     try:
         os.rmdir(src)
     except OSError:
@@ -262,6 +291,32 @@ def revert(path=None, force=False):
     write_index([r for r in rows if r is not chosen])
     i18n.ok(_("newgame.revert", path=_slot()))
     return _slot()
+
+
+def _vider(chemin):
+    """Supprime un fichier ou un dossier, sans hesiter sur le type."""
+    if os.path.isdir(chemin) and not os.path.islink(chemin):
+        shutil.rmtree(chemin, ignore_errors=True)
+    elif os.path.lexists(chemin):
+        try:
+            os.remove(chemin)
+        except OSError:
+            pass
+
+
+def _restaurer(src):
+    """Le contenu de l'archive, a la place exacte ou Cemu le cherche.
+
+    On RETIRE d'abord ce que l'emplacement porte deja sous le meme nom.
+    Cemu recree `user/` a chaque lancement : sans ce retrait, le
+    `shutil.move` glisse l'archive dans ce dossier et la partie finit un
+    cran trop bas, invisible pour le jeu.
+    """
+    os.makedirs(_slot(), exist_ok=True)
+    for nom in os.listdir(src):
+        cible = os.path.join(_slot(), nom)
+        _vider(cible)
+        shutil.move(os.path.join(src, nom), cible)
 
 
 def status():

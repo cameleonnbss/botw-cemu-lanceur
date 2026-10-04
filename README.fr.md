@@ -356,7 +356,7 @@ Ce que ça a donné, en clair :
 ## Tests
 
 ```bash
-cd cli && python -m pytest tests -q                  # 334 tests : l'outil botw
+cd cli && python -m pytest tests -q                  # 340 tests : l'outil botw
 python -m pytest outils/tests_installeur.py -q      # 18 tests : l'installateur
 ```
 

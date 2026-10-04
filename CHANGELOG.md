@@ -258,6 +258,17 @@ Toutes les versions publiées suivent [SemVer](https://semver.org/lang/fr/).
   en français. La fausse machine est maintenant un poste **anglais** : la suite
   se comporte pareil partout, et la détection de langue est exercée par des
   tests qui la pilotent explicitement.
+- **La touche 1 mettait la partie un cran trop bas, et Cemu ne la voyait
+  plus.** `revert()` deposait le contenu de l'archive dans l'emplacement
+  sans retirer ce que l'emplacement portait deja. Cemu recree `user/` a
+  chaque lancement : l'archive partait donc *dans* ce `user/`, en
+  `.../101c9500/user/user/80000001/0/game_data.sav`. Le jeu affichait une
+  nouvelle partie au lieu de la tienne, et plantait d'une violation d'acces
+  (0xc0000005) en lisant le compte - pendant que la commande annoncait
+  « Previous game restored ». Le meme piege qu'avant, dans un `shutil.move`
+  qui glisse au lieu de remplacer. L'emplacement est desormais nettoye
+  avant la remise en place, et la commande **verifie** que la partie est la
+  ou Cemu la cherche avant d'annoncer quoi que ce soit.
 - **`--dest D:/BOTW` affichait `D:/BOTW\Lanceur-BOTW.bat`.** Windows accepte de
   mélanger les deux séparateurs, l'installation était donc correcte — mais
   l'écran final de l'installateur ressemblait à une panne. Le dossier est
@@ -270,11 +281,12 @@ Toutes les versions publiées suivent [SemVer](https://semver.org/lang/fr/).
   n'existe pas), la copie est exacte jusqu'au contrôle MD5 après écriture —
   une copie à moitié faite est refusée —, une installation réelle produit un
   lanceur jouable, et la relancer ne réécrit rien.
-- **361 tests** (274 auparavant). Les garanties de sécurité sont vérifiées par
+- **367 tests** (274 auparavant). Les garanties de sécurité sont vérifiées par
   mutation : casser l'ordre archivage-puis-déploiement fait échouer 5 tests,
   mal étiqueter l'archive en fait échouer 4, retirer la normalisation du
   dossier d'installation en fait échouer 4, retirer le contrôle MD5 après copie
-  en fait échouer 1.
+  en fait échouer 1, retirer le nettoyage avant restauration en
+  fait échouer 3.
 
 ## [1.1.0] — 4 octobre 2026
 

@@ -3,6 +3,7 @@ import io
 import json
 import os
 import re
+import shutil
 import zipfile
 
 import pytest
@@ -450,9 +451,14 @@ class TestNouvellePartie(object):
         # la partie doit etre DIRECTEMENT dans l'emplacement
         assert io.open(config.main_save_file(), encoding="utf-8").read() == "SAUVEGARDE"
         assert newgame.has_game()
-        # aucun sous-dossier parasite dans l'emplacement
-        contenu = os.listdir(config.save_root())
-        assert sorted(contenu) == ["user"], contenu
+        # Aucun sous-dossier parasite : la partie est DIRECTEMENT dans
+        # l'emplacement. `meta` y est attendu - c'est l'icone du jeu, et
+        # `prepare` reconstruit un emplacement structuré pour que Cemu
+        # sache l'ouvrir meme sans partie.
+        contenu = sorted(os.listdir(config.save_root()))
+        assert contenu == ["meta", "user"], contenu
+        assert not os.path.isdir(os.path.join(config.save_root(), "user",
+                                              "user"))
 
     def test_revert_conserve_meta(self, fausse_machine):
         """Le dossier `meta` accompagne la partie : il doit revenir aussi."""
@@ -1071,3 +1077,101 @@ class TestNomDePartie(object):
         assert noms == [""], "une bascule ne doit pas inventer de nom"
         # le nom survit a une relecture complete de l'index
         assert newgame.read_index()[0]["nom"] == ""
+
+class TestRestaurationAuBonEndroit(object):
+    """Regression : la partie doit atterrir LA ou Cemu la cherche.
+
+    Le cas reproduit est celui de la vraie machine. Apres un `newgame`,
+    l'emplacement est vide ; Cemu le relance, il recree `user/80000001/0/` et
+    `user/common/`. La touche 1 restaure alors la partie principale dans un
+    emplacement qui n'est plus vide, et le `shutil.move` glissait l'archive
+    DANS le `user` deja present :
+
+        .../101c9500/user/user/80000001/0/game_data.sav
+
+    Cemu ne la voyait pas : nouvelle partie au lieu de la tienne, et plantage
+    en lisant le compte - alors que la commande annoncait "Previous game
+    restored".
+    """
+
+    @staticmethod
+    def _emplacement_avec_user():
+        """L'emplacement dans l'etat ou Cemu le laisse apres un lancement."""
+        for sous in ("user/80000001/0", "user/common", "meta/meta"):
+            os.makedirs(os.path.join(config.save_root(), *sous.split("/")),
+                        exist_ok=True)
+        ecrire(os.path.join(config.save_root(), "user", "80000001", "0",
+                            "caption.sav"), "NEUF")
+
+    @staticmethod
+    def _archive():
+        ecrire(config.main_save_file(), "MA PARTIE")
+        archive = newgame.prepare("secondwind")
+        assert archive, "aucune archive produite"
+        return archive
+
+    def test_emplacement_vide(self, fausse_machine):
+        archive = self._archive()
+        shutil.rmtree(config.save_root(), ignore_errors=True)
+        os.makedirs(config.save_root(), exist_ok=True)
+        assert newgame.revert(archive, force=True)
+        assert os.path.isfile(config.main_save_file())
+
+    def test_emplacement_deja_peuple_par_cemu(self, fausse_machine):
+        """LE CAS REEL : l'emplacement contient deja `user/`."""
+        archive = self._archive()
+        self._emplacement_avec_user()
+        assert newgame.revert(archive, force=True)
+        assert os.path.isfile(config.main_save_file()), (
+            "partie invisible pour le jeu : elle a ete mise dans %s"
+            % os.path.join(config.save_root(), "user", "user"))
+
+    def test_aucun_niveau_en_trop(self, fausse_machine):
+        archive = self._archive()
+        self._emplacement_avec_user()
+        assert newgame.revert(archive, force=True)
+        en_trop = os.path.join(config.save_root(), "user", "user")
+        assert not os.path.exists(en_trop), (
+            "l'archive a ete glissee dans le `user` existant : %s" % en_trop)
+
+    def test_la_partie_reste_chargeable(self, fausse_machine):
+        archive = self._archive()
+        self._emplacement_avec_user()
+        assert newgame.revert(archive, force=True)
+        assert newgame.has_game()
+        assert newgame.profil_de_la_partie() == "secondwind", (
+            "la partie restauree doit rester attribuee au bon profil")
+
+
+class TestAnnonceHonnete(object):
+    """Si la partie n'est pas la ou Cemu la cherche, on ne dit pas que c'est
+    fait : un « restauration reussie » alors que le jeu ne voit rien, c'est la
+    panne la plus breve et la plus trompeuse du projet."""
+
+    def test_une_restauration_qui_echoue_ne_dit_pas_oui(self, fausse_machine,
+                                                         monkeypatch):
+        archive = TestRestaurationAuBonEndroit._archive()
+        shutil.rmtree(config.save_root(), ignore_errors=True)
+        os.makedirs(config.save_root(), exist_ok=True)
+        monkeypatch.setattr(newgame, "_restaurer", lambda src: None)
+        assert newgame.revert(archive, force=True) is None
+
+    def test_une_restauration_partielle_est_signalee(self, fausse_machine,
+                                                      monkeypatch):
+        """Une copie arretee en route doit etre refusee, pas annoncee."""
+        archive = TestRestaurationAuBonEndroit._archive()
+        shutil.rmtree(config.save_root(), ignore_errors=True)
+        os.makedirs(config.save_root(), exist_ok=True)
+
+        vraie = newgame._restaurer
+
+        def copie_tronquee(src):
+            vraie(src)
+            # Le disque a filled en plein copier-coller : les dossiers sont
+            # la, le fichier de partie, non.
+            fichier = os.path.join(config.save_root(), "user", "80000001",
+                                   "0", "game_data.sav")
+            if os.path.isfile(fichier):
+                os.remove(fichier)
+        monkeypatch.setattr(newgame, "_restaurer", copie_tronquee)
+        assert newgame.revert(archive, force=True) is None

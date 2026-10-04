@@ -350,7 +350,7 @@ In plain terms, it found that:
 ## Tests
 
 ```bash
-cd cli && python -m pytest tests -q               # 334 tests: the botw tool
+cd cli && python -m pytest tests -q               # 340 tests: the botw tool
 python -m pytest outils/tests_installeur.py -q   # 18 tests: the installer
 ```
 
