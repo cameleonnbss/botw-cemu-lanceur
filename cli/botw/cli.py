@@ -443,7 +443,12 @@ def cmd_build(args, cfg):
 
 def cmd_newgame(args, cfg):
     from . import newgame
-    return 0 if newgame.execute(args.rest) else 1
+    # `-y` doit etre declare sur le sous-analyseur, sinon argparse le refuse
+    # avant que newgame.execute ne le voie. On le retransmet tel quel.
+    rest = list(args.rest or [])
+    if getattr(args, "yes", False):
+        rest.append("-y")
+    return 0 if newgame.execute(rest) else 1
 
 
 def cmd_config(args, cfg):
@@ -585,6 +590,7 @@ def build_parser():
 
     ng = s.add_parser("newgame", help=_("cli.help.newgame"))
     ng.add_argument("rest", nargs="*", default=None)
+    ng.add_argument("-y", "--yes", action="store_true")
 
     bd = s.add_parser("build", help=_("cli.help.build"))
     bd.add_argument("name", nargs="?", default=None)

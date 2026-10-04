@@ -222,6 +222,68 @@ class TestNouvellePartie(object):
         assert capsys.readouterr().out.strip() != ""
 
 
+class TestNouvellePartieCli(object):
+    """`botw newgame -y` doit etre accepte.
+
+    Regression : l'option etait documentee et implementee dans
+    newgame.execute, mais pas declaree sur le sous-analyseur. argparse
+    rejetait donc `-y` avant que la commande ne le voie, et l'utilisateur
+    devait repondre a une question a laquelle il ne pouvait pas repondre
+    depuis un script.
+    """
+
+    def test_le_moins_y_est_accepte(self):
+        from botw import cli
+        args = cli.build_parser().parse_args(["newgame", "-y"])
+        assert args.yes is True
+
+    def test_le_yes_long_est_accepte(self):
+        from botw import cli
+        args = cli.build_parser().parse_args(["newgame", "--yes"])
+        assert args.yes is True
+
+    def test_sans_option_le_moins_y_est_faux(self):
+        from botw import cli
+        args = cli.build_parser().parse_args(["newgame", "status"])
+        assert args.yes is False
+        assert args.rest == ["status"]
+
+    def test_le_moins_y_arrive_a_la_commande(self, fausse_machine, monkeypatch):
+        """cmd_newgame doit retransmettre -y a newgame.execute."""
+        from botw import cli
+        vu = {}
+
+        def faux_execute(rest):
+            vu["rest"] = list(rest)
+            return True
+
+        monkeypatch.setattr(newgame, "execute", faux_execute)
+        ecrire(config.main_save_file(), "SAUVEGARDE")
+        args = cli.build_parser().parse_args(["newgame", "-y"])
+        assert cli.cmd_newgame(args, config.load()) == 0
+        assert "-y" in vu["rest"]
+
+    def test_sans_option_le_moins_y_n_est_pas_ajoute(self, fausse_machine,
+                                                     monkeypatch):
+        from botw import cli
+        vu = {}
+        monkeypatch.setattr(newgame, "execute",
+                            lambda rest: vu.setdefault("rest", list(rest)) or True)
+        args = cli.build_parser().parse_args(["newgame", "revert"])
+        assert cli.cmd_newgame(args, config.load()) == 0
+        assert vu["rest"] == ["revert"]
+
+    def test_reellement_aucune_question_posee(self, fausse_machine, capsys):
+        """Le vrai chemin : `botw newgame -y` agit sans lire l'entree."""
+        import botw.cli as cli
+
+        ecrire(config.main_save_file(), "SAUVEGARDE")
+        rc = cli.main(["newgame", "-y"])
+        assert rc == 0
+        assert not newgame.has_game()
+        assert newgame.read_index()
+
+
 class TestReadme(object):
     def test_trouve_le_readme(self):
         assert readme.exists("en")
