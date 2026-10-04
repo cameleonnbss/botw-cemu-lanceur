@@ -227,7 +227,19 @@ def revert(path=None, force=False):
         extra = src + "_remplacee_%s" % _stamp()
         shutil.move(_slot(), extra)
         i18n.info(_("newgame.replaced", path=extra))
-    shutil.move(src, _slot())
+    # On deplace le CONTENU de l'archive dans l'emplacement, pas l'archive
+    # elle-meme. `shutil.move(src, _slot())` glisse l'archive DANS le
+    # dossier existant : l'emplacement se retrouvait avec un sous-dossier
+    # 'partie_...' a l'interieur, et Cemu n'y voyait plus aucune partie -
+    # alors que la commande annoncait la restauration. C'est exactement ce
+    # qui se passe apres `newgame`, qui laisse un emplacement vide valide.
+    os.makedirs(_slot(), exist_ok=True)
+    for nom in os.listdir(src):
+        shutil.move(os.path.join(src, nom), os.path.join(_slot(), nom))
+    try:
+        os.rmdir(src)
+    except OSError:
+        pass
     write_index([r for r in rows if r is not chosen])
     i18n.ok(_("newgame.revert", path=_slot()))
     return _slot()

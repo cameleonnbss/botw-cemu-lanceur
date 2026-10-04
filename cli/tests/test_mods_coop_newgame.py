@@ -221,6 +221,45 @@ class TestNouvellePartie(object):
         newgame.status()
         assert capsys.readouterr().out.strip() != ""
 
+    def test_revert_dans_un_emplacement_vide(self, fausse_machine):
+        """Regression : le cas exact que `newgame` laisse derriere lui.
+
+        `prepare` laisse un emplacement VIDE mais existant. Restaure dans
+        ce dossier, `shutil.move(archive, emplacement)` glisse l'archive
+        DANS l'emplacement : la partie se retrouve un niveau trop bas, et
+        Cemu n'en voit plus aucune. La commande annoncait pourtant la
+        restauration - c'est le pire genre de succes trompeur, parce que
+        l'utilisateur croit sa partie sauve.
+        """
+        ecrire(config.main_save_file(), "SAUVEGARDE")
+        newgame.prepare()
+        assert not newgame.has_game()
+        assert newgame.revert(force=True)
+        # la partie doit etre DIRECTEMENT dans l'emplacement
+        assert io.open(config.main_save_file(), encoding="utf-8").read() == "SAUVEGARDE"
+        assert newgame.has_game()
+        # aucun sous-dossier parasite dans l'emplacement
+        contenu = os.listdir(config.save_root())
+        assert sorted(contenu) == ["user"], contenu
+
+    def test_revert_conserve_meta(self, fausse_machine):
+        """Le dossier `meta` accompagne la partie : il doit revenir aussi."""
+        slot = config.save_root()
+        ecrire(config.main_save_file(), "SAUVEGARDE")
+        ecrire(os.path.join(slot, "meta", "meta.xml"), "<meta/>")
+        newgame.prepare()
+        assert newgame.revert(force=True)
+        assert io.open(os.path.join(slot, "meta", "meta.xml"),
+                       encoding="utf-8").read() == "<meta/>"
+
+    def test_revert_idempotent_sur_index(self, fausse_machine):
+        """Apres un revert reussi, l'archive sort de l'index."""
+        ecrire(config.main_save_file(), "SAUVEGARDE")
+        newgame.prepare()
+        assert len(newgame.read_index()) == 1
+        assert newgame.revert(force=True)
+        assert newgame.read_index() == []
+
 
 class TestNouvellePartieCli(object):
     """`botw newgame -y` doit etre accepte.
